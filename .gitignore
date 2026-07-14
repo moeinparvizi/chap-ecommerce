@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.angular/
+.next/
+out/
+*.tsbuildinfo
+
+# Package-specific
+apps/web/.next/
+apps/api/dist/
+packages/*/dist/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Temp
+tmp/
+temp/
+*.tmp
+
+# Prisma
+backend/prisma/migrations/
+
+# Docker
+docker-compose.override.yml
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Angular
+frontend/.angular/
+
+# NestJS
+backend/dist/
+
+# Compiled
+*.js.map
+*.d.ts
+!*.d.ts
