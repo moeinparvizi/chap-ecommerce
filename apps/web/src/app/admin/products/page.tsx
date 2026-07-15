@@ -264,27 +264,64 @@ export default function ProductsPage() {
           const mainImage = product.images.length > 0 ? product.images[0].url : null;
           const discount = product.compareAtPrice ? Math.round((1 - product.price / product.compareAtPrice) * 100) : 0;
           return (
-            <div key={product.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-              <div style={{ height: '180px', background: mainImage ? `url(${mainImage}) center/cover` : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                {!mainImage && <span style={{ fontSize: '48px' }}>{<Icons.Package size={48} />}</span>}
-                {discount > 0 && <span style={{ position: 'absolute', top: '10px', right: '10px', background: '#ef4444', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>-{discount}%</span>}
-                {product.images.length > 0 && <span style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px' }}>{<Icons.Image size={14} />} {product.images.length}</span>}
+            <div key={product.id} style={{ background: 'var(--card-bg)', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)', transition: 'transform 0.2s, box-shadow 0.2s', cursor: 'pointer' }} onClick={() => handleViewProduct(product)}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.12)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+            >
+              {/* Image Section */}
+              <div style={{ height: '200px', background: mainImage ? `url(${mainImage}) center/cover` : 'linear-gradient(135deg, var(--table-header-bg), var(--hover-bg))', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                {!mainImage && <div style={{ opacity: 0.3, color: 'var(--text-muted)' }}><Icons.Package size={56} /></div>}
+                {/* Discount Badge */}
+                {discount > 0 && (
+                  <span style={{ position: 'absolute', top: '12px', right: '12px', background: 'linear-gradient(135deg, #ef4444, #dc2626)', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, boxShadow: '0 2px 8px rgba(239,68,68,0.3)' }}>
+                    {discount}%-
+                  </span>
+                )}
+                {/* Image Count */}
+                {product.images.length > 0 && (
+                  <span style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Icons.Image size={12} /> {product.images.length}
+                  </span>
+                )}
+                {/* Status Badge */}
+                <span style={{ position: 'absolute', bottom: '12px', right: '12px', padding: '3px 10px', borderRadius: '6px', fontSize: '10px', fontWeight: 600, background: product.status === 'active' ? 'rgba(34,197,94,0.9)' : product.status === 'draft' ? 'rgba(245,158,11,0.9)' : 'rgba(107,114,128,0.9)', color: 'white' }}>
+                  {product.status === 'active' ? 'فعال' : product.status === 'draft' ? 'پیش\u200cنویس' : 'بایگانی'}
+                </span>
               </div>
-              <div style={{ padding: '12px' }}>
-                <p style={{ fontSize: '10px', color: 'var(--text-secondary)', margin: '0 0 2px' }}>{product.brand}</p>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 6px', lineHeight: '1.3' }}>{product.name}</h3>
-                <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 6px' }}>{product.description?.substring(0, 50)}...</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                  <span style={{ color: '#fbbf24', fontSize: '12px' }}>{<Icons.Star size={14} />} {product.rating}</span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({product.sales} فروش)</span>
+
+              {/* Content Section */}
+              <div style={{ padding: '16px' }}>
+                {/* Brand */}
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 4px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{product.brand}</p>
+                {/* Name */}
+                <h3 style={{ fontSize: '15px', fontWeight: 700, margin: '0 0 4px', lineHeight: '1.3', color: 'var(--text)' }}>{product.name}</h3>
+                {/* Description */}
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.description}</p>
+                
+                {/* Rating & Sales */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '12px', color: '#fbbf24', fontWeight: 600 }}>
+                    <Icons.Star size={12} color="#fbbf24" /> {product.rating}
+                  </span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{product.sales} فروش</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '15px', fontWeight: 700 }}>${product.price}</span>
-                  {product.compareAtPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${product.compareAtPrice}</span>}
+
+                {/* Price */}
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text)' }}>${product.price}</span>
+                  {product.compareAtPrice && <span style={{ fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${product.compareAtPrice}</span>}
+                  {discount > 0 && <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: 600 }}>-{discount}%</span>}
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '11px', color: product.stock === 0 ? '#ef4444' : '#22c55e' }}>{product.stock === 0 ? 'ناموجود' : `${product.stock} موجود`}</span>
-                  <button onClick={() => handleViewProduct(product)} style={{ padding: '5px 10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', fontSize: '11px', cursor: 'pointer' }}>مشاهده</button>
+
+                {/* Stock + Category */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderTop: '1px solid var(--border-light)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: product.stock === 0 ? '#ef4444' : product.stock < 10 ? '#f59e0b' : '#22c55e' }} />
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                      {product.stock === 0 ? 'ناموجود' : product.stock < 10 ? `${product.stock} باقیمانده` : `${product.stock} موجود`}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '11px', padding: '2px 8px', background: 'var(--hover-bg)', borderRadius: '4px', color: 'var(--text-secondary)' }}>{product.category}</span>
                 </div>
               </div>
             </div>
