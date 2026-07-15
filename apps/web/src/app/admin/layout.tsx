@@ -7,12 +7,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [openSubmenus, setOpenSubmenus] = useState<string[]>(['products']);
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     const userData = localStorage.getItem('user');
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
     
     if (!token || !userData) {
       router.push('/auth/login');
@@ -20,7 +21,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
     
     setUser(JSON.parse(userData));
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
   }, [router]);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
@@ -28,34 +38,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.push('/auth/login');
   };
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
-  };
-
   const toggleSubmenu = (id: string) => {
-    setOpenSubmenus(prev => 
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
+    setOpenSubmenus(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
-  if (!user) {
-    return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>;
-  }
+  if (!user) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>;
 
   const menuItems = [
     { id: 'dashboard', label: 'داشبورد', icon: '📊', path: '/admin' },
     { id: 'orders', label: 'سفارشات', icon: '📦', path: '/admin/orders' },
-    { 
-      id: 'products', 
-      label: 'محصولات', 
-      icon: '🏷️', 
-      path: '/admin/products',
-      children: [
-        { id: 'product-list', label: 'لیست محصولات', icon: '📋', path: '/admin/products' },
-        { id: 'categories', label: 'دسته‌بندی‌ها', icon: '📁', path: '/admin/categories' },
-        { id: 'brands', label: 'برندها', icon: '✨', path: '/admin/brands' },
-      ]
-    },
+    { id: 'products', label: 'محصولات', icon: '🏷️', path: '/admin/products', children: [
+      { id: 'product-list', label: 'لیست محصولات', icon: '📋', path: '/admin/products' },
+      { id: 'categories', label: 'دسته‌بندی‌ها', icon: '📁', path: '/admin/categories' },
+      { id: 'brands', label: 'برندها', icon: '✨', path: '/admin/brands' },
+    ]},
     { id: 'customers', label: 'مشتریان', icon: '👥', path: '/admin/customers' },
     { id: 'analytics', label: 'تحلیل‌ها', icon: '📈', path: '/admin/analytics' },
     { id: 'marketing', label: 'بازاریابی', icon: '📣', path: '/admin/marketing' },
@@ -76,55 +72,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const renderMenuItem = (item: any, isSubmenu = false) => {
     const isActive = getActiveTab() === item.id || pathname === item.path;
-    const hasChildren = item.children && item.children.length > 0;
+    const hasChildren = item.children?.length > 0;
     const isExpanded = openSubmenus.includes(item.id);
 
     return (
       <div key={item.id}>
         <button
-          onClick={() => {
-            if (hasChildren && sidebarOpen) {
-              toggleSubmenu(item.id);
-            } else {
-              handleNavigation(item.path);
-            }
-          }}
-          title={item.label}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            width: '100%',
-            padding: isSubmenu ? (sidebarOpen ? '10px 16px 10px 40px' : '10px') : (sidebarOpen ? '12px 16px' : '12px'),
-            marginBottom: '2px',
-            background: isActive ? '#1e40af' : 'transparent',
-            border: 'none',
-            borderRadius: '8px',
-            color: 'white',
-            cursor: 'pointer',
-            fontSize: isSubmenu ? '13px' : '14px',
-            textAlign: 'right',
-            justifyContent: sidebarOpen ? 'flex-start' : 'center',
-            transition: 'all 0.2s'
-          }}
+          onClick={() => hasChildren ? toggleSubmenu(item.id) : router.push(item.path)}
+          className={`menu-item ${isActive ? 'active' : ''}`}
+          style={isSubmenu ? { paddingLeft: '40px' } : {}}
         >
-          <span style={{ fontSize: isSubmenu ? '14px' : '18px' }}>{item.icon}</span>
-          {sidebarOpen && (
-            <>
-              <span style={{ flex: 1 }}>{item.label}</span>
-              {hasChildren && (
-                <span style={{ 
-                  fontSize: '10px', 
-                  transition: 'transform 0.2s',
-                  transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
-                }}>▼</span>
-              )}
-            </>
-          )}
+          <span className="icon">{item.icon}</span>
+          <span className="label">{item.label}</span>
+          {hasChildren && <span className={`arrow ${isExpanded ? 'expanded' : ''}`}>▼</span>}
         </button>
-        
-        {hasChildren && isExpanded && sidebarOpen && (
-          <div style={{ marginTop: '2px' }}>
+        {hasChildren && isExpanded && (
+          <div className="submenu">
             {item.children.map((child: any) => renderMenuItem(child, true))}
           </div>
         )}
@@ -135,111 +98,46 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Sidebar */}
-      <aside style={{
-        width: sidebarOpen ? '260px' : '60px',
-        background: '#0f172a',
-        color: 'white',
-        padding: sidebarOpen ? '24px 16px' : '24px 12px',
-        flexShrink: 0,
-        transition: 'width 0.3s ease',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
-        {/* Logo */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: sidebarOpen ? 'flex-start' : 'center',
-          marginBottom: '32px',
-          gap: '12px'
-        }}>
-          <div style={{ fontSize: '24px' }}>🛒</div>
-          {sidebarOpen && (
-            <span style={{ fontSize: '18px', fontWeight: 700, color: '#60a5fa' }}>
-              ShopHub
-            </span>
-          )}
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <span style={{ fontSize: '24px' }}>🛒</span>
+          <span>ShopHub</span>
         </div>
-
-        {/* Toggle Button */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            padding: '8px',
-            marginBottom: '24px',
-            background: '#1e293b',
-            border: 'none',
-            borderRadius: '8px',
-            color: 'white',
-            cursor: 'pointer',
-            fontSize: '12px'
-          }}
-        >
-          {sidebarOpen ? '◀ بستن منو' : '▶'}
-        </button>
-
-        {/* Navigation */}
+        
         <nav style={{ flex: 1 }}>
           {menuItems.map(item => renderMenuItem(item))}
         </nav>
 
-        {/* Logout */}
-        <div style={{ paddingTop: '16px', borderTop: '1px solid #334155' }}>
-          <button
-            onClick={handleLogout}
-            title="خروج"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: sidebarOpen ? 'flex-start' : 'center',
-              gap: '12px',
-              width: '100%',
-              padding: sidebarOpen ? '12px 16px' : '12px',
-              background: 'transparent',
-              border: 'none',
-              color: '#ef4444',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-          >
-            <span style={{ fontSize: '18px' }}>🚪</span>
-            {sidebarOpen && <span>خروج</span>}
+        <div style={{ paddingTop: '16px', borderTop: '1px solid var(--glass-border)' }}>
+          <button onClick={handleLogout} className="menu-item" style={{ color: '#ef4444' }}>
+            <span className="icon">🚪</span>
+            <span className="label">خروج</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, marginRight: '260px' }}>
         {/* Header */}
-        <header style={{
-          background: 'white',
-          borderBottom: '1px solid #e5e7eb',
-          padding: '12px 24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <header className="header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ color: '#64748b' }}>خوش آمدید {user.name}</span>
+            <span style={{ color: 'var(--text-secondary)' }}>خوش آمدید {user.name}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ color: '#64748b', fontSize: '14px' }}>{user.email}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* Theme Toggle */}
+            <div className="theme-toggle">
+              <button className={`theme-btn ${theme === 'light' ? 'active' : ''}`} onClick={toggleTheme} title="روشن">
+                ☀️
+              </button>
+              <button className={`theme-btn ${theme === 'dark' ? 'active' : ''}`} onClick={toggleTheme} title="تاریک">
+                🌙
+              </button>
+            </div>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{user.email}</span>
             <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              background: '#3b82f6',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 600,
-              fontSize: '14px'
+              width: '36px', height: '36px', borderRadius: '50%',
+              background: 'var(--accent)', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', color: 'white', fontWeight: 600
             }}>
               {user.name.charAt(0)}
             </div>
@@ -247,7 +145,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Page Content */}
-        <main style={{ flex: 1, background: '#f8fafc', overflow: 'auto' }}>
+        <main style={{ padding: '24px', minHeight: 'calc(100vh - 60px)' }}>
           {children}
         </main>
       </div>
