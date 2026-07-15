@@ -23,8 +23,8 @@ export default function MarketingPage() {
   const bannerFileRef = useRef<HTMLInputElement>(null);
 
   const tabs = [
-    { id: 'campaigns', label: 'کمپین\u200cها', icon: <Icons.Megaphone size={14} /> },
-    { id: 'coupons', label: 'کوپن\u200cها', icon: <Icons.Tag size={14} /> },
+    { id: 'campaigns', label: 'کمپینها', icon: <Icons.Megaphone size={14} /> },
+    { id: 'coupons', label: 'کوپنها', icon: <Icons.Tag size={14} /> },
     { id: 'banners', label: 'بنرها', icon: <Icons.Image size={14} /> },
     { id: 'newsletter', label: 'خبرنامه', icon: <Icons.Mail size={14} /> },
   ];
@@ -125,7 +125,7 @@ export default function MarketingPage() {
       case 'campaigns': return (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0 }}>کمپین\u200cها</h2>
+            <h2 style={{ margin: 0 }}>کمپینها</h2>
             <button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} className={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
           <div className="table-container">
@@ -138,7 +138,7 @@ export default function MarketingPage() {
                   <tr key={c.id}>
                     <td style={tdStyle}>{c.name}</td><td style={tdStyle}>{c.type}</td>
                     <td style={{ ...tdStyle, color: '#22c55e', fontWeight: 600 }}>{c.discount}</td>
-                    <td style={tdStyle}><span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '11px', background: c.status === 'active' ? 'var(--badge-success-bg)' : 'var(--hover-bg)', color: c.status === 'active' ? 'var(--badge-success-text)' : 'var(--text-secondary)' }}>{c.status === 'active' ? 'فعال' : c.status === 'scheduled' ? 'برنامه\u200cریزی شده' : 'پایان یافته'}</span></td>
+                    <td style={tdStyle}><span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '11px', background: c.status === 'active' ? 'var(--badge-success-bg)' : 'var(--hover-bg)', color: c.status === 'active' ? 'var(--badge-success-text)' : 'var(--text-secondary)' }}>{c.status === 'active' ? 'فعال' : c.status === 'scheduled' ? 'برنامهریزی شده' : 'پایان یافته'}</span></td>
                     <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCampaignModal(true); }} className={btnSmall}><Icons.Edit size={14} /></button><button onClick={() => handleDeleteCampaign(c.id)} className={btnSmallRed}><Icons.Trash size={14} /></button></div></td>
                   </tr>
                 ))}
@@ -150,7 +150,7 @@ export default function MarketingPage() {
       case 'coupons': return (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0 }}>کوپن\u200cها</h2>
+            <h2 style={{ margin: 0 }}>کوپنها</h2>
             <button onClick={() => { setEditingItem(null); setShowCouponModal(true); }} className={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
           <div className="table-container">
@@ -201,7 +201,7 @@ export default function MarketingPage() {
         <div>
           <h2 style={{ margin: '0 0 16px' }}>خبرنامه</h2>
           <div className="card">
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '16px' }}>مدیریت ایمیل\u200cهای خبرنامه</p>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '16px' }}>مدیریت ایمیلهای خبرنامه</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px' }}>
               {[{ l: 'مشترکین', v: '1,234', ic: <Icons.Users size={20} /> }, { l: 'نرخ بازشدن', v: '45.2%', ic: <Icons.TrendingUp size={20} /> }, { l: 'نرخ کلیک', v: '12.8%', ic: <Icons.ExternalLink size={20} /> }, { l: 'ایمیل ارسالی', v: '3,456', ic: <Icons.Mail size={20} /> }].map((s, i) => (
                 <div key={i} style={{ textAlign: 'center', padding: '16px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
@@ -287,7 +287,7 @@ export default function MarketingPage() {
             </div>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>نام</label><input id="b-name" defaultValue={editingItem?.name} style={inputStyle} /></div>
-              <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>موقعیت</label><select id="b-position" defaultValue={editingItem?.position || 'home'} style={inputStyle}><option value="home">صفحه خانه</option><option value="category">دسته\u200cبندی</option><option value="product">محصول</option></select></div>
+              <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>موقعیت</label><select id="b-position" defaultValue={editingItem?.position || 'home'} style={inputStyle}><option value="home">صفحه خانه</option><option value="category">دستهبندی</option><option value="product">محصول</option></select></div>
               <div>
                 <label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>تصاویر (حداکثر ۵)</label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px' }}>

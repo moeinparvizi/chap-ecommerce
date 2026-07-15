@@ -12,7 +12,7 @@ export default function AnalyticsPage() {
   const [categoryStats, setCategoryStats] = useState<any[]>([]);
   const [trafficSources] = useState([
     { source: 'جستجوی گوگل', visitors: 12400, percentage: 38, color: '#3b82f6' },
-    { source: 'شبکه\u200cهای اجتماعی', visitors: 8200, percentage: 25, color: '#8b5cf6' },
+    { source: 'شبکههای اجتماعی', visitors: 8200, percentage: 25, color: '#8b5cf6' },
     { source: 'مستقیم', visitors: 6500, percentage: 20, color: '#22c55e' },
     { source: 'ایمیل مارکتینگ', visitors: 3200, percentage: 10, color: '#f59e0b' },
     { source: 'تبلیغات پولی', visitors: 2100, percentage: 7, color: '#ec4899' },
@@ -58,7 +58,7 @@ export default function AnalyticsPage() {
     <div style={{ padding: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>تحلیل\u200cها و گزارشات</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>تحلیلها و گزارشات</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '4px 0 0' }}>آمار و عملکرد فروشگاه</p>
         </div>
         <select value={period} onChange={e => setPeriod(e.target.value)} style={{ padding: '8px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', background: 'var(--input-bg)', color: 'var(--text)' }}>
@@ -151,7 +151,7 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="card">
-          <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600 }}>پرفروش\u200cترین محصولات</h3>
+          <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600 }}>پرفروشترین محصولات</h3>
           {topProducts.map((p: any, i: number) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < topProducts.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

@@ -178,7 +178,7 @@ export default function AdminDashboard() {
 
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>پرفروش\u200cترین محصولات</h3>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>پرفروشترین محصولات</h3>
             <button onClick={() => router.push('/admin/products')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>مشاهده همه <Icons.ExternalLink size={12} /></button>
           </div>
           {topProducts.length === 0 ? (
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
             { icon: <Icons.Package size={24} />, label: 'سفارشات', path: '/admin/orders' },
             { icon: <Icons.Tag size={24} />, label: 'محصولات', path: '/admin/products' },
             { icon: <Icons.Users size={24} />, label: 'مشتریان', path: '/admin/customers' },
-            { icon: <Icons.TrendingUp size={24} />, label: 'تحلیل\u200cها', path: '/admin/analytics' },
+            { icon: <Icons.TrendingUp size={24} />, label: 'تحلیلها', path: '/admin/analytics' },
             { icon: <Icons.Megaphone size={24} />, label: 'بازاریابی', path: '/admin/marketing' },
             { icon: <Icons.Settings size={24} />, label: 'تنظیمات', path: '/admin/settings' },
           ].map((item, i) => (

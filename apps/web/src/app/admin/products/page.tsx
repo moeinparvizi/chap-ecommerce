@@ -285,7 +285,7 @@ export default function ProductsPage() {
                 )}
                 {/* Status Badge */}
                 <span style={{ position: 'absolute', bottom: '12px', right: '12px', padding: '3px 10px', borderRadius: '6px', fontSize: '10px', fontWeight: 600, background: product.status === 'active' ? 'rgba(34,197,94,0.9)' : product.status === 'draft' ? 'rgba(245,158,11,0.9)' : 'rgba(107,114,128,0.9)', color: 'white' }}>
-                  {product.status === 'active' ? 'فعال' : product.status === 'draft' ? 'پیش\u200cنویس' : 'بایگانی'}
+                  {product.status === 'active' ? 'فعال' : product.status === 'draft' ? 'پیشنویس' : 'بایگانی'}
                 </span>
               </div>
 
