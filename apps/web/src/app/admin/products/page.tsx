@@ -43,18 +43,26 @@ export default function ProductsPage() {
   const addFileInputRef = useRef<HTMLInputElement>(null);
   const [addModalImages, setAddModalImages] = useState<ProductImage[]>([]);
 
-  // Demo products
+  // Load products from localStorage or use demo data
   useEffect(() => {
-    const demoProducts: Product[] = [
-      { id: '1', name: 'iPhone 15 Pro Max', sku: 'IPH-15-PM-256', category: 'موبایل', brand: 'Apple', description: 'گوشی هوشمند اپل آیفون ۱۵ پرو مکس با تراشه A17 Pro', price: 1199, compareAtPrice: 1299, stock: 45, status: 'active', sales: 234, rating: 4.8, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=1', name: 'front.jpg', size: 245000 }, { id: '2', url: 'https://picsum.photos/400/300?random=2', name: 'back.jpg', size: 198000 }] },
-      { id: '2', name: 'MacBook Pro M3 14"', sku: 'MBP-M3-14', category: 'لپتاپ', brand: 'Apple', description: 'لپتاپ اپل مک‌بوک پرو با تراشه M3', price: 1999, compareAtPrice: 2199, stock: 12, status: 'active', sales: 89, rating: 4.9, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=3', name: 'front.jpg', size: 312000 }] },
-      { id: '3', name: 'Sony WH-1000XM5', sku: 'SONY-WH1000', category: 'هدفون', brand: 'Sony', description: 'هدفون بی‌سیم سونی با حذف نویز', price: 349, compareAtPrice: 399, stock: 78, status: 'active', sales: 456, rating: 4.7, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=4', name: 'front.jpg', size: 89000 }] },
-      { id: '4', name: 'Samsung Galaxy S24', sku: 'SAM-S24', category: 'موبایل', brand: 'Samsung', description: 'گوشی هوشمند سامسونگ گلکسی اس ۲۴', price: 899, compareAtPrice: 999, stock: 56, status: 'active', sales: 187, rating: 4.6, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=5', name: 'front.jpg', size: 178000 }] },
-      { id: '5', name: 'Nike Air Max 90', sku: 'NIKE-AM90', category: 'کفش', brand: 'Nike', description: 'کفش ورزشی نایک ایرمکس ۹۰', price: 129, compareAtPrice: 150, stock: 156, status: 'active', sales: 567, rating: 4.5, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=6', name: 'main.jpg', size: 145000 }] },
-      { id: '6', name: 'iPad Air M2', sku: 'IPAD-AIR', category: 'تبلت', brand: 'Apple', description: 'تبلت اپل آیپد ایر با تراشه M2', price: 599, compareAtPrice: 649, stock: 23, status: 'active', sales: 123, rating: 4.8, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=7', name: 'front.jpg', size: 198000 }] },
-    ];
-    setProducts(demoProducts);
-    setFilteredProducts(demoProducts);
+    const saved = localStorage.getItem('admin_products');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setProducts(parsed);
+      setFilteredProducts(parsed);
+    } else {
+      const demoProducts: Product[] = [
+        { id: '1', name: 'iPhone 15 Pro Max', sku: 'IPH-15-PM-256', category: 'موبایل', brand: 'Apple', description: 'گوشی هوشمند اپل آیفون ۱۵ پرو مکس با تراشه A17 Pro', price: 1199, compareAtPrice: 1299, stock: 45, status: 'active', sales: 234, rating: 4.8, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=1', name: 'front.jpg', size: 245000 }, { id: '2', url: 'https://picsum.photos/400/300?random=2', name: 'back.jpg', size: 198000 }] },
+        { id: '2', name: 'MacBook Pro M3 14"', sku: 'MBP-M3-14', category: 'لپتاپ', brand: 'Apple', description: 'لپتاپ اپل مک\u200cبوک پرو با تراشه M3', price: 1999, compareAtPrice: 2199, stock: 12, status: 'active', sales: 89, rating: 4.9, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=3', name: 'front.jpg', size: 312000 }] },
+        { id: '3', name: 'Sony WH-1000XM5', sku: 'SONY-WH1000', category: 'هدفون', brand: 'Sony', description: 'هدفون بی\u200cسیم سونی با حذف نویز', price: 349, compareAtPrice: 399, stock: 78, status: 'active', sales: 456, rating: 4.7, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=4', name: 'front.jpg', size: 89000 }] },
+        { id: '4', name: 'Samsung Galaxy S24', sku: 'SAM-S24', category: 'موبایل', brand: 'Samsung', description: 'گوشی هوشمند سامسونگ گلکسی اس ۲۴', price: 899, compareAtPrice: 999, stock: 56, status: 'active', sales: 187, rating: 4.6, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=5', name: 'front.jpg', size: 178000 }] },
+        { id: '5', name: 'Nike Air Max 90', sku: 'NIKE-AM90', category: 'کفش', brand: 'Nike', description: 'کفش ورزشی نایک ایرمکس ۹۰', price: 129, compareAtPrice: 150, stock: 156, status: 'active', sales: 567, rating: 4.5, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=6', name: 'main.jpg', size: 145000 }] },
+        { id: '6', name: 'iPad Air M2', sku: 'IPAD-AIR', category: 'تبلت', brand: 'Apple', description: 'تبلت اپل آیپد ایر با تراشه M2', price: 599, compareAtPrice: 649, stock: 23, status: 'active', sales: 123, rating: 4.8, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=7', name: 'front.jpg', size: 198000 }] },
+      ];
+      setProducts(demoProducts);
+      setFilteredProducts(demoProducts);
+      localStorage.setItem('admin_products', JSON.stringify(demoProducts));
+    }
   }, []);
 
   useEffect(() => {
@@ -67,6 +75,13 @@ export default function ProductsPage() {
     if (categoryFilter !== 'all') result = result.filter(p => p.category === categoryFilter);
     setFilteredProducts(result);
   }, [searchQuery, statusFilter, categoryFilter, products]);
+
+  // Auto-save to localStorage
+  useEffect(() => {
+    if (products.length > 0) {
+      localStorage.setItem('admin_products', JSON.stringify(products));
+    }
+  }, [products]);
 
   const categories = [...new Set(products.map(p => p.category))];
 
@@ -245,7 +260,7 @@ export default function ProductsPage() {
           return (
             <div key={product.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <div style={{ height: '180px', background: mainImage ? `url(${mainImage}) center/cover` : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                {!mainImage && <span style={{ fontSize: '48px' }}>{<Icons.Package size={14} />}</span>}
+                {!mainImage && <span style={{ fontSize: '48px' }}>{<Icons.Package size={48} />}</span>}
                 {discount > 0 && <span style={{ position: 'absolute', top: '10px', right: '10px', background: '#ef4444', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>-{discount}%</span>}
                 {product.images.length > 0 && <span style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px' }}>{<Icons.Image size={14} />} {product.images.length}</span>}
               </div>
@@ -323,7 +338,7 @@ export default function ProductsPage() {
               <div>
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                   <div style={{ width: '150px', height: '150px', borderRadius: '8px', overflow: 'hidden', background: 'var(--table-header-bg)', flexShrink: 0 }}>
-                    {selectedProduct.images.length > 0 ? <img src={selectedProduct.images[0].url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '48px' }}>{<Icons.Package size={14} />}</div>}
+                    {selectedProduct.images.length > 0 ? <img src={selectedProduct.images[0].url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '48px' }}>{<Icons.Package size={48} />}</div>}
                   </div>
                   <div style={{ flex: 1 }}>
                     <h3 style={{ margin: '0 0 4px' }}>{selectedProduct.name}</h3>
@@ -403,7 +418,7 @@ export default function ProductsPage() {
                     ))}
                   </div>
                 )}
-                {addModalImages.length < 10 && <div onClick={() => addFileInputRef.current?.click()} style={{ border: '2px dashed var(--border)', borderRadius: '8px', padding: '16px', textAlign: 'center', cursor: 'pointer' }}><span style={{ fontSize: '24px' }}>{<Icons.Image size={14} />}</span><p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>کلیک کنید تا تصویر انتخاب کنید</p></div>}
+                {addModalImages.length < 10 && <div onClick={() => addFileInputRef.current?.click()} style={{ border: '2px dashed var(--border)', borderRadius: '8px', padding: '16px', textAlign: 'center', cursor: 'pointer' }}><span style={{ fontSize: '24px' }}>{<Icons.Image size={24} />}</span><p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>کلیک کنید تا تصویر انتخاب کنید</p></div>}
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Icons } from '../../components/Icons';
 
 interface Campaign { id: string; name: string; type: string; status: 'active' | 'scheduled' | 'ended'; discount: string; startDate: string; endDate: string; usageCount: number; }
@@ -10,18 +10,33 @@ interface Banner { id: string; name: string; position: string; images: BannerIma
 
 export default function MarketingPage() {
   const [activeTab, setActiveTab] = useState('campaigns');
-  const [campaigns, setCampaigns] = useState<Campaign[]>([
-    { id: '1', name: 'حراج فصل تابستان', type: 'فصلی', status: 'active', discount: '30%', startDate: '2024-06-01', endDate: '2024-06-30', usageCount: 456 },
-    { id: '2', name: 'تخفیف مشتریان جدید', type: 'خوشامدگویی', status: 'active', discount: '20%', startDate: '2024-01-01', endDate: '2024-12-31', usageCount: 234 },
-  ]);
-  const [coupons, setCoupons] = useState<Coupon[]>([
-    { id: '1', code: 'WELCOME20', type: 'درصدی', value: '20%', usageCount: 234, maxUsage: 500, status: 'active' },
-    { id: '2', code: 'SUMMER30', type: 'درصدی', value: '30%', usageCount: 456, maxUsage: 1000, status: 'active' },
-  ]);
-  const [banners, setBanners] = useState<Banner[]>([
-    { id: '1', name: 'بنر اصلی صفحه خانه', position: 'home', images: [] },
-    { id: '2', name: 'بنر دسته‌بندی موبایل', position: 'mobile', images: [] },
-  ]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
+
+  // Load from localStorage
+  useEffect(() => {
+    const savedCampaigns = localStorage.getItem('admin_campaigns');
+    const savedCoupons = localStorage.getItem('admin_coupons');
+    const savedBanners = localStorage.getItem('admin_banners');
+    setCampaigns(savedCampaigns ? JSON.parse(savedCampaigns) : [
+      { id: '1', name: 'حراج فصل تابستان', type: 'فصلی', status: 'active', discount: '30%', startDate: '2024-06-01', endDate: '2024-06-30', usageCount: 456 },
+      { id: '2', name: 'تخفیف مشتریان جدید', type: 'خوشامدگویی', status: 'active', discount: '20%', startDate: '2024-01-01', endDate: '2024-12-31', usageCount: 234 },
+    ]);
+    setCoupons(savedCoupons ? JSON.parse(savedCoupons) : [
+      { id: '1', code: 'WELCOME20', type: 'درصدی', value: '20%', usageCount: 234, maxUsage: 500, status: 'active' },
+      { id: '2', code: 'SUMMER30', type: 'درصدی', value: '30%', usageCount: 456, maxUsage: 1000, status: 'active' },
+    ]);
+    setBanners(savedBanners ? JSON.parse(savedBanners) : [
+      { id: '1', name: 'بنر اصلی صفحه خانه', position: 'home', images: [] },
+      { id: '2', name: 'بنر دسته\u200cبندی موبایل', position: 'mobile', images: [] },
+    ]);
+  }, []);
+
+  // Auto-save to localStorage
+  useEffect(() => { if (campaigns.length > 0) localStorage.setItem('admin_campaigns', JSON.stringify(campaigns)); }, [campaigns]);
+  useEffect(() => { if (coupons.length > 0) localStorage.setItem('admin_coupons', JSON.stringify(coupons)); }, [coupons]);
+  useEffect(() => { if (banners.length > 0) localStorage.setItem('admin_banners', JSON.stringify(banners)); }, [banners]);
 
   // Modals
   const [showCampaignModal, setShowCampaignModal] = useState(false);

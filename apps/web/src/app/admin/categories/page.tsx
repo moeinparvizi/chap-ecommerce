@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Icons } from '../../components/Icons';
 
 interface CategoryImage {
@@ -31,20 +31,33 @@ export default function CategoriesPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadContext, setUploadContext] = useState<'add' | 'edit'>('add');
 
-  // Demo categories
-  useState(() => {
-    const demoCategories: Category[] = [
-      { id: '1', name: 'موبایل', slug: 'mobile', description: 'گوشی‌های هوشمند و تلفن‌های همراه', productCount: 125, image: { id: '1', url: 'https://picsum.photos/100/100?random=10', name: 'mobile.jpg' }, parentId: null, status: 'active' },
-      { id: '2', name: 'لپتاپ', slug: 'laptop', description: 'لپتاپ و نوت‌بوک', productCount: 89, image: { id: '2', url: 'https://picsum.photos/100/100?random=11', name: 'laptop.jpg' }, parentId: null, status: 'active' },
-      { id: '3', name: 'هدفون', slug: 'headphone', description: 'هدفون و هندزفری', productCount: 156, image: { id: '3', url: 'https://picsum.photos/100/100?random=12', name: 'headphone.jpg' }, parentId: null, status: 'active' },
-      { id: '4', name: 'تبلت', slug: 'tablet', description: 'تبلت و آیپد', productCount: 67, image: { id: '4', url: 'https://picsum.photos/100/100?random=13', name: 'tablet.jpg' }, parentId: null, status: 'active' },
-      { id: '5', name: 'کفش', slug: 'shoes', description: 'کفش‌های ورزشی و روزمره', productCount: 234, image: { id: '5', url: 'https://picsum.photos/100/100?random=14', name: 'shoes.jpg' }, parentId: null, status: 'active' },
-      { id: '6', name: 'دوربین', slug: 'camera', description: 'دوربین عکاسی و فیلمبرداری', productCount: 45, image: null, parentId: null, status: 'active' },
-      { id: '7', name: 'خانه', slug: 'home', description: 'لوازم خانگی', productCount: 178, image: { id: '7', url: 'https://picsum.photos/100/100?random=15', name: 'home.jpg' }, parentId: null, status: 'active' },
-      { id: '8', name: 'گیمینگ', slug: 'gaming', description: 'کنسول و بازی', productCount: 92, image: { id: '8', url: 'https://picsum.photos/100/100?random=16', name: 'gaming.jpg' }, parentId: null, status: 'active' },
-    ];
-    setCategories(demoCategories);
-  });
+  // Load from localStorage or use demo data
+  useEffect(() => {
+    const saved = localStorage.getItem('admin_categories');
+    if (saved) {
+      setCategories(JSON.parse(saved));
+    } else {
+      const demoCategories: Category[] = [
+        { id: '1', name: 'موبایل', slug: 'mobile', description: 'گوشی\u200cهای هوشمند و تلفن\u200cهای همراه', productCount: 125, image: { id: '1', url: 'https://picsum.photos/100/100?random=10', name: 'mobile.jpg' }, parentId: null, status: 'active' },
+        { id: '2', name: 'لپتاپ', slug: 'laptop', description: 'لپتاپ و نوت\u200cبوک', productCount: 89, image: { id: '2', url: 'https://picsum.photos/100/100?random=11', name: 'laptop.jpg' }, parentId: null, status: 'active' },
+        { id: '3', name: 'هدفون', slug: 'headphone', description: 'هدفون و هندزفری', productCount: 156, image: { id: '3', url: 'https://picsum.photos/100/100?random=12', name: 'headphone.jpg' }, parentId: null, status: 'active' },
+        { id: '4', name: 'تبلت', slug: 'tablet', description: 'تبلت و آیپد', productCount: 67, image: { id: '4', url: 'https://picsum.photos/100/100?random=13', name: 'tablet.jpg' }, parentId: null, status: 'active' },
+        { id: '5', name: 'کفش', slug: 'shoes', description: 'کفش\u200cهای ورزشی و روزمره', productCount: 234, image: { id: '5', url: 'https://picsum.photos/100/100?random=14', name: 'shoes.jpg' }, parentId: null, status: 'active' },
+        { id: '6', name: 'دوربین', slug: 'camera', description: 'دوربین عکاسی و فیلمبرداری', productCount: 45, image: null, parentId: null, status: 'active' },
+        { id: '7', name: 'خانه', slug: 'home', description: 'لوازم خانگی', productCount: 178, image: { id: '7', url: 'https://picsum.photos/100/100?random=15', name: 'home.jpg' }, parentId: null, status: 'active' },
+        { id: '8', name: 'گیمینگ', slug: 'gaming', description: 'کنسول و بازی', productCount: 92, image: { id: '8', url: 'https://picsum.photos/100/100?random=16', name: 'gaming.jpg' }, parentId: null, status: 'active' },
+      ];
+      setCategories(demoCategories);
+      localStorage.setItem('admin_categories', JSON.stringify(demoCategories));
+    }
+  }, []);
+
+  // Auto-save to localStorage
+  useEffect(() => {
+    if (categories.length > 0) {
+      localStorage.setItem('admin_categories', JSON.stringify(categories));
+    }
+  }, [categories]);
 
   const filteredCategories = categories.filter(c => 
     c.name.includes(searchQuery) || c.slug.includes(searchQuery)
@@ -151,7 +164,7 @@ export default function CategoriesPage() {
         {filteredCategories.map((category) => (
           <div key={category.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <div style={{ height: '150px', background: category.image ? `url(${category.image.url}) center/cover` : 'var(--table-header-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {!category.image && <span style={{ fontSize: '48px', opacity: 0.3 }}>{<Icons.Folder size={14} />}</span>}
+              {!category.image && <span style={{ fontSize: '48px', opacity: 0.3 }}>{<Icons.Folder size={48} />}</span>}
               <span style={{ position: 'absolute', top: '10px', left: '10px', padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 500, background: category.status === 'active' ? '#dcfce7' : '#fee2e2', color: category.status === 'active' ? '#166534' : '#991b1b' }}>
                 {category.status === 'active' ? 'فعال' : 'غیرفعال'}
               </span>
