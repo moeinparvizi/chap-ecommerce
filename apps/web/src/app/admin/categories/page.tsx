@@ -149,9 +149,7 @@ export default function CategoriesPage() {
             <div style={{ padding: '16px' }}>
               <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600 }}>{category.name}</h3>
               <p style={{ margin: '0 0 4px', fontSize: '12px', color: 'var(--text-muted)' }}>/ {category.slug}</p>
-              @if (category.description) {
-                <p style={{ margin: '0 0 8px', fontSize: '13px', color: 'var(--text-secondary)' }}>{category.description}</p>
-              }
+              {category.description && <p style={{ margin: '0 0 8px', fontSize: '13px', color: 'var(--text-secondary)' }}>{category.description}</p>}
               <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#2563eb' }}>{<Icons.Package size={14} />} {category.productCount} محصول</p>
               <div style={{ display: 'flex', gap: '6px' }}>
                 <button onClick={() => openEditModal(category)} style={{ flex: 1, padding: '8px', background: 'var(--hover-bg)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}>{<Icons.Edit size={14} />} ویرایش</button>
