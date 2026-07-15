@@ -1,27 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import { Icons } from '../components/Icons';
 
 export default function AnalyticsPage() {
   const [period, setPeriod] = useState('7days');
 
   const kpis = [
-    { title: 'درآمد کل', value: '$124,563', prevValue: '$110,234', change: 13, icon: '💰', color: '#22c55e' },
-    { title: 'تعداد سفارشات', value: '1,234', prevValue: '1,102', change: 12, icon: '📦', color: '#3b82f6' },
-    { title: 'مشتریان جدید', value: '788', prevValue: '692', change: 14, icon: '👥', color: '#8b5cf6' },
-    { title: 'نرخ تبدیل', value: '3.24%', prevValue: '2.85%', change: 14, icon: '📈', color: '#f59e0b' },
-    { title: 'میانگین سفارش', value: '$101', prevValue: '$95', change: 6, icon: '🛒', color: '#ec4899' },
-    { title: 'ترک سبد خرید', value: '68.5%', prevValue: '72.1%', change: -5, icon: '🚪', color: '#ef4444' },
+    { title: 'درآمد کل', value: '$124,563', change: 13, icon: <Icons.DollarSign size={20} />, color: '#22c55e' },
+    { title: 'تعداد سفارشات', value: '1,234', change: 12, icon: <Icons.Package size={20} />, color: '#3b82f6' },
+    { title: 'مشتریان جدید', value: '788', change: 14, icon: <Icons.Users size={20} />, color: '#8b5cf6' },
+    { title: 'نرخ تبدیل', value: '3.24%', change: 14, icon: <Icons.TrendingUp size={20} />, color: '#f59e0b' },
+    { title: 'میانگین سفارش', value: '$101', change: 6, icon: <Icons.ShoppingCart size={20} />, color: '#ec4899' },
+    { title: 'ترک سبد خرید', value: '68.5%', change: -5, icon: <Icons.LogOut size={20} />, color: '#ef4444' },
   ];
 
   const weeklyRevenue = [
-    { day: 'شنبه', revenue: 18500, orders: 183, visitors: 3200 },
-    { day: 'یکشنبه', revenue: 22300, orders: 221, visitors: 3800 },
-    { day: 'دوشنبه', revenue: 19800, orders: 196, visitors: 3400 },
-    { day: 'سه‌شنبه', revenue: 25600, orders: 253, visitors: 4200 },
-    { day: 'چهارشنبه', revenue: 21200, orders: 210, visitors: 3600 },
-    { day: 'پنجشنبه', revenue: 28400, orders: 281, visitors: 4800 },
-    { day: 'جمعه', revenue: 24200, orders: 240, visitors: 4100 },
+    { day: 'شنبه', revenue: 18500, orders: 183 },
+    { day: 'یکشنبه', revenue: 22300, orders: 221 },
+    { day: 'دوشنبه', revenue: 19800, orders: 196 },
+    { day: 'سه\u200cشنبه', revenue: 25600, orders: 253 },
+    { day: 'چهارشنبه', revenue: 21200, orders: 210 },
+    { day: 'پنجشنبه', revenue: 28400, orders: 281 },
+    { day: 'جمعه', revenue: 24200, orders: 240 },
   ];
   const maxRevenue = Math.max(...weeklyRevenue.map(d => d.revenue));
   const totalWeeklyRevenue = weeklyRevenue.reduce((a, b) => a + b.revenue, 0);
@@ -48,7 +49,7 @@ export default function AnalyticsPage() {
 
   const trafficSources = [
     { source: 'جستجوی گوگل', visitors: 12400, percentage: 38, color: '#3b82f6' },
-    { source: 'شبکه‌های اجتماعی', visitors: 8200, percentage: 25, color: '#8b5cf6' },
+    { source: 'شبکه\u200cهای اجتماعی', visitors: 8200, percentage: 25, color: '#8b5cf6' },
     { source: 'مستقیم', visitors: 6500, percentage: 20, color: '#22c55e' },
     { source: 'ایمیل مارکتینگ', visitors: 3200, percentage: 10, color: '#f59e0b' },
     { source: 'تبلیغات پولی', visitors: 2100, percentage: 7, color: '#ec4899' },
@@ -65,10 +66,9 @@ export default function AnalyticsPage() {
 
   return (
     <div style={{ padding: '24px' }}>
-      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>تحلیل‌ها و گزارشات</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>تحلیل\u200cها و گزارشات</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '4px 0 0' }}>آمار و عملکرد فروشگاه</p>
         </div>
         <select value={period} onChange={e => setPeriod(e.target.value)} style={{ padding: '8px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', background: 'var(--input-bg)', color: 'var(--text)' }}>
@@ -88,13 +88,14 @@ export default function AnalyticsPage() {
                 <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>{stat.title}</p>
                 <p style={{ fontSize: '24px', fontWeight: 700, margin: '6px 0 2px', color: 'var(--text)' }}>{stat.value}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                  {stat.change >= 0 ? <Icons.ArrowUp size={14} color="#22c55e" /> : <Icons.ArrowDown size={14} color="#ef4444" />}
                   <span style={{ fontSize: '12px', fontWeight: 600, color: stat.change >= 0 ? '#22c55e' : '#ef4444' }}>
-                    {stat.change >= 0 ? '↑' : '↓'} {Math.abs(stat.change)}%
+                    {Math.abs(stat.change)}%
                   </span>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>نسبت به دوره قبل</span>
                 </div>
               </div>
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: stat.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: stat.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', color: stat.color }}>
                 {stat.icon}
               </div>
             </div>
@@ -104,13 +105,12 @@ export default function AnalyticsPage() {
 
       {/* Revenue Chart + Traffic Sources */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '24px' }}>
-        {/* Revenue Chart */}
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>نمودار درآمد</h3>
             <div style={{ display: 'flex', gap: '16px', fontSize: '12px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>📦 سفارشات: {totalWeeklyOrders.toLocaleString()}</span>
-              <span style={{ color: 'var(--text-secondary)' }}>💰 درآمد: ${(totalWeeklyRevenue / 1000).toFixed(0)}k</span>
+              <span style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Package size={12} /> سفارشات: {totalWeeklyOrders.toLocaleString()}</span>
+              <span style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.DollarSign size={12} /> درآمد: ${(totalWeeklyRevenue / 1000).toFixed(0)}k</span>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '200px', padding: '0 4px' }}>
@@ -124,7 +124,6 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Traffic Sources */}
         <div className="card">
           <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600 }}>منابع ترافیک</h3>
           {trafficSources.map((src, i) => (
@@ -147,7 +146,6 @@ export default function AnalyticsPage() {
 
       {/* Hourly Orders + Top Products */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
-        {/* Peak Hours */}
         <div className="card">
           <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600 }}>ساعت پیک سفارشات</h3>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '120px', padding: '0 4px' }}>
@@ -164,14 +162,13 @@ export default function AnalyticsPage() {
             ))}
           </div>
           <div style={{ display: 'flex', gap: '16px', marginTop: '12px', fontSize: '11px', color: 'var(--text-secondary)' }}>
-            <span>🔴 پیک: ساعت ۲۰-۲۱</span>
-            <span>📊 میانگین: {Math.round(hourlyOrders.reduce((a, b) => a + b.orders, 0) / hourlyOrders.length)} سفارش/ساعت</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.AlertCircle size={12} color="#ef4444" /> پیک: ساعت ۲۰-۲۱</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.BarChart size={12} /> میانگین: {Math.round(hourlyOrders.reduce((a, b) => a + b.orders, 0) / hourlyOrders.length)} سفارش/ساعت</span>
           </div>
         </div>
 
-        {/* Top Products */}
         <div className="card">
-          <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600 }}>پرفروش‌ترین محصولات</h3>
+          <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600 }}>پرفروش\u200cترین محصولات</h3>
           {topProducts.map((p, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < topProducts.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -188,7 +185,7 @@ export default function AnalyticsPage() {
               </div>
               <div style={{ textAlign: 'left' }}>
                 <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#22c55e' }}>${p.revenue.toLocaleString()}</p>
-                <p style={{ margin: 0, fontSize: '11px', color: '#22c55e' }}>↑ {p.growth}%</p>
+                <p style={{ margin: 0, fontSize: '11px', color: '#22c55e', display: 'flex', alignItems: 'center', gap: '2px' }}><Icons.ArrowUp size={10} color="#22c55e" /> {p.growth}%</p>
               </div>
             </div>
           ))}
@@ -205,7 +202,7 @@ export default function AnalyticsPage() {
               <th style={{ textAlign: 'right', padding: '10px 12px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>سفارشات</th>
               <th style={{ textAlign: 'right', padding: '10px 12px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>درآمد</th>
               <th style={{ textAlign: 'right', padding: '10px 12px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>بازگشت</th>
-              <th style={{ textAlign: 'right', padding: '10px 12px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>میانگین سفارش</th>
+              <th style={{ textAlign: 'right', padding: '10px 12px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>میانگین</th>
               <th style={{ textAlign: 'right', padding: '10px 12px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>نمودار</th>
             </tr>
           </thead>

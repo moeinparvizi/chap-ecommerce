@@ -2,25 +2,26 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Icons } from '../components/Icons';
 
 export default function AdminDashboard() {
   const router = useRouter();
   const [period, setPeriod] = useState('7days');
 
   const stats = [
-    { label: 'کل فروش', value: '$124,563', change: '+12.5%', positive: true, icon: '💰', color: '#22c55e', sparkline: [30, 45, 35, 55, 48, 62, 58, 72, 65, 80] },
-    { label: 'سفارشات', value: '1,234', change: '+8.2%', positive: true, icon: '📦', color: '#3b82f6', sparkline: [20, 28, 35, 32, 40, 38, 45, 42, 50, 48] },
-    { label: 'مشتریان', value: '5,678', change: '+15.3%', positive: true, icon: '👥', color: '#8b5cf6', sparkline: [15, 22, 28, 32, 35, 42, 48, 52, 58, 65] },
-    { label: 'نرخ تبدیل', value: '3.24%', change: '+0.8%', positive: true, icon: '📈', color: '#f59e0b', sparkline: [2.1, 2.3, 2.5, 2.8, 2.9, 3.0, 3.1, 3.2, 3.24, 3.3] },
-    { label: 'میانگین سفارش', value: '$101', change: '+6.1%', positive: true, icon: '🛒', color: '#ec4899', sparkline: [82, 85, 88, 90, 93, 95, 97, 98, 100, 101] },
-    { label: 'بازگشت سفارش', value: '2.1%', change: '-0.3%', positive: true, icon: '🔄', color: '#06b6d4', sparkline: [3.2, 3.0, 2.8, 2.7, 2.5, 2.4, 2.3, 2.2, 2.15, 2.1] },
+    { label: 'کل فروش', value: '$124,563', change: '+12.5%', positive: true, icon: <Icons.DollarSign size={22} />, color: '#22c55e', sparkline: [30, 45, 35, 55, 48, 62, 58, 72, 65, 80] },
+    { label: 'سفارشات', value: '1,234', change: '+8.2%', positive: true, icon: <Icons.Package size={22} />, color: '#3b82f6', sparkline: [20, 28, 35, 32, 40, 38, 45, 42, 50, 48] },
+    { label: 'مشتریان', value: '5,678', change: '+15.3%', positive: true, icon: <Icons.Users size={22} />, color: '#8b5cf6', sparkline: [15, 22, 28, 32, 35, 42, 48, 52, 58, 65] },
+    { label: 'نرخ تبدیل', value: '3.24%', change: '+0.8%', positive: true, icon: <Icons.TrendingUp size={22} />, color: '#f59e0b', sparkline: [2.1, 2.3, 2.5, 2.8, 2.9, 3.0, 3.1, 3.2, 3.24, 3.3] },
+    { label: 'میانگین سفارش', value: '$101', change: '+6.1%', positive: true, icon: <Icons.ShoppingCart size={22} />, color: '#ec4899', sparkline: [82, 85, 88, 90, 93, 95, 97, 98, 100, 101] },
+    { label: 'بازگشت سفارش', value: '2.1%', change: '-0.3%', positive: true, icon: <Icons.RotateCcw size={22} />, color: '#06b6d4', sparkline: [3.2, 3.0, 2.8, 2.7, 2.5, 2.4, 2.3, 2.2, 2.15, 2.1] },
   ];
 
   const revenueData = [
     { day: 'شنبه', revenue: 18500, orders: 183 },
     { day: 'یکشنبه', revenue: 22300, orders: 221 },
     { day: 'دوشنبه', revenue: 19800, orders: 196 },
-    { day: 'سه‌شنبه', revenue: 25600, orders: 253 },
+    { day: 'سه\u200cشنبه', revenue: 25600, orders: 253 },
     { day: 'چهارشنبه', revenue: 21200, orders: 210 },
     { day: 'پنجشنبه', revenue: 28400, orders: 281 },
     { day: 'جمعه', revenue: 24200, orders: 240 },
@@ -61,16 +62,8 @@ export default function AdminDashboard() {
     pending: { text: 'در انتظار', color: '#991b1b', bg: '#fee2e2' },
   };
 
-  const [darkMode, setDarkMode] = useState(false);
-  if (typeof window !== 'undefined') {
-    const t = document.documentElement.getAttribute('data-theme');
-    if (t === 'dark' && !darkMode) setDarkMode(true);
-    if (t !== 'dark' && darkMode) setDarkMode(false);
-  }
-
   return (
     <div style={{ padding: '24px' }}>
-      {/* Period Selector */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>داشبورد مدیریت</h1>
@@ -93,21 +86,18 @@ export default function AdminDashboard() {
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>{stat.label}</p>
                 <p style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text)', margin: '8px 0 4px' }}>{stat.value}</p>
                 <span style={{ fontSize: '13px', fontWeight: 500, color: stat.positive ? '#22c55e' : '#ef4444' }}>
-                  {stat.positive ? '↑' : '↓'} {stat.change}
+                  {stat.positive ? <><Icons.ArrowUp size={14} color="#22c55e" /></> : <><Icons.ArrowDown size={14} color="#ef4444" /></>} {stat.change}
                 </span>
               </div>
-              <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: stat.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: stat.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', color: stat.color }}>
                 {stat.icon}
               </div>
             </div>
-            {/* Mini Sparkline */}
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '2px', height: '30px', marginTop: '12px' }}>
               {stat.sparkline.map((v, i) => {
                 const max = Math.max(...stat.sparkline);
                 const h = (v / max) * 100;
-                return (
-                  <div key={i} style={{ flex: 1, height: `${h}%`, background: stat.color + '40', borderRadius: '2px', transition: 'height 0.3s' }} />
-                );
+                return <div key={i} style={{ flex: 1, height: `${h}%`, background: stat.color + '40', borderRadius: '2px' }} />;
               })}
             </div>
           </div>
@@ -116,7 +106,6 @@ export default function AdminDashboard() {
 
       {/* Revenue Chart + Category Breakdown */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '24px' }}>
-        {/* Daily Revenue Chart */}
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>درآمد روزانه</h3>
@@ -126,7 +115,7 @@ export default function AdminDashboard() {
             {revenueData.map((d, i) => (
               <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
                 <span style={{ fontSize: '10px', color: 'var(--text-secondary)', fontWeight: 500 }}>${(d.revenue / 1000).toFixed(1)}k</span>
-                <div style={{ width: '100%', height: `${(d.revenue / maxRevenue) * 100}%`, background: 'linear-gradient(180deg, #3b82f6, #1d4ed8)', borderRadius: '6px 6px 0 0', minHeight: '8px', transition: 'height 0.5s' }} />
+                <div style={{ width: '100%', height: `${(d.revenue / maxRevenue) * 100}%`, background: 'linear-gradient(180deg, #3b82f6, #1d4ed8)', borderRadius: '6px 6px 0 0', minHeight: '8px' }} />
                 <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{d.day}</span>
               </div>
             ))}
@@ -147,10 +136,8 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Category Breakdown */}
         <div className="card">
           <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 20px' }}>فروش بر اساس دسته</h3>
-          {/* Donut-like Progress Bars */}
           {categoryStats.map((cat, i) => (
             <div key={i} style={{ marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
@@ -158,7 +145,7 @@ export default function AdminDashboard() {
                 <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>${cat.revenue.toLocaleString()}</span>
               </div>
               <div style={{ width: '100%', height: '8px', background: 'var(--hover-bg)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${cat.percentage}%`, height: '100%', background: cat.color, borderRadius: '4px', transition: 'width 0.5s' }} />
+                <div style={{ width: `${cat.percentage}%`, height: '100%', background: cat.color, borderRadius: '4px' }} />
               </div>
               <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{cat.percentage}%</span>
             </div>
@@ -168,16 +155,15 @@ export default function AdminDashboard() {
 
       {/* Recent Orders + Top Products */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
-        {/* Recent Orders */}
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>آخرین سفارشات</h3>
-            <button onClick={() => router.push('/admin/orders')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '13px', cursor: 'pointer' }}>مشاهده همه →</button>
+            <button onClick={() => router.push('/admin/orders')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>مشاهده همه <Icons.ExternalLink size={12} /></button>
           </div>
           {recentOrders.map((order, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < recentOrders.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--hover-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--hover-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
                   {order.customer.charAt(0)}
                 </div>
                 <div>
@@ -195,11 +181,10 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Top Products */}
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>پرفروش‌ترین محصولات</h3>
-            <button onClick={() => router.push('/admin/products')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '13px', cursor: 'pointer' }}>مشاهده همه →</button>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>پرفروش\u200cترین محصولات</h3>
+            <button onClick={() => router.push('/admin/products')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>مشاهده همه <Icons.ExternalLink size={12} /></button>
           </div>
           {topProducts.map((p, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < topProducts.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
@@ -224,15 +209,15 @@ export default function AdminDashboard() {
         <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 16px' }}>دسترسی سریع</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
           {[
-            { icon: '📦', label: 'سفارشات', path: '/admin/orders' },
-            { icon: '🏷️', label: 'محصولات', path: '/admin/products' },
-            { icon: '👥', label: 'مشتریان', path: '/admin/customers' },
-            { icon: '📈', label: 'تحلیل‌ها', path: '/admin/analytics' },
-            { icon: '📣', label: 'بازاریابی', path: '/admin/marketing' },
-            { icon: '⚙️', label: 'تنظیمات', path: '/admin/settings' },
+            { icon: <Icons.Package size={24} />, label: 'سفارشات', path: '/admin/orders' },
+            { icon: <Icons.Tag size={24} />, label: 'محصولات', path: '/admin/products' },
+            { icon: <Icons.Users size={24} />, label: 'مشتریان', path: '/admin/customers' },
+            { icon: <Icons.TrendingUp size={24} />, label: 'تحلیل\u200cها', path: '/admin/analytics' },
+            { icon: <Icons.Megaphone size={24} />, label: 'بازاریابی', path: '/admin/marketing' },
+            { icon: <Icons.Settings size={24} />, label: 'تنظیمات', path: '/admin/settings' },
           ].map((item, i) => (
             <button key={i} onClick={() => router.push(item.path)} style={{ padding: '16px', background: 'var(--table-header-bg)', border: '1px solid var(--border)', borderRadius: '10px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s' }}>
-              <div style={{ fontSize: '24px', marginBottom: '8px' }}>{item.icon}</div>
+              <div style={{ marginBottom: '8px', color: 'var(--text-secondary)' }}>{item.icon}</div>
               <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text)' }}>{item.label}</div>
             </button>
           ))}
