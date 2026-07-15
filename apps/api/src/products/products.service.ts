@@ -24,7 +24,7 @@ export class ProductsService {
     return this.prisma.product.create({
       data: {
         ...productData,
-        slug: productData.name.toLowerCase().replace(/\s+/g, '-'),
+        slug: productData.name.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now(),
         images: images ? { create: images.map((img: any) => ({ url: img.url, name: img.name })) } : undefined,
       },
       include: { images: true },

@@ -4,14 +4,17 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
+import express from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    bodyParser: {
-      limit: '50mb',
-    },
+    bodyParser: false,
   });
+
+  // Configure body parser with 50MB limit for base64 image uploads
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('APP_PORT', 3000);
