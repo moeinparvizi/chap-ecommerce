@@ -1,26 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 interface Campaign { id: string; name: string; type: string; status: 'active' | 'scheduled' | 'ended'; discount: string; startDate: string; endDate: string; usageCount: number; }
 interface Coupon { id: string; code: string; type: string; value: string; usageCount: number; maxUsage: number; status: 'active' | 'expired' | 'disabled'; }
-interface Banner { id: string; name: string; position: string; image: string; }
+interface Banner { id: string; name: string; position: string; imageUrl: string; }
 
 export default function MarketingPage() {
   const [activeTab, setActiveTab] = useState('campaigns');
   const [campaigns, setCampaigns] = useState<Campaign[]>([
     { id: '1', name: 'حراج فصل تابستان', type: 'فصلی', status: 'active', discount: '30%', startDate: '2024-06-01', endDate: '2024-06-30', usageCount: 456 },
     { id: '2', name: 'تخفیف مشتریان جدید', type: 'خوشامدگویی', status: 'active', discount: '20%', startDate: '2024-01-01', endDate: '2024-12-31', usageCount: 234 },
-    { id: '3', name: 'فلاش سیل عید', type: 'فلاش سیل', status: 'ended', discount: '50%', startDate: '2024-03-20', endDate: '2024-03-25', usageCount: 890 },
   ]);
   const [coupons, setCoupons] = useState<Coupon[]>([
     { id: '1', code: 'WELCOME20', type: 'درصدی', value: '20%', usageCount: 234, maxUsage: 500, status: 'active' },
     { id: '2', code: 'SUMMER30', type: 'درصدی', value: '30%', usageCount: 456, maxUsage: 1000, status: 'active' },
-    { id: '3', code: 'FLAT50', type: 'مبلغ ثابت', value: '$50', usageCount: 123, maxUsage: 200, status: 'active' },
   ]);
   const [banners, setBanners] = useState<Banner[]>([
-    { id: '1', name: 'بنر اصلی صفحه خانه', position: 'home', image: '🏠' },
-    { id: '2', name: 'بنر دسته‌بندی موبایل', position: 'mobile', image: '📱' },
+    { id: '1', name: 'بنر اصلی صفحه خانه', position: 'home', imageUrl: '' },
+    { id: '2', name: 'بنر دسته‌بندی موبایل', position: 'mobile', imageUrl: '' },
   ]);
 
   // Modals
@@ -28,7 +26,10 @@ export default function MarketingPage() {
   const [showCouponModal, setShowCouponModal] = useState(false);
   const [showBannerModal, setShowBannerModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [editType, setEditType] = useState<'campaign' | 'coupon' | 'banner' | null>(null);
+  
+  // Banner image state
+  const [bannerImage, setBannerImage] = useState<string>('');
+  const bannerFileRef = useRef<HTMLInputElement>(null);
 
   const tabs = [
     { id: 'campaigns', label: 'کمپین‌ها', icon: '📣' },
@@ -37,48 +38,21 @@ export default function MarketingPage() {
     { id: 'newsletter', label: 'خبرنامه', icon: '📧' },
   ];
 
-  // Open add modal
-  const openAddModal = (type: 'campaign' | 'coupon' | 'banner') => {
-    setEditingItem(null);
-    setEditType(type);
-    if (type === 'campaign') setShowCampaignModal(true);
-    if (type === 'coupon') setShowCouponModal(true);
-    if (type === 'banner') setShowBannerModal(true);
-  };
-
-  // Open edit modal
-  const openEditModal = (type: 'campaign' | 'coupon' | 'banner', item: any) => {
-    setEditingItem(item);
-    setEditType(type);
-    if (type === 'campaign') setShowCampaignModal(true);
-    if (type === 'coupon') setShowCouponModal(true);
-    if (type === 'banner') setShowBannerModal(true);
-  };
-
-  // Close all modals
   const closeAllModals = () => {
     setShowCampaignModal(false);
     setShowCouponModal(false);
     setShowBannerModal(false);
     setEditingItem(null);
-    setEditType(null);
+    setBannerImage('');
   };
 
-  // Delete handlers
-  const handleDeleteCampaign = (id: string) => {
-    if (confirm('آیا از حذف این کمپین اطمینان دارید؟')) {
-      setCampaigns(campaigns.filter(c => c.id !== id));
-    }
-  };
-  const handleDeleteCoupon = (id: string) => {
-    if (confirm('آیا از حذف این کوپن اطمینان دارید؟')) {
-      setCoupons(coupons.filter(c => c.id !== id));
-    }
-  };
-  const handleDeleteBanner = (id: string) => {
-    if (confirm('آیا از حذف این بنر اطمینان دارید؟')) {
-      setBanners(banners.filter(b => b.id !== id));
-    }
+  // Banner image upload
+  const handleBannerImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (event) => setBannerImage(event.target?.result as string);
+    reader.readAsDataURL(file);
   };
 
   // Save handlers
@@ -93,7 +67,6 @@ export default function MarketingPage() {
       setCampaigns([{ id: Date.now().toString(), name, type, status: 'scheduled', discount: discount || '10%', startDate: new Date().toISOString().split('T')[0], endDate: '', usageCount: 0 }, ...campaigns]);
     }
     closeAllModals();
-    alert(editingItem ? 'کمپین بروزرسانی شد!' : 'کمپین اضافه شد!');
   };
 
   const handleSaveCoupon = () => {
@@ -107,21 +80,30 @@ export default function MarketingPage() {
       setCoupons([{ id: Date.now().toString(), code: code.toUpperCase(), type, value: type === 'free_shipping' ? 'ارسال رایگان' : (type === 'fixed_amount' ? `$${value}` : `${value}%`), usageCount: 0, maxUsage: 0, status: 'active' }, ...coupons]);
     }
     closeAllModals();
-    alert(editingItem ? 'کوپن بروزرسانی شد!' : 'کوپن اضافه شد!');
   };
 
   const handleSaveBanner = () => {
     const name = (document.getElementById('b-name') as HTMLInputElement)?.value;
     const position = (document.getElementById('b-position') as HTMLSelectElement)?.value;
     if (!name) { alert('نام ضروری است'); return; }
-    const icons: Record<string, string> = { home: '🏠', mobile: '📱', category: '📁', sale: '🏷️' };
     if (editingItem) {
-      setBanners(banners.map(b => b.id === editingItem.id ? { ...b, name, position, image: icons[position] || '🖼️' } : b));
+      setBanners(banners.map(b => b.id === editingItem.id ? { ...b, name, position, imageUrl: bannerImage || b.imageUrl } : b));
     } else {
-      setBanners([{ id: Date.now().toString(), name, position, image: icons[position] || '🖼️' }, ...banners]);
+      setBanners([{ id: Date.now().toString(), name, position, imageUrl: bannerImage }, ...banners]);
     }
     closeAllModals();
-    alert(editingItem ? 'بنر بروزرسانی شد!' : 'بنر اضافه شد!');
+  };
+
+  const openAddBanner = () => {
+    setEditingItem(null);
+    setBannerImage('');
+    setShowBannerModal(true);
+  };
+
+  const openEditBanner = (banner: Banner) => {
+    setEditingItem(banner);
+    setBannerImage(banner.imageUrl);
+    setShowBannerModal(true);
   };
 
   return (
@@ -141,27 +123,20 @@ export default function MarketingPage() {
       {activeTab === 'campaigns' && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0, fontSize: '18px' }}>کمپین‌ها</h2>
-            <button onClick={() => openAddModal('campaign')} style={btnGreen}>➕ کمپین جدید</button>
+            <h2 style={{ margin: 0 }}>کمپین‌ها</h2>
+            <button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} style={btnGreen}>➕ جدید</button>
           </div>
           <div style={tableContainer}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead><tr style={theadStyle}>
-                <th style={thStyle}>نام</th><th style={thStyle}>نوع</th><th style={thStyle}>تخفیف</th><th style={thStyle}>وضعیت</th><th style={thStyle}>عملیات</th>
-              </tr></thead>
+              <thead><tr style={theadStyle}><th style={thStyle}>نام</th><th style={thStyle}>نوع</th><th style={thStyle}>تخفیف</th><th style={thStyle}>وضعیت</th><th style={thStyle}>عملیات</th></tr></thead>
               <tbody>
                 {campaigns.map(c => (
                   <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={tdStyle}><strong>{c.name}</strong></td>
                     <td style={tdStyle}>{c.type}</td>
                     <td style={tdStyle}><span style={{ color: '#22c55e', fontWeight: 600 }}>{c.discount}</span></td>
-                    <td style={tdStyle}><span style={statusBadge(c.status)}>{c.status === 'active' ? 'فعال' : c.status === 'scheduled' ? 'برنامه‌ریزی' : 'پایان'}</span></td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        <button onClick={() => openEditModal('campaign', c)} style={btnSmall}>✏️</button>
-                        <button onClick={() => handleDeleteCampaign(c.id)} style={btnSmallRed}>🗑️</button>
-                      </div>
-                    </td>
+                    <td style={tdStyle}><span style={badge(c.status)}>{c.status === 'active' ? 'فعال' : c.status === 'scheduled' ? 'برنامه‌ریزی' : 'پایان'}</span></td>
+                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCampaignModal(true); }} style={btnSmall}>✏️</button><button onClick={() => setCampaigns(campaigns.filter(x => x.id !== c.id))} style={btnSmallRed}>🗑️</button></div></td>
                   </tr>
                 ))}
               </tbody>
@@ -174,21 +149,21 @@ export default function MarketingPage() {
       {activeTab === 'coupons' && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0, fontSize: '18px' }}>کوپن‌ها</h2>
-            <button onClick={() => openAddModal('coupon')} style={btnGreen}>➕ کوپن جدید</button>
+            <h2 style={{ margin: 0 }}>کوپن‌ها</h2>
+            <button onClick={() => { setEditingItem(null); setShowCouponModal(true); }} style={btnGreen}>➕ جدید</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             {coupons.map(c => (
               <div key={c.id} style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '16px' }}>{c.code}</span>
-                  <span style={statusBadge(c.status)}>{c.status === 'active' ? 'فعال' : 'منقضی'}</span>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 700 }}>{c.code}</span>
+                  <span style={badge(c.status)}>{c.status === 'active' ? 'فعال' : 'منقضی'}</span>
                 </div>
                 <p style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#2563eb' }}>{c.value}</p>
                 <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>استفاده: {c.usageCount} / {c.maxUsage || '∞'}</p>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <button onClick={() => openEditModal('coupon', c)} style={{ ...btnSmall, flex: 1 }}>✏️ ویرایش</button>
-                  <button onClick={() => handleDeleteCoupon(c.id)} style={{ ...btnSmallRed, flex: 1 }}>🗑️ حذف</button>
+                  <button onClick={() => { setEditingItem(c); setShowCouponModal(true); }} style={{ ...btnSmall, flex: 1 }}>✏️ ویرایش</button>
+                  <button onClick={() => setCoupons(coupons.filter(x => x.id !== c.id))} style={{ ...btnSmallRed, flex: 1 }}>🗑️ حذف</button>
                 </div>
               </div>
             ))}
@@ -200,19 +175,21 @@ export default function MarketingPage() {
       {activeTab === 'banners' && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0, fontSize: '18px' }}>بنرها</h2>
-            <button onClick={() => openAddModal('banner')} style={btnGreen}>➕ بنر جدید</button>
+            <h2 style={{ margin: 0 }}>بنرها</h2>
+            <button onClick={openAddBanner} style={btnGreen}>➕ جدید</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
             {banners.map(b => (
               <div key={b.id} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
-                <div style={{ height: '120px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>{b.image}</div>
+                <div style={{ height: '150px', background: b.imageUrl ? `url(${b.imageUrl}) center/cover` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {!b.imageUrl && <span style={{ color: 'white', fontSize: '24px', fontWeight: 600 }}>{b.name}</span>}
+                </div>
                 <div style={{ padding: '12px' }}>
                   <p style={{ margin: 0, fontWeight: 500 }}>{b.name}</p>
                   <p style={{ margin: '4px 0 12px', fontSize: '12px', color: '#64748b' }}>موقعیت: {b.position}</p>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    <button onClick={() => openEditModal('banner', b)} style={{ ...btnSmall, flex: 1 }}>✏️ ویرایش</button>
-                    <button onClick={() => handleDeleteBanner(b.id)} style={{ ...btnSmallRed, flex: 1 }}>🗑️ حذف</button>
+                    <button onClick={() => openEditBanner(b)} style={{ ...btnSmall, flex: 1 }}>✏️ ویرایش</button>
+                    <button onClick={() => setBanners(banners.filter(x => x.id !== b.id))} style={{ ...btnSmallRed, flex: 1 }}>🗑️ حذف</button>
                   </div>
                 </div>
               </div>
@@ -223,8 +200,8 @@ export default function MarketingPage() {
 
       {/* Newsletter */}
       {activeTab === 'newsletter' && (
-        <div style={{ background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e5e7eb' }}>
-          <h2 style={{ margin: '0 0 16px', fontSize: '18px' }}>خبرنامه</h2>
+        <div style={{ background: 'white', borderRadius: '12px', padding: '24px' }}>
+          <h2 style={{ margin: '0 0 16px' }}>خبرنامه</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
             {[{ l: 'مشترکین', v: '2,345', c: '#2563eb' }, { l: 'نرخ بازشدن', v: '45%', c: '#22c55e' }, { l: 'نرخ کلیک', v: '12%', c: '#8b5cf6' }].map((s, i) => (
               <div key={i} style={{ textAlign: 'center', padding: '16px', background: '#f8fafc', borderRadius: '8px' }}>
@@ -246,8 +223,8 @@ export default function MarketingPage() {
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام کمپین *</label><input id="c-name" style={inputStyle} defaultValue={editingItem?.name || ''} placeholder="نام کمپین" /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div><label style={labelStyle}>نوع</label><select id="c-type" style={inputStyle} defaultValue={editingItem?.type || 'فصلی'}><option value="فصلی">فصلی</option><option value="فلاش سیل">فلاش سیل</option><option value="خوشامدگویی">خوشامدگویی</option><option value="ارسال رایگان">ارسال رایگان</option></select></div>
-                <div><label style={labelStyle}>تخفیف</label><input id="c-discount" style={inputStyle} defaultValue={editingItem?.discount || ''} placeholder="مثال: 20%" /></div>
+                <div><label style={labelStyle}>نوع</label><select id="c-type" style={inputStyle} defaultValue={editingItem?.type || 'فصلی'}><option value="فصلی">فصلی</option><option value="فلاش سیل">فلاش سیل</option><option value="خوشامدگویی">خوشامدگویی</option></select></div>
+                <div><label style={labelStyle}>تخفیف</label><input id="c-discount" style={inputStyle} defaultValue={editingItem?.discount || ''} placeholder="20%" /></div>
               </div>
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleSaveCampaign} style={{ ...btnGreen, flex: 1 }}>💾 ذخیره</button>
@@ -264,10 +241,10 @@ export default function MarketingPage() {
           <div style={modal} onClick={e => e.stopPropagation()}>
             <h2 style={modalTitle}>{editingItem ? '✏️ ویرایش کوپن' : '🎫 کوپن جدید'}</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
-              <div><label style={labelStyle}>کد کوپن *</label><input id="cp-code" style={inputStyle} defaultValue={editingItem?.code || ''} placeholder="مثال: SUMMER30" /></div>
+              <div><label style={labelStyle}>کد کوپن *</label><input id="cp-code" style={inputStyle} defaultValue={editingItem?.code || ''} placeholder="SUMMER30" /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div><label style={labelStyle}>نوع</label><select id="cp-type" style={inputStyle} defaultValue={editingItem?.type || 'درصدی'}><option value="percentage">درصدی</option><option value="fixed_amount">مبلغ ثابت</option><option value="free_shipping">ارسال رایگان</option></select></div>
-                <div><label style={labelStyle}>مقدار *</label><input id="cp-value" style={inputStyle} defaultValue={editingItem?.value || ''} placeholder="مثال: 20" /></div>
+                <div><label style={labelStyle}>مقدار *</label><input id="cp-value" style={inputStyle} defaultValue={editingItem?.value || ''} placeholder="20" /></div>
               </div>
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleSaveCoupon} style={{ ...btnGreen, flex: 1 }}>💾 ذخیره</button>
@@ -278,14 +255,89 @@ export default function MarketingPage() {
         </div>
       )}
 
-      {/* Banner Modal */}
+      {/* Banner Modal with Image Upload */}
       {showBannerModal && (
         <div style={overlay} onClick={closeAllModals}>
-          <div style={modal} onClick={e => e.stopPropagation()}>
+          <div style={{ ...modal, maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
             <h2 style={modalTitle}>{editingItem ? '✏️ ویرایش بنر' : '🖼️ بنر جدید'}</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام بنر *</label><input id="b-name" style={inputStyle} defaultValue={editingItem?.name || ''} placeholder="نام بنر" /></div>
-              <div><label style={labelStyle}>موقعیت</label><select id="b-position" style={inputStyle} defaultValue={editingItem?.position || 'home'}><option value="home">صفحه خانه</option><option value="mobile">موبایل</option><option value="category">دسته‌بندی</option><option value="sale">تخفیف‌ها</option></select></div>
+              
+              <div><label style={labelStyle}>موقعیت</label>
+                <select id="b-position" style={inputStyle} defaultValue={editingItem?.position || 'home'}>
+                  <option value="home">صفحه خانه</option>
+                  <option value="mobile">موبایل</option>
+                  <option value="category">دسته‌بندی</option>
+                  <option value="sale">تخفیف‌ها</option>
+                </select>
+              </div>
+
+              {/* Image Upload Section */}
+              <div>
+                <label style={labelStyle}>تصویر بنر</label>
+                
+                {/* Image Preview */}
+                {bannerImage && (
+                  <div style={{ position: 'relative', marginBottom: '8px' }}>
+                    <img 
+                      src={bannerImage} 
+                      alt="Preview" 
+                      style={{ 
+                        width: '100%', 
+                        height: '150px', 
+                        objectFit: 'cover', 
+                        borderRadius: '8px',
+                        border: '1px solid #e5e7eb'
+                      }} 
+                    />
+                    <button 
+                      onClick={() => setBannerImage('')}
+                      style={{ 
+                        position: 'absolute', 
+                        top: '8px', 
+                        right: '8px', 
+                        width: '28px', 
+                        height: '28px', 
+                        borderRadius: '50%', 
+                        background: '#ef4444', 
+                        color: 'white', 
+                        border: 'none', 
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >×</button>
+                  </div>
+                )}
+
+                {/* Upload Button */}
+                <input 
+                  ref={bannerFileRef}
+                  type="file" 
+                  accept="image/*" 
+                  style={{ display: 'none' }} 
+                  onChange={handleBannerImageUpload} 
+                />
+                <button 
+                  onClick={() => bannerFileRef.current?.click()}
+                  style={{ 
+                    width: '100%', 
+                    padding: '16px', 
+                    border: '2px dashed ' + (bannerImage ? '#22c55e' : '#d1d5db'), 
+                    borderRadius: '8px', 
+                    background: bannerImage ? '#f0fdf4' : 'white', 
+                    cursor: 'pointer',
+                    color: bannerImage ? '#166534' : '#64748b',
+                    fontSize: '14px'
+                  }}
+                >
+                  {bannerImage ? '✅ تصویر انتخاب شد - کلیک برای تغییر' : '📷 کلیک کنید تا تصویر انتخاب کنید'}
+                </button>
+                <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#94a3b8' }}>PNG, JPG (حداکثر ۵MB)</p>
+              </div>
+
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleSaveBanner} style={{ ...btnGreen, flex: 1 }}>💾 ذخیره</button>
                 <button onClick={closeAllModals} style={{ ...btnGray, flex: 1 }}>انصراف</button>
@@ -305,10 +357,10 @@ const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '13px', fo
 const inputStyle = { width: '100%', padding: '8px 10px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '13px', outline: 'none' };
 const btnGreen = { padding: '10px 16px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500, fontSize: '13px' };
 const btnGray = { padding: '10px 16px', background: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' };
-const btnSmall = { padding: '6px 12px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 500 };
-const btnSmallRed = { padding: '6px 12px', background: '#fee2e2', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 500, color: '#991b1b' };
+const btnSmall = { padding: '6px 12px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' };
+const btnSmallRed = { padding: '6px 12px', background: '#fee2e2', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: '#991b1b' };
 const thStyle = { textAlign: 'right' as const, padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' };
 const tdStyle = { padding: '14px 16px', fontSize: '14px', color: '#374151' };
 const tableContainer = { background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' };
 const theadStyle = { background: '#f8fafc' };
-const statusBadge = (status: string) => ({ padding: '4px 10px', borderRadius: '20px', fontSize: '12px', background: status === 'active' ? '#dcfce7' : status === 'scheduled' ? '#dbeafe' : '#e5e7eb', color: status === 'active' ? '#166534' : status === 'scheduled' ? '#1e40af' : '#374151' });
+const badge = (status: string) => ({ padding: '4px 10px', borderRadius: '20px', fontSize: '12px', background: status === 'active' ? '#dcfce7' : '#e5e7eb', color: status === 'active' ? '#166534' : '#374151' });
