@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Icons } from '../../components/Icons';
 
 interface Customer {
   id: string;

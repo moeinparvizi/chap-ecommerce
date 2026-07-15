@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Icons } from '../../components/Icons';
 
 interface Order {
   id: string;
@@ -167,7 +168,7 @@ export default function OrdersPage() {
             fontWeight: 500
           }}
         >
-          🔄 بروزرسانی
+          {Icons.RotateCcw size={14} /} بروزرسانی
         </button>
       </div>
 
