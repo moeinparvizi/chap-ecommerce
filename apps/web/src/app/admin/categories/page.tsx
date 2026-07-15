@@ -128,7 +128,7 @@ export default function CategoriesPage() {
           <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت دسته‌بندی‌ها</h1>
           <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredCategories.length} دسته‌بندی</p>
         </div>
-        <button onClick={() => { setShowAddModal(true); setUploadContext('add'); }} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Plus size={14} />} افزودن دسته‌بندی</button>
+        <button onClick={() => { setShowAddModal(true); setUploadContext('add'); }} className="btn btn-success">{<Icons.Plus size={14} />} افزودن دسته‌بندی</button>
       </div>
 
       {/* Search */}
@@ -153,7 +153,7 @@ export default function CategoriesPage() {
               <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#2563eb' }}>{<Icons.Package size={14} />} {category.productCount} محصول</p>
               <div style={{ display: 'flex', gap: '6px' }}>
                 <button onClick={() => openEditModal(category)} style={{ flex: 1, padding: '8px', background: 'var(--hover-bg)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}>{<Icons.Edit size={14} />} ویرایش</button>
-                <button onClick={() => handleDeleteCategory(category.id)} style={{ flex: 1, padding: '8px', background: '#fee2e2', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 500, color: '#991b1b' }}>{<Icons.Trash size={14} />} حذف</button>
+                <button onClick={() => handleDeleteCategory(category.id)} className="btn btn-danger btn-xs" style={{ flex: 1 }}>{<Icons.Trash size={14} />} حذف</button>
               </div>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function CategoriesPage() {
                 {addImage && (
                   <div style={{ position: 'relative', marginBottom: '8px' }}>
                     <img src={addImage.url} alt="" style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
-                    <button onClick={() => setAddImage(null)} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '14px' }}>×</button>
+                    <button onClick={() => setAddImage(null)} className="btn-close" style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'var(--danger)', color: 'white', fontSize: '14px' }}><Icons.X size={14} /></button>
                   </div>
                 )}
                 <button onClick={() => { setUploadContext('add'); fileInputRef.current?.click(); }} style={{ width: '100%', padding: '12px', border: '2px dashed var(--border)', borderRadius: '8px', background: 'var(--card-bg)', cursor: 'pointer', color: 'var(--text-secondary)' }}>
@@ -184,7 +184,7 @@ export default function CategoriesPage() {
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleAddCategory} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Check size={14} />} ذخیره</button>
+                <button onClick={handleAddCategory} className="btn btn-success" style={{ flex: 1 }}>{<Icons.Check size={14} />} ذخیره</button>
                 <button onClick={() => { setShowAddModal(false); setAddImage(null); }} className="btn btn-ghost" style={{ flex: 1 }} >انصراف</button>
               </div>
             </div>
@@ -208,7 +208,7 @@ export default function CategoriesPage() {
                 {editImage && (
                   <div style={{ position: 'relative', marginBottom: '8px' }}>
                     <img src={editImage.url} alt="" style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
-                    <button onClick={() => setEditImage(null)} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '14px' }}>×</button>
+                    <button onClick={() => setEditImage(null)} className="btn-close" style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'var(--danger)', color: 'white', fontSize: '14px' }}><Icons.X size={14} /></button>
                   </div>
                 )}
                 <button onClick={() => { setUploadContext('edit'); fileInputRef.current?.click(); }} style={{ width: '100%', padding: '12px', border: '2px dashed var(--border)', borderRadius: '8px', background: 'var(--card-bg)', cursor: 'pointer', color: 'var(--text-secondary)' }}>
@@ -217,7 +217,7 @@ export default function CategoriesPage() {
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleEditCategory} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Save size={14} />} ذخیره تغییرات</button>
+                <button onClick={handleEditCategory} className="btn btn-primary" style={{ flex: 1 }}>{<Icons.Save size={14} />} ذخیره تغییرات</button>
                 <button onClick={() => { setShowEditModal(false); setEditImage(null); }} className="btn btn-ghost" style={{ flex: 1 }} >انصراف</button>
               </div>
             </div>

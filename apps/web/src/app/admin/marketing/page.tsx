@@ -237,7 +237,7 @@ export default function MarketingPage() {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={modalTitle}>{editingItem ? 'ویرایش کمپین' : 'کمپین جدید'}</h2>
-              <button onClick={closeAllModals} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px' }}><Icons.X size={20} /></button>
+              <button onClick={closeAllModals} className="btn-close"><Icons.X size={20} /></button>
             </div>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>نام</label><input id="c-name" defaultValue={editingItem?.name} style={inputStyle} /></div>
@@ -260,7 +260,7 @@ export default function MarketingPage() {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={modalTitle}>{editingItem ? 'ویرایش کوپن' : 'کوپن جدید'}</h2>
-              <button onClick={closeAllModals} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px' }}><Icons.X size={20} /></button>
+              <button onClick={closeAllModals} className="btn-close"><Icons.X size={20} /></button>
             </div>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>کد</label><input id="cp-code" defaultValue={editingItem?.code} style={inputStyle} /></div>
@@ -283,7 +283,7 @@ export default function MarketingPage() {
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={modalTitle}>{editingItem ? 'ویرایش بنر' : 'بنر جدید'}</h2>
-              <button onClick={closeAllModals} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px' }}><Icons.X size={20} /></button>
+              <button onClick={closeAllModals} className="btn-close"><Icons.X size={20} /></button>
             </div>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>نام</label><input id="b-name" defaultValue={editingItem?.name} style={inputStyle} /></div>
@@ -294,7 +294,7 @@ export default function MarketingPage() {
                   {bannerImages.map(img => (
                     <div key={img.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                       <img src={img.url} alt={img.name} style={{ width: '100%', height: '80px', objectFit: 'cover', display: 'block' }} />
-                      <button onClick={() => removeBannerImage(img.id)} style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.X size={10} /></button>
+                      <button onClick={() => removeBannerImage(img.id)} className="btn-close" style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'var(--danger)', color: 'white', fontSize: '10px' }}><Icons.X size={10} /></button>
                     </div>
                   ))}
                   {bannerImages.length < 5 && (

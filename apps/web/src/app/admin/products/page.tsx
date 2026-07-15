@@ -225,7 +225,7 @@ export default function ProductsPage() {
           <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت محصولات</h1>
           <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredProducts.length} محصول | {productStats.totalImages} تصویر</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Plus size={14} />} افزودن محصول</button>
+        <button onClick={() => setShowAddModal(true)} className="btn btn-success">{<Icons.Plus size={14} />} افزودن محصول</button>
       </div>
 
       {/* Stats */}
@@ -335,7 +335,7 @@ export default function ProductsPage() {
           <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{editMode ? <>{<Icons.Edit size={14} />} ویرایش محصول</> : <>{<Icons.Package size={14} />} جزئیات محصول</>}</h2>
-              <button onClick={() => { setShowProductModal(false); setEditMode(false); }} className="btn-close">×</button>
+              <button onClick={() => { setShowProductModal(false); setEditMode(false); }} className="btn-close" style={{ fontSize: '24px' }}>×</button>
             </div>
 
             {editMode ? (
@@ -364,7 +364,7 @@ export default function ProductsPage() {
                     {editImages.map(img => (
                       <div key={img.id} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                         <img src={img.url} alt={img.name} style={{ width: '100%', height: '80px', objectFit: 'cover' }} />
-                        <button onClick={() => removeImage(img.id, 'edit')} style={{ position: 'absolute', top: '2px', right: '2px', width: '20px', height: '20px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '10px' }}>×</button>
+                        <button onClick={() => removeImage(img.id, 'edit')} className="btn-close" style={{ position: 'absolute', top: '2px', right: '2px', width: '20px', height: '20px', borderRadius: '50%', background: 'var(--danger)', color: 'white', fontSize: '10px' }}><Icons.X size={10} /></button>
                       </div>
                     ))}
                     {editImages.length < 10 && <div onClick={() => editFileInputRef.current?.click()} style={{ height: '80px', border: '2px dashed var(--border)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: '#9ca3af' }}>+</div>}
@@ -372,7 +372,7 @@ export default function ProductsPage() {
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                  <button onClick={handleSaveEdit} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Save size={14} />} ذخیره تغییرات</button>
+                  <button onClick={handleSaveEdit} className="btn btn-success" style={{ flex: 1 }}>{<Icons.Save size={14} />} ذخیره تغییرات</button>
                   <button onClick={() => setEditMode(false)} className="btn btn-ghost" style={{ flex: 1 }} >انصراف</button>
                 </div>
               </div>
@@ -414,8 +414,8 @@ export default function ProductsPage() {
                 )}
 
                 <div style={{ display: 'flex', gap: '8px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-                  <button onClick={handleEditProduct} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Edit size={14} />} ویرایش</button>
-                  <button onClick={() => handleDeleteProduct(selectedProduct.id)} style={{ flex: 1, padding: '10px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Trash size={14} />} حذف</button>
+                  <button onClick={handleEditProduct} className="btn btn-primary" style={{ flex: 1 }}>{<Icons.Edit size={14} />} ویرایش</button>
+                  <button onClick={() => handleDeleteProduct(selectedProduct.id)} className="btn btn-danger" style={{ flex: 1 }}>{<Icons.Trash size={14} />} حذف</button>
                   <button onClick={() => { setShowProductModal(false); setEditMode(false); }} className="btn btn-ghost" style={{ flex: 1 }} >بستن</button>
                 </div>
               </div>
@@ -430,7 +430,7 @@ export default function ProductsPage() {
           <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{<Icons.Plus size={14} />} افزودن محصول جدید</h2>
-              <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} className="btn-close">×</button>
+              <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} className="btn-close" style={{ fontSize: '24px' }}>×</button>
             </div>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام محصول *</label><input id="add-name" style={inputStyle} placeholder="نام محصول" /></div>
@@ -456,7 +456,7 @@ export default function ProductsPage() {
                     {addModalImages.map(img => (
                       <div key={img.id} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                         <img src={img.url} alt="" style={{ width: '100%', height: '70px', objectFit: 'cover' }} />
-                        <button onClick={() => removeImage(img.id, 'add')} style={{ position: 'absolute', top: '2px', right: '2px', width: '18px', height: '18px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '10px' }}>×</button>
+                        <button onClick={() => removeImage(img.id, 'add')} className="btn-close" style={{ position: 'absolute', top: '2px', right: '2px', width: '18px', height: '18px', borderRadius: '50%', background: 'var(--danger)', color: 'white', fontSize: '10px' }}><Icons.X size={10} /></button>
                       </div>
                     ))}
                   </div>
@@ -465,7 +465,7 @@ export default function ProductsPage() {
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleAddProduct} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Check size={14} />} ذخیره</button>
+                <button onClick={handleAddProduct} className="btn btn-success" style={{ flex: 1 }}>{<Icons.Check size={14} />} ذخیره</button>
                 <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} className="btn btn-ghost" style={{ flex: 1 }} >انصراف</button>
               </div>
             </div>
