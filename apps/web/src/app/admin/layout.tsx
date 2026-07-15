@@ -8,6 +8,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openSubmenus, setOpenSubmenus] = useState<string[]>(['products']);
 
   useEffect(() => {
@@ -23,6 +25,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setUser(JSON.parse(userData));
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    // Auto-collapse sidebar on mobile
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
   }, [router]);
 
   const toggleTheme = () => {
@@ -40,6 +47,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const toggleSubmenu = (id: string) => {
     setOpenSubmenus(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const navigate = (path: string) => {
+    router.push(path);
+    setMobileMenuOpen(false);
   };
 
   if (!user) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>;
@@ -78,7 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
       <div key={item.id}>
         <button
-          onClick={() => hasChildren ? toggleSubmenu(item.id) : router.push(item.path)}
+          onClick={() => hasChildren ? toggleSubmenu(item.id) : navigate(item.path)}
           className={`menu-item ${isActive ? 'active' : ''}`}
           style={isSubmenu ? { paddingLeft: '40px' } : {}}
         >
@@ -97,14 +109,55 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        style={{
+          position: 'fixed',
+          top: '12px',
+          left: '12px',
+          zIndex: 60,
+          width: '44px',
+          height: '44px',
+          display: 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--glass-bg)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid var(--glass-border)',
+          borderRadius: '12px',
+          cursor: 'pointer',
+          fontSize: '20px',
+        }}
+        className="mobile-menu-btn"
+      >
+        {mobileMenuOpen ? '✕' : '☰'}
+      </button>
+
+      {/* Mobile Overlay */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 90,
+          }}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside
+        className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}
+        style={{ right: 0, position: 'fixed' }}
+      >
         <div className="sidebar-logo">
           <span style={{ fontSize: '24px' }}>🛒</span>
           <span>ShopHub</span>
         </div>
         
-        <nav style={{ flex: 1 }}>
+        <nav style={{ flex: 1, overflowY: 'auto' }}>
           {menuItems.map(item => renderMenuItem(item))}
         </nav>
 
@@ -117,23 +170,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content */}
-      <div style={{ flex: 1, marginRight: '260px' }}>
+      <div className="main-content" style={{ flex: 1, transition: 'margin 0.3s ease' }}>
         {/* Header */}
         <header className="header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ color: 'var(--text-secondary)' }}>خوش آمدید {user.name}</span>
+            <span className="mobile-only" style={{ display: 'none' }}></span>
+            <span style={{ color: 'var(--text-secondary)' }} className="desktop-only">خوش آمدید {user.name}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {/* Theme Toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div className="theme-toggle">
-              <button className={`theme-btn ${theme === 'light' ? 'active' : ''}`} onClick={toggleTheme} title="روشن">
-                ☀️
-              </button>
-              <button className={`theme-btn ${theme === 'dark' ? 'active' : ''}`} onClick={toggleTheme} title="تاریک">
-                🌙
-              </button>
+              <button className={`theme-btn ${theme === 'light' ? 'active' : ''}`} onClick={toggleTheme}>☀️</button>
+              <button className={`theme-btn ${theme === 'dark' ? 'active' : ''}`} onClick={toggleTheme}>🌙</button>
             </div>
-            <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{user.email}</span>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }} className="desktop-only">{user.email}</span>
             <div style={{
               width: '36px', height: '36px', borderRadius: '50%',
               background: 'var(--accent)', display: 'flex', alignItems: 'center',
