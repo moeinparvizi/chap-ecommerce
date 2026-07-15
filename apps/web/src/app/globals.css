@@ -102,8 +102,9 @@ body {
   color: var(--text); cursor: pointer; font-size: 14px;
   text-align: right; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.menu-item:hover { background: var(--hover-bg); transform: translateX(-4px); }
+.menu-item:hover { background: var(--hover-bg); transform: translateX(-4px); width: 98%; }
 .menu-item.active {
+  width: 98%;
   background: var(--primary); color: white;
   box-shadow: 0 4px 15px rgba(37,99,235,0.4);
   transform: translateX(-4px);
