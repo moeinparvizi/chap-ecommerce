@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Icons } from '../../components/Icons';
+import { useNotification } from '../../lib/notifications';
 import { api } from '../../lib/api';
 
 interface Campaign { id: string; name: string; type: string; status: string; discount: string; startDate: string; endDate: string; usageCount: number; }
@@ -10,6 +11,7 @@ interface BannerImage { id: string; url: string; name: string; }
 interface Banner { id: string; name: string; position: string; images: BannerImage[]; }
 
 export default function MarketingPage() {
+  const notify = useNotification();
   const [activeTab, setActiveTab] = useState('campaigns');
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
@@ -23,7 +25,6 @@ export default function MarketingPage() {
   const bannerFileRef = useRef<HTMLInputElement>(null);
 
   const tabs = [
-    { id: 'campaigns', label: 'کمپینها', icon: <Icons.Megaphone size={14} /> },
     { id: 'coupons', label: 'کوپنها', icon: <Icons.Tag size={14} /> },
     { id: 'banners', label: 'بنرها', icon: <Icons.Image size={14} /> },
     { id: 'newsletter', label: 'خبرنامه', icon: <Icons.Mail size={14} /> },
@@ -50,7 +51,7 @@ export default function MarketingPage() {
     const files = e.target.files;
     if (!files) return;
     const remaining = 5 - bannerImages.length;
-    if (remaining <= 0) { alert('حداکثر ۵ تصویر مجاز است'); return; }
+    if (remaining <= 0) { notify.warning('حداکثر ۵ تصویر مجاز است'); return; }
     Array.from(files).slice(0, remaining).forEach(file => {
       if (!file.type.startsWith('image/')) return;
       const reader = new FileReader();
@@ -66,7 +67,7 @@ export default function MarketingPage() {
     const name = (document.getElementById('c-name') as HTMLInputElement)?.value;
     const type = (document.getElementById('c-type') as HTMLSelectElement)?.value;
     const discount = (document.getElementById('c-discount') as HTMLInputElement)?.value;
-    if (!name) { alert('نام ضروری است'); return; }
+    if (!name) { notify.warning('نام ضروری است'); return; }
     try {
       if (editingItem) {
         await api.updateCampaign(editingItem.id, { name, type, discount });
@@ -75,14 +76,14 @@ export default function MarketingPage() {
       }
       await refreshData();
       closeAllModals();
-    } catch (e) { alert('خطا'); }
+    } catch (e) { notify.error('خطا در عملیات'); }
   };
 
   const handleSaveCoupon = async () => {
     const code = (document.getElementById('cp-code') as HTMLInputElement)?.value;
     const type = (document.getElementById('cp-type') as HTMLSelectElement)?.value;
     const value = (document.getElementById('cp-value') as HTMLInputElement)?.value;
-    if (!code || !value) { alert('کد و مقدار ضروری است'); return; }
+    if (!code || !value) { notify.warning('کد و مقدار ضروری است'); return; }
     try {
       if (editingItem) {
         await api.updateCoupon(editingItem.id, { code: code.toUpperCase(), type, value });
@@ -91,13 +92,13 @@ export default function MarketingPage() {
       }
       await refreshData();
       closeAllModals();
-    } catch (e) { alert('خطا'); }
+    } catch (e) { notify.error('خطا در عملیات'); }
   };
 
   const handleSaveBanner = async () => {
     const name = (document.getElementById('b-name') as HTMLInputElement)?.value;
     const position = (document.getElementById('b-position') as HTMLSelectElement)?.value;
-    if (!name) { alert('نام ضروری است'); return; }
+    if (!name) { notify.warning('نام ضروری است'); return; }
     try {
       if (editingItem) {
         await api.updateBanner(editingItem.id, { name, position, images: bannerImages.map(img => ({ url: img.url, name: img.name })) });
@@ -106,12 +107,15 @@ export default function MarketingPage() {
       }
       await refreshData();
       closeAllModals();
-    } catch (e) { alert('خطا'); }
+    } catch (e) { notify.error('خطا در عملیات'); }
   };
 
-  const handleDeleteCampaign = async (id: string) => { if (confirm('حذف شود؟')) { await api.deleteCampaign(id); await refreshData(); } };
-  const handleDeleteCoupon = async (id: string) => { if (confirm('حذف شود؟')) { await api.deleteCoupon(id); await refreshData(); } };
-  const handleDeleteBanner = async (id: string) => { if (confirm('حذف شود؟')) { await api.deleteBanner(id); await refreshData(); } };
+  const handleDeleteCampaign = async (id: string) => { const confirmed = await notify.confirm({ message: 'آیا از حذف اطمینان دارید؟', type: 'danger' });
+    if (confirmed) { await api.deleteCampaign(id); await refreshData(); } };
+  const handleDeleteCoupon = async (id: string) => { const confirmed = await notify.confirm({ message: 'آیا از حذف اطمینان دارید؟', type: 'danger' });
+    if (confirmed) { await api.deleteCoupon(id); await refreshData(); } };
+  const handleDeleteBanner = async (id: string) => { const confirmed = await notify.confirm({ message: 'آیا از حذف اطمینان دارید؟', type: 'danger' });
+    if (confirmed) { await api.deleteBanner(id); await refreshData(); } };
 
   const btnGreen = 'btn btn-success btn-sm';
   const btnSmall = 'btn btn-ghost btn-xs';

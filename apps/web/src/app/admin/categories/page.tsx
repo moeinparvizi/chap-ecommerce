@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Icons } from '../../components/Icons';
+import { useNotification } from '../../lib/notifications';
 import { api } from '../../lib/api';
 
 interface CategoryImage {
@@ -22,6 +23,7 @@ interface Category {
 }
 
 export default function CategoriesPage() {
+  const notify = useNotification();
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -81,13 +83,13 @@ export default function CategoriesPage() {
     const slug = (document.getElementById('add-slug') as HTMLInputElement)?.value;
     const description = (document.getElementById('add-description') as HTMLTextAreaElement)?.value;
 
-    if (!name) { alert('نام دسته‌بندی ضروری است'); return; }
+    if (!name) { notify.warning('نام دستهu200cبندی ضروری است'); return; }
 
     try {
       await api.createCategory({ name, slug: slug || name.toLowerCase().replace(/\s+/g, '-'), description: description || '', image: addImage?.url || null, status: 'active' });
       await refreshCategories();
       setAddImage(null); setShowAddModal(false);
-    } catch (e) { alert('خطا در اضافه کردن'); }
+    } catch (e) { notify.error('خطا در اضافه کردن'); }
   };
 
   const handleEditCategory = async () => {
@@ -96,18 +98,19 @@ export default function CategoriesPage() {
     const slug = (document.getElementById('edit-slug') as HTMLInputElement)?.value;
     const description = (document.getElementById('edit-description') as HTMLTextAreaElement)?.value;
     const status = (document.getElementById('edit-status') as HTMLSelectElement)?.value;
-    if (!name) { alert('نام ضروری است'); return; }
+    if (!name) { notify.warning('نام ضروری است'); return; }
     try {
       await api.updateCategory(selectedCategory.id, { name, slug: slug || name.toLowerCase().replace(/\s+/g, '-'), description: description || '', image: editImage?.url || selectedCategory.image?.url || null, status });
       await refreshCategories();
       setEditImage(null); setShowEditModal(false);
-    } catch (e) { alert('خطا در بروزرسانی'); }
+    } catch (e) { notify.error('خطا در بروزرسانی'); }
   };
 
   const handleDeleteCategory = async (id: string) => {
     const cat = categories.find(c => c.id === id);
-    if (cat && cat.productCount > 0) { alert(`"${cat.name}" محصول دارد`); return; }
-    if (confirm('آیا از حذف اطمینان دارید؟')) {
+    if (cat && cat.productCount > 0) { notify.warning(cat.name + ' محصول دارد'); return; }
+    const confirmed = await notify.confirm({ message: 'آیا از حذف اطمینان دارید؟', type: 'danger' });
+    if (confirmed) {
       try { await api.deleteCategory(id); await refreshCategories(); } catch (e) { alert('خطا'); }
     }
   };

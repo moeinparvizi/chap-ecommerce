@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Icons } from '../../components/Icons';
+import { useNotification } from '../../lib/notifications';
 import { api } from '../../lib/api';
 
 interface ProductImage {
@@ -39,11 +40,10 @@ export default function ProductsPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editImages, setEditImages] = useState<ProductImage[]>([]);
-  
+  const notify = useNotification();  
   const editFileInputRef = useRef<HTMLInputElement>(null);
   const addFileInputRef = useRef<HTMLInputElement>(null);
   const [addModalImages, setAddModalImages] = useState<ProductImage[]>([]);
-
   // Load products from API
   useEffect(() => {
     api.getProducts().then((data: any[]) => {
@@ -101,7 +101,7 @@ export default function ProductsPage() {
 
     const currentImages = target === 'edit' ? editImages : addModalImages;
     const remainingSlots = 10 - currentImages.length;
-    if (remainingSlots <= 0) { alert('حداکثر ۱۰ تصویر مجاز است'); return; }
+    if (remainingSlots <= 0) { notify.warning('حداکثر ۱۰ تصویر مجاز است'); return; }
 
     Array.from(files).slice(0, remainingSlots).forEach(file => {
       if (!file.type.startsWith('image/')) return;
@@ -152,7 +152,7 @@ export default function ProductsPage() {
     const status = (document.getElementById('edit-status') as HTMLSelectElement)?.value;
 
     if (!name || !sku || !price) {
-      alert('لطفاً فیلدهای ضروری را پر کنید');
+      notify.warning('لطفاً فیلدهای ضروری را پر کنید');
       return;
     }
 
@@ -167,12 +167,13 @@ export default function ProductsPage() {
       await refreshProducts();
       setEditMode(false);
       setShowProductModal(false);
-      alert('محصول با موفقیت بروزرسانی شد!');
-    } catch (e) { alert('خطا در بروزرسانی'); }
+      notify.success('محصول با موفقیت بروزرسانی شد!');
+    } catch (e) { notify.error('خطا در بروزرسانی'); }
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (confirm('آیا از حذف این محصول اطمینان دارید؟')) {
+    const confirmed = await notify.confirm({ message: 'آیا از حذف این محصول اطمینان دارید؟', type: 'danger' });
+    if (confirmed) {
       try {
         await api.deleteProduct(productId);
         await refreshProducts();
@@ -190,7 +191,7 @@ export default function ProductsPage() {
     const price = parseFloat((document.getElementById('add-price') as HTMLInputElement)?.value || '0');
     const stock = parseInt((document.getElementById('add-stock') as HTMLInputElement)?.value || '0');
 
-    if (!name || !sku || !category || !price) { alert('لطفاً فیلدهای ضوری را پر کنید'); return; }
+    if (!name || !sku || !category || !price) { notify.warning('لطفاً فیلدهای ضوری را پر کنید'); return; }
 
     try {
       await api.createProduct({
@@ -201,8 +202,8 @@ export default function ProductsPage() {
       await refreshProducts();
       setAddModalImages([]);
       setShowAddModal(false);
-      alert('محصول با موفقیت اضافه شد!');
-    } catch (e) { alert('خطا در اضافه کردن'); }
+      notify.success('محصول با موفقیت اضافه شد!');
+    } catch (e) { notify.error('خطا در اضافه کردن'); }
   };
 
   const productStats = {

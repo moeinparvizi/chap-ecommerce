@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icons } from '../../components/Icons';
+import { useNotification } from '../../lib/notifications';
 import { api } from '../../lib/api';
 
 interface Order {
@@ -20,6 +21,7 @@ interface Order {
 
 export default function OrdersPage() {
   const router = useRouter();
+  const notify = useNotification();
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,16 +81,17 @@ export default function OrdersPage() {
     try {
       await api.updateOrder(orderId, { status: newStatus.toUpperCase() });
       await refreshOrders();
-    } catch (e) { alert('خطا در بروزرسانی وضعیت'); }
+    } catch (e) { notify.error('خطا در بروزرسانی وضعیت'); }
   };
 
   const handleDeleteOrder = async (orderId: string) => {
-    if (confirm('آیا از حذف این سفارش اطمینان دارید؟')) {
+    const confirmed = await notify.confirm({ message: 'آیا از حذف این سفارش اطمینان دارید؟', type: 'danger' });
+    if (confirmed) {
       try {
         await api.deleteOrder(orderId);
         await refreshOrders();
         setShowOrderModal(false);
-      } catch (e) { alert('خطا در حذف'); }
+      } catch (e) { notify.error('خطا در حذف'); }
     }
   };
 
