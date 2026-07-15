@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Icons } from '../../components/Icons';
+import { api } from '../../lib/api';
 
 interface CategoryImage {
   id: string;
@@ -31,33 +32,27 @@ export default function CategoriesPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadContext, setUploadContext] = useState<'add' | 'edit'>('add');
 
-  // Load from localStorage or use demo data
-  useEffect(() => {
-    const saved = localStorage.getItem('admin_categories');
-    if (saved) {
-      setCategories(JSON.parse(saved));
-    } else {
-      const demoCategories: Category[] = [
-        { id: '1', name: 'موبایل', slug: 'mobile', description: 'گوشی\u200cهای هوشمند و تلفن\u200cهای همراه', productCount: 125, image: { id: '1', url: 'https://picsum.photos/100/100?random=10', name: 'mobile.jpg' }, parentId: null, status: 'active' },
-        { id: '2', name: 'لپتاپ', slug: 'laptop', description: 'لپتاپ و نوت\u200cبوک', productCount: 89, image: { id: '2', url: 'https://picsum.photos/100/100?random=11', name: 'laptop.jpg' }, parentId: null, status: 'active' },
-        { id: '3', name: 'هدفون', slug: 'headphone', description: 'هدفون و هندزفری', productCount: 156, image: { id: '3', url: 'https://picsum.photos/100/100?random=12', name: 'headphone.jpg' }, parentId: null, status: 'active' },
-        { id: '4', name: 'تبلت', slug: 'tablet', description: 'تبلت و آیپد', productCount: 67, image: { id: '4', url: 'https://picsum.photos/100/100?random=13', name: 'tablet.jpg' }, parentId: null, status: 'active' },
-        { id: '5', name: 'کفش', slug: 'shoes', description: 'کفش\u200cهای ورزشی و روزمره', productCount: 234, image: { id: '5', url: 'https://picsum.photos/100/100?random=14', name: 'shoes.jpg' }, parentId: null, status: 'active' },
-        { id: '6', name: 'دوربین', slug: 'camera', description: 'دوربین عکاسی و فیلمبرداری', productCount: 45, image: null, parentId: null, status: 'active' },
-        { id: '7', name: 'خانه', slug: 'home', description: 'لوازم خانگی', productCount: 178, image: { id: '7', url: 'https://picsum.photos/100/100?random=15', name: 'home.jpg' }, parentId: null, status: 'active' },
-        { id: '8', name: 'گیمینگ', slug: 'gaming', description: 'کنسول و بازی', productCount: 92, image: { id: '8', url: 'https://picsum.photos/100/100?random=16', name: 'gaming.jpg' }, parentId: null, status: 'active' },
-      ];
-      setCategories(demoCategories);
-      localStorage.setItem('admin_categories', JSON.stringify(demoCategories));
-    }
-  }, []);
+  const refreshCategories = async () => {
+    try {
+      const data = await api.getCategories() as any[];
+      const mapped = data.map((c: any) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        description: c.description || '',
+        productCount: c._count?.products || 0,
+        image: c.image ? { id: '1', url: c.image, name: 'category.jpg' } : null,
+        parentId: c.parentId,
+        status: c.status || 'active',
+      }));
+      setCategories(mapped);
+    } catch (e) { console.error(e); }
+  };
 
-  // Auto-save to localStorage
+  // Load from API
   useEffect(() => {
-    if (categories.length > 0) {
-      localStorage.setItem('admin_categories', JSON.stringify(categories));
-    }
-  }, [categories]);
+    refreshCategories();
+  }, []);
 
   const filteredCategories = categories.filter(c => 
     c.name.includes(searchQuery) || c.slug.includes(searchQuery)
@@ -81,57 +76,39 @@ export default function CategoriesPage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     const name = (document.getElementById('add-name') as HTMLInputElement)?.value;
     const slug = (document.getElementById('add-slug') as HTMLInputElement)?.value;
     const description = (document.getElementById('add-description') as HTMLTextAreaElement)?.value;
 
     if (!name) { alert('نام دسته‌بندی ضروری است'); return; }
 
-    const newCategory: Category = {
-      id: Date.now().toString(),
-      name,
-      slug: slug || name.toLowerCase().replace(/\s+/g, '-'),
-      description: description || '',
-      productCount: 0,
-      image: addImage,
-      parentId: null,
-      status: 'active',
-    };
-
-    setCategories([newCategory, ...categories]);
-    setAddImage(null);
-    setShowAddModal(false);
-    alert('دسته‌بندی با موفقیت اضافه شد!');
+    try {
+      await api.createCategory({ name, slug: slug || name.toLowerCase().replace(/\s+/g, '-'), description: description || '', image: addImage?.url || null, status: 'active' });
+      await refreshCategories();
+      setAddImage(null); setShowAddModal(false);
+    } catch (e) { alert('خطا در اضافه کردن'); }
   };
 
-  const handleEditCategory = () => {
+  const handleEditCategory = async () => {
     if (!selectedCategory) return;
-
     const name = (document.getElementById('edit-name') as HTMLInputElement)?.value;
     const slug = (document.getElementById('edit-slug') as HTMLInputElement)?.value;
     const description = (document.getElementById('edit-description') as HTMLTextAreaElement)?.value;
     const status = (document.getElementById('edit-status') as HTMLSelectElement)?.value;
-
-    if (!name) { alert('نام دسته‌بندی ضوری است'); return; }
-
-    setCategories(categories.map(c => 
-      c.id === selectedCategory.id 
-        ? { ...c, name, slug: slug || name.toLowerCase().replace(/\s+/g, '-'), description, status: status as Category['status'], image: editImage || c.image }
-        : c
-    ));
-    setEditImage(null);
-    setShowEditModal(false);
+    if (!name) { alert('نام ضروری است'); return; }
+    try {
+      await api.updateCategory(selectedCategory.id, { name, slug: slug || name.toLowerCase().replace(/\s+/g, '-'), description: description || '', image: editImage?.url || selectedCategory.image?.url || null, status });
+      await refreshCategories();
+      setEditImage(null); setShowEditModal(false);
+    } catch (e) { alert('خطا در بروزرسانی'); }
   };
 
-  const handleDeleteCategory = (id: string) => {
+  const handleDeleteCategory = async (id: string) => {
     const cat = categories.find(c => c.id === id);
-    if (cat && cat.productCount > 0) {
-      alert(`امکان حذف دسته‌بندی "${cat.name}" وجود ندارد چون ${cat.productCount} محصول دارد`);
-      return;
-    }
-    if (confirm('آیا از حذف این دسته‌بندی اطمینان دارید؟')) {
-      setCategories(categories.filter(c => c.id !== id));
+    if (cat && cat.productCount > 0) { alert(`"${cat.name}" محصول دارد`); return; }
+    if (confirm('آیا از حذف اطمینان دارید؟')) {
+      try { await api.deleteCategory(id); await refreshCategories(); } catch (e) { alert('خطا'); }
     }
   };
 
