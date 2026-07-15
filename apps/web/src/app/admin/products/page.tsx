@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Icons } from '../../components/Icons';
+import { api } from '../../lib/api';
 
 interface ProductImage {
   id: string;
@@ -43,26 +44,17 @@ export default function ProductsPage() {
   const addFileInputRef = useRef<HTMLInputElement>(null);
   const [addModalImages, setAddModalImages] = useState<ProductImage[]>([]);
 
-  // Load products from localStorage or use demo data
+  // Load products from API
   useEffect(() => {
-    const saved = localStorage.getItem('admin_products');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setProducts(parsed);
-      setFilteredProducts(parsed);
-    } else {
-      const demoProducts: Product[] = [
-        { id: '1', name: 'iPhone 15 Pro Max', sku: 'IPH-15-PM-256', category: 'موبایل', brand: 'Apple', description: 'گوشی هوشمند اپل آیفون ۱۵ پرو مکس با تراشه A17 Pro', price: 1199, compareAtPrice: 1299, stock: 45, status: 'active', sales: 234, rating: 4.8, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=1', name: 'front.jpg', size: 245000 }, { id: '2', url: 'https://picsum.photos/400/300?random=2', name: 'back.jpg', size: 198000 }] },
-        { id: '2', name: 'MacBook Pro M3 14"', sku: 'MBP-M3-14', category: 'لپتاپ', brand: 'Apple', description: 'لپتاپ اپل مک\u200cبوک پرو با تراشه M3', price: 1999, compareAtPrice: 2199, stock: 12, status: 'active', sales: 89, rating: 4.9, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=3', name: 'front.jpg', size: 312000 }] },
-        { id: '3', name: 'Sony WH-1000XM5', sku: 'SONY-WH1000', category: 'هدفون', brand: 'Sony', description: 'هدفون بی\u200cسیم سونی با حذف نویز', price: 349, compareAtPrice: 399, stock: 78, status: 'active', sales: 456, rating: 4.7, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=4', name: 'front.jpg', size: 89000 }] },
-        { id: '4', name: 'Samsung Galaxy S24', sku: 'SAM-S24', category: 'موبایل', brand: 'Samsung', description: 'گوشی هوشمند سامسونگ گلکسی اس ۲۴', price: 899, compareAtPrice: 999, stock: 56, status: 'active', sales: 187, rating: 4.6, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=5', name: 'front.jpg', size: 178000 }] },
-        { id: '5', name: 'Nike Air Max 90', sku: 'NIKE-AM90', category: 'کفش', brand: 'Nike', description: 'کفش ورزشی نایک ایرمکس ۹۰', price: 129, compareAtPrice: 150, stock: 156, status: 'active', sales: 567, rating: 4.5, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=6', name: 'main.jpg', size: 145000 }] },
-        { id: '6', name: 'iPad Air M2', sku: 'IPAD-AIR', category: 'تبلت', brand: 'Apple', description: 'تبلت اپل آیپد ایر با تراشه M2', price: 599, compareAtPrice: 649, stock: 23, status: 'active', sales: 123, rating: 4.8, images: [{ id: '1', url: 'https://picsum.photos/400/300?random=7', name: 'front.jpg', size: 198000 }] },
-      ];
-      setProducts(demoProducts);
-      setFilteredProducts(demoProducts);
-      localStorage.setItem('admin_products', JSON.stringify(demoProducts));
-    }
+    api.getProducts().then((data: any[]) => {
+      const mapped = data.map((p: any) => ({
+        ...p,
+        category: p.category?.name || p.categoryId || '',
+        status: p.status?.toLowerCase() || 'active',
+      }));
+      setProducts(mapped);
+      setFilteredProducts(mapped);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -76,12 +68,16 @@ export default function ProductsPage() {
     setFilteredProducts(result);
   }, [searchQuery, statusFilter, categoryFilter, products]);
 
-  // Auto-save to localStorage
-  useEffect(() => {
-    if (products.length > 0) {
-      localStorage.setItem('admin_products', JSON.stringify(products));
-    }
-  }, [products]);
+  // Auto-refresh from API after mutations
+  const refreshProducts = async () => {
+    const data = await api.getProducts() as any[];
+    const mapped = data.map((p: any) => ({
+      ...p,
+      category: p.category?.name || p.categoryId || '',
+      status: p.status?.toLowerCase() || 'active',
+    }));
+    setProducts(mapped);
+  };
 
   const categories = [...new Set(products.map(p => p.category))];
 
@@ -142,7 +138,7 @@ export default function ProductsPage() {
     setEditMode(true);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!selectedProduct) return;
     
     const name = (document.getElementById('edit-name') as HTMLInputElement)?.value;
@@ -160,24 +156,32 @@ export default function ProductsPage() {
       return;
     }
 
-    setProducts(products.map(p => 
-      p.id === selectedProduct.id 
-        ? { ...p, name, sku, category, brand, description, price, compareAtPrice: comparePrice || undefined, stock, status: status as Product['status'], images: [...editImages] }
-        : p
-    ));
-    setEditMode(false);
-    setShowProductModal(false);
-    alert('محصول با موفقیت بروزرسانی شد!');
+    try {
+      await api.updateProduct(selectedProduct.id, {
+        name, sku, brand, description, price,
+        compareAtPrice: comparePrice || null,
+        stock,
+        status: status?.toUpperCase() || 'ACTIVE',
+        images: editImages.map(img => ({ url: img.url, name: img.name })),
+      });
+      await refreshProducts();
+      setEditMode(false);
+      setShowProductModal(false);
+      alert('محصول با موفقیت بروزرسانی شد!');
+    } catch (e) { alert('خطا در بروزرسانی'); }
   };
 
-  const handleDeleteProduct = (productId: string) => {
+  const handleDeleteProduct = async (productId: string) => {
     if (confirm('آیا از حذف این محصول اطمینان دارید؟')) {
-      setProducts(products.filter(p => p.id !== productId));
-      setShowProductModal(false);
+      try {
+        await api.deleteProduct(productId);
+        await refreshProducts();
+        setShowProductModal(false);
+      } catch (e) { alert('خطا در حذف'); }
     }
   };
 
-  const handleAddProduct = () => {
+  const handleAddProduct = async () => {
     const name = (document.getElementById('add-name') as HTMLInputElement)?.value;
     const sku = (document.getElementById('add-sku') as HTMLInputElement)?.value;
     const category = (document.getElementById('add-category') as HTMLSelectElement)?.value;
@@ -188,15 +192,17 @@ export default function ProductsPage() {
 
     if (!name || !sku || !category || !price) { alert('لطفاً فیلدهای ضوری را پر کنید'); return; }
 
-    const newProduct: Product = {
-      id: String(Date.now()), name, sku, category, brand, description, price, stock,
-      status: 'draft', sales: 0, rating: 0, images: [...addModalImages]
-    };
-
-    setProducts([newProduct, ...products]);
-    setAddModalImages([]);
-    setShowAddModal(false);
-    alert('محصول با موفقیت اضافه شد!');
+    try {
+      await api.createProduct({
+        name, sku, brand, description, price, stock,
+        status: 'DRAFT',
+        images: addModalImages.map(img => ({ url: img.url, name: img.name })),
+      });
+      await refreshProducts();
+      setAddModalImages([]);
+      setShowAddModal(false);
+      alert('محصول با موفقیت اضافه شد!');
+    } catch (e) { alert('خطا در اضافه کردن'); }
   };
 
   const productStats = {

@@ -6,3 +6,130 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      Role     @default(CUSTOMER)
+  phone     String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  CUSTOMER
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?
+  parentId    String?
+  parent      Category? @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  products    Product[]
+  status      String    @default("active")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id             String         @id @default(uuid())
+  name           String
+  sku            String         @unique
+  slug           String         @unique
+  description    String?
+  price          Float
+  compareAtPrice Float?
+  stock          Int            @default(0)
+  status         ProductStatus  @default(DRAFT)
+  brand          String?
+  rating         Float          @default(0)
+  sales          Int            @default(0)
+  categoryId     String?
+  category       Category?      @relation(fields: [categoryId], references: [id])
+  images         ProductImage[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  ARCHIVED
+}
+
+model ProductImage {
+  id        String  @id @default(uuid())
+  url       String
+  name      String
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Campaign {
+  id          String   @id @default(uuid())
+  name        String
+  type        String
+  status      String   @default("active")
+  discount    String
+  startDate   String
+  endDate     String
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Coupon {
+  id         String   @id @default(uuid())
+  code       String   @unique
+  type       String
+  value      String
+  usageCount Int      @default(0)
+  maxUsage   Int      @default(100)
+  status     String   @default("active")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Banner {
+  id        String       @id @default(uuid())
+  name      String
+  position  String
+  images    BannerImage[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model BannerImage {
+  id       String @id @default(uuid())
+  url      String
+  name     String
+  bannerId String
+  banner   Banner @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  customerName String
+  amount      Float
+  status      OrderStatus @default(PENDING)
+  items       Int         @default(1)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
