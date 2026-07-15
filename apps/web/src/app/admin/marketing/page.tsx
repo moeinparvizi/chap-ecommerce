@@ -113,9 +113,9 @@ export default function MarketingPage() {
   const handleDeleteCoupon = async (id: string) => { if (confirm('حذف شود؟')) { await api.deleteCoupon(id); await refreshData(); } };
   const handleDeleteBanner = async (id: string) => { if (confirm('حذف شود؟')) { await api.deleteBanner(id); await refreshData(); } };
 
-  const btnGreen: React.CSSProperties = { padding: '8px 16px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' };
-  const btnSmall: React.CSSProperties = { padding: '4px 8px', background: 'var(--hover-bg)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '4px' };
-  const btnSmallRed: React.CSSProperties = { ...btnSmall, background: 'var(--badge-danger-bg)', color: 'var(--badge-danger-text)' };
+  const btnGreen = 'btn btn-success btn-sm';
+  const btnSmall = 'btn btn-ghost btn-xs';
+  const btnSmallRed = 'btn btn-danger btn-xs';
   const tdStyle: React.CSSProperties = { padding: '12px', fontSize: '13px', borderBottom: '1px solid var(--border-light)' };
   const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 12px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', background: 'var(--input-bg)', color: 'var(--text)' };
   const modalTitle: React.CSSProperties = { margin: 0, fontSize: '16px', fontWeight: 600 };
@@ -126,7 +126,7 @@ export default function MarketingPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h2 style={{ margin: 0 }}>کمپین\u200cها</h2>
-            <button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} style={btnGreen}><Icons.Plus size={14} /> جدید</button>
+            <button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} className={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
           <div className="table-container">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -139,7 +139,7 @@ export default function MarketingPage() {
                     <td style={tdStyle}>{c.name}</td><td style={tdStyle}>{c.type}</td>
                     <td style={{ ...tdStyle, color: '#22c55e', fontWeight: 600 }}>{c.discount}</td>
                     <td style={tdStyle}><span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '11px', background: c.status === 'active' ? 'var(--badge-success-bg)' : 'var(--hover-bg)', color: c.status === 'active' ? 'var(--badge-success-text)' : 'var(--text-secondary)' }}>{c.status === 'active' ? 'فعال' : c.status === 'scheduled' ? 'برنامه\u200cریزی شده' : 'پایان یافته'}</span></td>
-                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCampaignModal(true); }} style={btnSmall}><Icons.Edit size={14} /></button><button onClick={() => handleDeleteCampaign(c.id)} style={btnSmallRed}><Icons.Trash size={14} /></button></div></td>
+                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCampaignModal(true); }} className={btnSmall}><Icons.Edit size={14} /></button><button onClick={() => handleDeleteCampaign(c.id)} className={btnSmallRed}><Icons.Trash size={14} /></button></div></td>
                   </tr>
                 ))}
               </tbody>
@@ -151,7 +151,7 @@ export default function MarketingPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h2 style={{ margin: 0 }}>کوپن\u200cها</h2>
-            <button onClick={() => { setEditingItem(null); setShowCouponModal(true); }} style={btnGreen}><Icons.Plus size={14} /> جدید</button>
+            <button onClick={() => { setEditingItem(null); setShowCouponModal(true); }} className={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
           <div className="table-container">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -164,7 +164,7 @@ export default function MarketingPage() {
                     <td style={{ ...tdStyle, fontFamily: 'monospace', fontWeight: 600 }}>{c.code}</td><td style={tdStyle}>{c.type}</td>
                     <td style={{ ...tdStyle, color: '#22c55e', fontWeight: 600 }}>{c.value}</td>
                     <td style={tdStyle}><span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '11px', background: c.status === 'active' ? 'var(--badge-success-bg)' : 'var(--hover-bg)', color: c.status === 'active' ? 'var(--badge-success-text)' : 'var(--text-secondary)' }}>{c.status === 'active' ? 'فعال' : 'غیرفعال'}</span></td>
-                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCouponModal(true); }} style={btnSmall}><Icons.Edit size={14} /> ویرایش</button><button onClick={() => handleDeleteCoupon(c.id)} style={btnSmallRed}><Icons.Trash size={14} /> حذف</button></div></td>
+                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCouponModal(true); }} className={btnSmall}><Icons.Edit size={14} /> ویرایش</button><button onClick={() => handleDeleteCoupon(c.id)} className={btnSmallRed}><Icons.Trash size={14} /> حذف</button></div></td>
                   </tr>
                 ))}
               </tbody>
@@ -176,7 +176,7 @@ export default function MarketingPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h2 style={{ margin: 0 }}>بنرها</h2>
-            <button onClick={() => { setEditingItem(null); setBannerImages([]); setShowBannerModal(true); }} style={btnGreen}><Icons.Plus size={14} /> جدید</button>
+            <button onClick={() => { setEditingItem(null); setBannerImages([]); setShowBannerModal(true); }} className={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
             {banners.map(b => (
@@ -188,8 +188,8 @@ export default function MarketingPage() {
                   <h3 style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600 }}>{b.name}</h3>
                   <p style={{ margin: '0 0 8px', fontSize: '12px', color: 'var(--text-muted)' }}>موقعیت: {b.position}</p>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    <button onClick={() => { setEditingItem(b); setBannerImages(b.images); setShowBannerModal(true); }} style={btnSmall}><Icons.Edit size={14} /> ویرایش</button>
-                    <button onClick={() => handleDeleteBanner(b.id)} style={btnSmallRed}><Icons.Trash size={14} /> حذف</button>
+                    <button onClick={() => { setEditingItem(b); setBannerImages(b.images); setShowBannerModal(true); }} className={btnSmall}><Icons.Edit size={14} /> ویرایش</button>
+                    <button onClick={() => handleDeleteBanner(b.id)} className={btnSmallRed}><Icons.Trash size={14} /> حذف</button>
                   </div>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export default function MarketingPage() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-              <button onClick={handleSaveCampaign} style={{ ...btnGreen, flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
+              <button onClick={handleSaveCampaign} className="btn btn-success" style={{ flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
               <button onClick={closeAllModals} className="btn btn-ghost" style={{ flex: 1 }}>انصراف</button>
             </div>
           </div>
@@ -270,7 +270,7 @@ export default function MarketingPage() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-              <button onClick={handleSaveCoupon} style={{ ...btnGreen, flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
+              <button onClick={handleSaveCoupon} className="btn btn-success" style={{ flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
               <button onClick={closeAllModals} className="btn btn-ghost" style={{ flex: 1 }}>انصراف</button>
             </div>
           </div>
@@ -308,7 +308,7 @@ export default function MarketingPage() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-              <button onClick={handleSaveBanner} style={{ ...btnGreen, flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
+              <button onClick={handleSaveBanner} className="btn btn-success" style={{ flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
               <button onClick={closeAllModals} className="btn btn-ghost" style={{ flex: 1 }}>انصراف</button>
             </div>
           </div>

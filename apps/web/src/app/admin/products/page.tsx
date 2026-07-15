@@ -335,7 +335,7 @@ export default function ProductsPage() {
           <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{editMode ? <>{<Icons.Edit size={14} />} ویرایش محصول</> : <>{<Icons.Package size={14} />} جزئیات محصول</>}</h2>
-              <button onClick={() => { setShowProductModal(false); setEditMode(false); }} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
+              <button onClick={() => { setShowProductModal(false); setEditMode(false); }} className="btn-close">×</button>
             </div>
 
             {editMode ? (
@@ -373,7 +373,7 @@ export default function ProductsPage() {
 
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                   <button onClick={handleSaveEdit} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Save size={14} />} ذخیره تغییرات</button>
-                  <button onClick={() => setEditMode(false)} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
+                  <button onClick={() => setEditMode(false)} className="btn btn-ghost" style={{ flex: 1 }} >انصراف</button>
                 </div>
               </div>
             ) : (
@@ -416,7 +416,7 @@ export default function ProductsPage() {
                 <div style={{ display: 'flex', gap: '8px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
                   <button onClick={handleEditProduct} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Edit size={14} />} ویرایش</button>
                   <button onClick={() => handleDeleteProduct(selectedProduct.id)} style={{ flex: 1, padding: '10px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Trash size={14} />} حذف</button>
-                  <button onClick={() => { setShowProductModal(false); setEditMode(false); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>بستن</button>
+                  <button onClick={() => { setShowProductModal(false); setEditMode(false); }} className="btn btn-ghost" style={{ flex: 1 }} >بستن</button>
                 </div>
               </div>
             )}
@@ -430,7 +430,7 @@ export default function ProductsPage() {
           <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{<Icons.Plus size={14} />} افزودن محصول جدید</h2>
-              <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
+              <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} className="btn-close">×</button>
             </div>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام محصول *</label><input id="add-name" style={inputStyle} placeholder="نام محصول" /></div>
@@ -466,7 +466,7 @@ export default function ProductsPage() {
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleAddProduct} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Check size={14} />} ذخیره</button>
-                <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
+                <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} className="btn btn-ghost" style={{ flex: 1 }} >انصراف</button>
               </div>
             </div>
           </div>

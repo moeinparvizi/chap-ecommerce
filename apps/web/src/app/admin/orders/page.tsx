@@ -177,7 +177,7 @@ export default function OrdersPage() {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>جزئیات سفارش {selectedOrder.orderNumber}</h2>
-              <button onClick={() => setShowOrderModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px' }}><Icons.X size={20} /></button>
+              <button onClick={() => setShowOrderModal(false)} className="btn-close"><Icons.X size={20} /></button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>

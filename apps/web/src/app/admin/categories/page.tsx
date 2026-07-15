@@ -185,7 +185,7 @@ export default function CategoriesPage() {
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleAddCategory} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Check size={14} />} ذخیره</button>
-                <button onClick={() => { setShowAddModal(false); setAddImage(null); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
+                <button onClick={() => { setShowAddModal(false); setAddImage(null); }} className="btn btn-ghost" style={{ flex: 1 }} >انصراف</button>
               </div>
             </div>
           </div>
@@ -218,7 +218,7 @@ export default function CategoriesPage() {
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleEditCategory} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Save size={14} />} ذخیره تغییرات</button>
-                <button onClick={() => { setShowEditModal(false); setEditImage(null); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
+                <button onClick={() => { setShowEditModal(false); setEditImage(null); }} className="btn btn-ghost" style={{ flex: 1 }} >انصراف</button>
               </div>
             </div>
           </div>
