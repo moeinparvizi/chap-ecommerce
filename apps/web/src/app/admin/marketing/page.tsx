@@ -4,7 +4,8 @@ import { useState, useRef } from 'react';
 
 interface Campaign { id: string; name: string; type: string; status: 'active' | 'scheduled' | 'ended'; discount: string; startDate: string; endDate: string; usageCount: number; }
 interface Coupon { id: string; code: string; type: string; value: string; usageCount: number; maxUsage: number; status: 'active' | 'expired' | 'disabled'; }
-interface Banner { id: string; name: string; position: string; imageUrl: string; }
+interface BannerImage { id: string; url: string; name: string; }
+interface Banner { id: string; name: string; position: string; images: BannerImage[]; }
 
 export default function MarketingPage() {
   const [activeTab, setActiveTab] = useState('campaigns');
@@ -17,8 +18,8 @@ export default function MarketingPage() {
     { id: '2', code: 'SUMMER30', type: 'درصدی', value: '30%', usageCount: 456, maxUsage: 1000, status: 'active' },
   ]);
   const [banners, setBanners] = useState<Banner[]>([
-    { id: '1', name: 'بنر اصلی صفحه خانه', position: 'home', imageUrl: '' },
-    { id: '2', name: 'بنر دسته‌بندی موبایل', position: 'mobile', imageUrl: '' },
+    { id: '1', name: 'بنر اصلی صفحه خانه', position: 'home', images: [] },
+    { id: '2', name: 'بنر دسته‌بندی موبایل', position: 'mobile', images: [] },
   ]);
 
   // Modals
@@ -27,8 +28,8 @@ export default function MarketingPage() {
   const [showBannerModal, setShowBannerModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   
-  // Banner image state
-  const [bannerImage, setBannerImage] = useState<string>('');
+  // Banner images state (up to 5)
+  const [bannerImages, setBannerImages] = useState<BannerImage[]>([]);
   const bannerFileRef = useRef<HTMLInputElement>(null);
 
   const tabs = [
@@ -43,16 +44,38 @@ export default function MarketingPage() {
     setShowCouponModal(false);
     setShowBannerModal(false);
     setEditingItem(null);
-    setBannerImage('');
+    setBannerImages([]);
   };
 
-  // Banner image upload
+  // Banner image upload (supports up to 5 images)
   const handleBannerImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = (event) => setBannerImage(event.target?.result as string);
-    reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (!files) return;
+    
+    const remainingSlots = 5 - bannerImages.length;
+    if (remainingSlots <= 0) {
+      alert('حداکثر ۵ تصویر مجاز است');
+      return;
+    }
+
+    Array.from(files).slice(0, remainingSlots).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const newImage: BannerImage = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          url: event.target?.result as string,
+          name: file.name,
+        };
+        setBannerImages(prev => [...prev, newImage]);
+      };
+      reader.readAsDataURL(file);
+    });
+    if (bannerFileRef.current) bannerFileRef.current.value = '';
+  };
+
+  const removeBannerImage = (id: string) => {
+    setBannerImages(prev => prev.filter(img => img.id !== id));
   };
 
   // Save handlers
@@ -87,22 +110,22 @@ export default function MarketingPage() {
     const position = (document.getElementById('b-position') as HTMLSelectElement)?.value;
     if (!name) { alert('نام ضروری است'); return; }
     if (editingItem) {
-      setBanners(banners.map(b => b.id === editingItem.id ? { ...b, name, position, imageUrl: bannerImage || b.imageUrl } : b));
+      setBanners(banners.map(b => b.id === editingItem.id ? { ...b, name, position, images: [...bannerImages] } : b));
     } else {
-      setBanners([{ id: Date.now().toString(), name, position, imageUrl: bannerImage }, ...banners]);
+      setBanners([{ id: Date.now().toString(), name, position, images: [...bannerImages] }, ...banners]);
     }
     closeAllModals();
   };
 
   const openAddBanner = () => {
     setEditingItem(null);
-    setBannerImage('');
+    setBannerImages([]);
     setShowBannerModal(true);
   };
 
   const openEditBanner = (banner: Banner) => {
     setEditingItem(banner);
-    setBannerImage(banner.imageUrl);
+    setBannerImages([...banner.images]);
     setShowBannerModal(true);
   };
 
@@ -181,12 +204,13 @@ export default function MarketingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
             {banners.map(b => (
               <div key={b.id} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
-                <div style={{ height: '150px', background: b.imageUrl ? `url(${b.imageUrl}) center/cover` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {!b.imageUrl && <span style={{ color: 'white', fontSize: '24px', fontWeight: 600 }}>{b.name}</span>}
+                <div style={{ height: '150px', background: b.images.length > 0 ? `url(${b.images[0].url}) center/cover` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                  {b.images.length === 0 && <span style={{ color: 'white', fontSize: '24px', fontWeight: 600 }}>{b.name}</span>}
+                  {b.images.length > 0 && <span style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '11px' }}>📷 {b.images.length} تصویر</span>}
                 </div>
                 <div style={{ padding: '12px' }}>
                   <p style={{ margin: 0, fontWeight: 500 }}>{b.name}</p>
-                  <p style={{ margin: '4px 0 12px', fontSize: '12px', color: '#64748b' }}>موقعیت: {b.position}</p>
+                  <p style={{ margin: '4px 0 12px', fontSize: '12px', color: '#64748b' }}>موقعیت: {b.position} | {b.images.length} تصویر</p>
                   <div style={{ display: 'flex', gap: '4px' }}>
                     <button onClick={() => openEditBanner(b)} style={{ ...btnSmall, flex: 1 }}>✏️ ویرایش</button>
                     <button onClick={() => setBanners(banners.filter(x => x.id !== b.id))} style={{ ...btnSmallRed, flex: 1 }}>🗑️ حذف</button>
@@ -255,10 +279,10 @@ export default function MarketingPage() {
         </div>
       )}
 
-      {/* Banner Modal with Image Upload */}
+      {/* Banner Modal with Multi-Image Upload */}
       {showBannerModal && (
         <div style={overlay} onClick={closeAllModals}>
-          <div style={{ ...modal, maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
+          <div style={{ ...modal, maxWidth: '550px' }} onClick={e => e.stopPropagation()}>
             <h2 style={modalTitle}>{editingItem ? '✏️ ویرایش بنر' : '🖼️ بنر جدید'}</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام بنر *</label><input id="b-name" style={inputStyle} defaultValue={editingItem?.name || ''} placeholder="نام بنر" /></div>
@@ -272,43 +296,41 @@ export default function MarketingPage() {
                 </select>
               </div>
 
-              {/* Image Upload Section */}
+              {/* Multi-Image Upload Section */}
               <div>
-                <label style={labelStyle}>تصویر بنر</label>
+                <label style={labelStyle}>تصاویر بنر ({bannerImages.length} از ۵)</label>
                 
-                {/* Image Preview */}
-                {bannerImage && (
-                  <div style={{ position: 'relative', marginBottom: '8px' }}>
-                    <img 
-                      src={bannerImage} 
-                      alt="Preview" 
-                      style={{ 
-                        width: '100%', 
-                        height: '150px', 
-                        objectFit: 'cover', 
-                        borderRadius: '8px',
-                        border: '1px solid #e5e7eb'
-                      }} 
-                    />
-                    <button 
-                      onClick={() => setBannerImage('')}
-                      style={{ 
-                        position: 'absolute', 
-                        top: '8px', 
-                        right: '8px', 
-                        width: '28px', 
-                        height: '28px', 
-                        borderRadius: '50%', 
-                        background: '#ef4444', 
-                        color: 'white', 
-                        border: 'none', 
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >×</button>
+                {/* Images Grid */}
+                {bannerImages.length > 0 && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px', marginBottom: '12px' }}>
+                    {bannerImages.map((image) => (
+                      <div key={image.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+                        <img 
+                          src={image.url} 
+                          alt={image.name} 
+                          style={{ width: '100%', height: '80px', objectFit: 'cover' }} 
+                        />
+                        <button 
+                          onClick={() => removeBannerImage(image.id)}
+                          style={{ 
+                            position: 'absolute', 
+                            top: '4px', 
+                            right: '4px', 
+                            width: '20px', 
+                            height: '20px', 
+                            borderRadius: '50%', 
+                            background: '#ef4444', 
+                            color: 'white', 
+                            border: 'none', 
+                            cursor: 'pointer',
+                            fontSize: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >×</button>
+                      </div>
+                    ))}
                   </div>
                 )}
 
@@ -317,25 +339,27 @@ export default function MarketingPage() {
                   ref={bannerFileRef}
                   type="file" 
                   accept="image/*" 
+                  multiple
                   style={{ display: 'none' }} 
                   onChange={handleBannerImageUpload} 
                 />
                 <button 
                   onClick={() => bannerFileRef.current?.click()}
+                  disabled={bannerImages.length >= 5}
                   style={{ 
                     width: '100%', 
-                    padding: '16px', 
-                    border: '2px dashed ' + (bannerImage ? '#22c55e' : '#d1d5db'), 
+                    padding: '12px', 
+                    border: '2px dashed ' + (bannerImages.length >= 5 ? '#d1d5db' : '#d1d5db'), 
                     borderRadius: '8px', 
-                    background: bannerImage ? '#f0fdf4' : 'white', 
-                    cursor: 'pointer',
-                    color: bannerImage ? '#166534' : '#64748b',
+                    background: bannerImages.length >= 5 ? '#f9fafb' : 'white', 
+                    cursor: bannerImages.length >= 5 ? 'not-allowed' : 'pointer',
+                    color: bannerImages.length >= 5 ? '#9ca3af' : '#64748b',
                     fontSize: '14px'
                   }}
                 >
-                  {bannerImage ? '✅ تصویر انتخاب شد - کلیک برای تغییر' : '📷 کلیک کنید تا تصویر انتخاب کنید'}
+                  {bannerImages.length >= 5 ? 'حداکثر ۵ تصویر' : '📷 کلیک کنید تا تصویر انتخاب کنید'}
                 </button>
-                <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#94a3b8' }}>PNG, JPG (حداکثر ۵MB)</p>
+                <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#94a3b8' }}>PNG, JPG (حداکثر ۵ تصویر)</p>
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
