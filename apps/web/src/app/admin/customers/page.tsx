@@ -50,27 +50,27 @@ export default function CustomersPage() {
       <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 24px' }}>مدیریت مشتریان</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        {[{ l: 'کل مشتریان', v: stats.total, c: '#0f172a' }, { l: 'فعال', v: stats.active, c: '#22c55e' }, { l: 'درآمد کل', v: `$${stats.totalRevenue.toLocaleString()}`, c: '#2563eb' }, { l: 'میانگین خرید', v: `$${stats.avgSpent}`, c: '#8b5cf6' }].map((s, i) => (
-          <div key={i} style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-            <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>{s.l}</p>
+        {[{ l: 'کل مشتریان', v: stats.total, c: 'var(--text)' }, { l: 'فعال', v: stats.active, c: '#22c55e' }, { l: 'درآمد کل', v: `$${stats.totalRevenue.toLocaleString()}`, c: '#2563eb' }, { l: 'میانگین خرید', v: `$${stats.avgSpent}`, c: '#8b5cf6' }].map((s, i) => (
+          <div key={i} style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>{s.l}</p>
             <p style={{ fontSize: '22px', fontWeight: 700, color: s.c, margin: '4px 0' }}>{s.v}</p>
           </div>
         ))}
       </div>
 
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-        <input type="text" placeholder="جستجو..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ flex: 1, padding: '10px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '14px', outline: 'none' }} />
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
+        <input type="text" placeholder="جستجو..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ flex: 1, padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }} />
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
           <option value="all">همه</option>
           <option value="active">فعال</option>
           <option value="inactive">غیرفعال</option>
         </select>
       </div>
 
-      <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+      <div style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#f8fafc' }}>
+            <tr style={{ background: 'var(--table-header-bg)' }}>
               <th style={thStyle}>نام</th>
               <th style={thStyle}>ایمیل</th>
               <th style={thStyle}>تلفن</th>
@@ -82,7 +82,7 @@ export default function CustomersPage() {
           </thead>
           <tbody>
             {filtered.map(c => (
-              <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+              <tr key={c.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
                 <td style={tdStyle}><strong>{c.name}</strong></td>
                 <td style={tdStyle}>{c.email}</td>
                 <td style={tdStyle} dir="ltr">{c.phone}</td>
@@ -103,5 +103,5 @@ export default function CustomersPage() {
   );
 }
 
-const thStyle = { textAlign: 'right' as const, padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' };
-const tdStyle = { padding: '14px 16px', fontSize: '14px', color: '#374151' };
+const thStyle = { textAlign: 'right' as const, padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' };
+const tdStyle = { padding: '14px 16px', fontSize: '14px', color: 'var(--text)' };

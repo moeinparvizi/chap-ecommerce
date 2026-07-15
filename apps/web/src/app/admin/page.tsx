@@ -23,15 +23,15 @@ export default function AdminDashboard() {
       }}>
         {stats.map((stat, index) => (
           <div key={index} style={{
-            background: 'white',
+            background: 'var(--card-bg)',
             borderRadius: '12px',
             padding: '20px',
             boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>{stat.label}</p>
-                <p style={{ fontSize: '28px', fontWeight: 700, color: '#0f172a', margin: '8px 0' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>{stat.label}</p>
+                <p style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text)', margin: '8px 0' }}>
                   {stat.value}
                 </p>
                 <span style={{ 
@@ -61,12 +61,12 @@ export default function AdminDashboard() {
 
       {/* Quick Actions */}
       <div style={{
-        background: 'white',
+        background: 'var(--card-bg)',
         borderRadius: '12px',
         padding: '24px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
       }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#0f172a', margin: '0 0 16px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text)', margin: '0 0 16px' }}>
           دسترسی سریع
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
@@ -74,8 +74,8 @@ export default function AdminDashboard() {
             onClick={() => router.push('/admin/orders')}
             style={{
               padding: '16px',
-              background: '#f8fafc',
-              border: '1px solid #e5e7eb',
+              background: 'var(--table-header-bg)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               cursor: 'pointer',
               textAlign: 'center'
@@ -88,8 +88,8 @@ export default function AdminDashboard() {
             onClick={() => router.push('/admin/products')}
             style={{
               padding: '16px',
-              background: '#f8fafc',
-              border: '1px solid #e5e7eb',
+              background: 'var(--table-header-bg)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               cursor: 'pointer',
               textAlign: 'center'
@@ -102,8 +102,8 @@ export default function AdminDashboard() {
             onClick={() => router.push('/admin/customers')}
             style={{
               padding: '16px',
-              background: '#f8fafc',
-              border: '1px solid #e5e7eb',
+              background: 'var(--table-header-bg)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               cursor: 'pointer',
               textAlign: 'center'
@@ -116,8 +116,8 @@ export default function AdminDashboard() {
             onClick={() => router.push('/admin/analytics')}
             style={{
               padding: '16px',
-              background: '#f8fafc',
-              border: '1px solid #e5e7eb',
+              background: 'var(--table-header-bg)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               cursor: 'pointer',
               textAlign: 'center'
@@ -130,8 +130,8 @@ export default function AdminDashboard() {
             onClick={() => router.push('/admin/orders')}
             style={{
               padding: '16px',
-              background: '#f8fafc',
-              border: '1px solid #e5e7eb',
+              background: 'var(--table-header-bg)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               cursor: 'pointer',
               textAlign: 'center'
@@ -144,8 +144,8 @@ export default function AdminDashboard() {
             onClick={() => router.push('/admin/settings')}
             style={{
               padding: '16px',
-              background: '#f8fafc',
-              border: '1px solid #e5e7eb',
+              background: 'var(--table-header-bg)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               cursor: 'pointer',
               textAlign: 'center'

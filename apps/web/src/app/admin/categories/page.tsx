@@ -134,22 +134,22 @@ export default function CategoriesPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: 0 }}>مدیریت دسته‌بندی‌ها</h1>
-          <p style={{ color: '#64748b', marginTop: '4px' }}>{filteredCategories.length} دسته‌بندی</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت دسته‌بندی‌ها</h1>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredCategories.length} دسته‌بندی</p>
         </div>
         <button onClick={() => { setShowAddModal(true); setUploadContext('add'); }} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>➕ افزودن دسته‌بندی</button>
       </div>
 
       {/* Search */}
       <div style={{ marginBottom: '24px' }}>
-        <input type="text" placeholder="جستجو در دسته‌بندی‌ها..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ width: '300px', padding: '10px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '14px', outline: 'none' }} />
+        <input type="text" placeholder="جستجو در دسته‌بندی‌ها..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ width: '300px', padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }} />
       </div>
 
       {/* Categories Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
         {filteredCategories.map((category) => (
-          <div key={category.id} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <div style={{ height: '150px', background: category.image ? `url(${category.image.url}) center/cover` : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div key={category.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <div style={{ height: '150px', background: category.image ? `url(${category.image.url}) center/cover` : 'var(--table-header-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {!category.image && <span style={{ fontSize: '48px', opacity: 0.3 }}>📁</span>}
               <span style={{ position: 'absolute', top: '10px', left: '10px', padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 500, background: category.status === 'active' ? '#dcfce7' : '#fee2e2', color: category.status === 'active' ? '#166534' : '#991b1b' }}>
                 {category.status === 'active' ? 'فعال' : 'غیرفعال'}
@@ -157,13 +157,13 @@ export default function CategoriesPage() {
             </div>
             <div style={{ padding: '16px' }}>
               <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600 }}>{category.name}</h3>
-              <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#94a3b8' }}>/ {category.slug}</p>
+              <p style={{ margin: '0 0 4px', fontSize: '12px', color: 'var(--text-muted)' }}>/ {category.slug}</p>
               @if (category.description) {
-                <p style={{ margin: '0 0 8px', fontSize: '13px', color: '#64748b' }}>{category.description}</p>
+                <p style={{ margin: '0 0 8px', fontSize: '13px', color: 'var(--text-secondary)' }}>{category.description}</p>
               }
               <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#2563eb' }}>📦 {category.productCount} محصول</p>
               <div style={{ display: 'flex', gap: '6px' }}>
-                <button onClick={() => openEditModal(category)} style={{ flex: 1, padding: '8px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}>✏️ ویرایش</button>
+                <button onClick={() => openEditModal(category)} style={{ flex: 1, padding: '8px', background: 'var(--hover-bg)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}>✏️ ویرایش</button>
                 <button onClick={() => handleDeleteCategory(category.id)} style={{ flex: 1, padding: '8px', background: '#fee2e2', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 500, color: '#991b1b' }}>🗑️ حذف</button>
               </div>
             </div>
@@ -174,7 +174,7 @@ export default function CategoriesPage() {
       {/* Add Modal */}
       {showAddModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowAddModal(false)}>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '500px' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '500px' }} onClick={(e) => e.stopPropagation()}>
             <h2 style={{ margin: '0 0 16px', fontSize: '18px', fontWeight: 600 }}>➕ افزودن دسته‌بندی جدید</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام دسته‌بندی *</label><input id="add-name" style={inputStyle} placeholder="نام دسته‌بندی" /></div>
@@ -189,14 +189,14 @@ export default function CategoriesPage() {
                     <button onClick={() => setAddImage(null)} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '14px' }}>×</button>
                   </div>
                 )}
-                <button onClick={() => { setUploadContext('add'); fileInputRef.current?.click(); }} style={{ width: '100%', padding: '12px', border: '2px dashed #d1d5db', borderRadius: '8px', background: 'white', cursor: 'pointer', color: '#64748b' }}>
+                <button onClick={() => { setUploadContext('add'); fileInputRef.current?.click(); }} style={{ width: '100%', padding: '12px', border: '2px dashed var(--border)', borderRadius: '8px', background: 'var(--card-bg)', cursor: 'pointer', color: 'var(--text-secondary)' }}>
                   📷 {addImage ? 'تغییر تصویر' : 'انتخاب تصویر'}
                 </button>
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleAddCategory} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>✅ ذخیره</button>
-                <button onClick={() => { setShowAddModal(false); setAddImage(null); }} style={{ flex: 1, padding: '10px', background: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
+                <button onClick={() => { setShowAddModal(false); setAddImage(null); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
               </div>
             </div>
           </div>
@@ -206,7 +206,7 @@ export default function CategoriesPage() {
       {/* Edit Modal */}
       {showEditModal && selectedCategory && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowEditModal(false)}>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '500px' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '500px' }} onClick={(e) => e.stopPropagation()}>
             <h2 style={{ margin: '0 0 16px', fontSize: '18px', fontWeight: 600 }}>✏️ ویرایش دسته‌بندی</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام دسته‌بندی *</label><input id="edit-name" defaultValue={selectedCategory.name} style={inputStyle} /></div>
@@ -222,14 +222,14 @@ export default function CategoriesPage() {
                     <button onClick={() => setEditImage(null)} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '14px' }}>×</button>
                   </div>
                 )}
-                <button onClick={() => { setUploadContext('edit'); fileInputRef.current?.click(); }} style={{ width: '100%', padding: '12px', border: '2px dashed #d1d5db', borderRadius: '8px', background: 'white', cursor: 'pointer', color: '#64748b' }}>
+                <button onClick={() => { setUploadContext('edit'); fileInputRef.current?.click(); }} style={{ width: '100%', padding: '12px', border: '2px dashed var(--border)', borderRadius: '8px', background: 'var(--card-bg)', cursor: 'pointer', color: 'var(--text-secondary)' }}>
                   📷 {editImage ? 'تغییر تصویر' : 'انتخاب تصویر'}
                 </button>
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleEditCategory} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>💾 ذخیره تغییرات</button>
-                <button onClick={() => { setShowEditModal(false); setEditImage(null); }} style={{ flex: 1, padding: '10px', background: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
+                <button onClick={() => { setShowEditModal(false); setEditImage(null); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
               </div>
             </div>
           </div>
@@ -239,5 +239,5 @@ export default function CategoriesPage() {
   );
 }
 
-const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '13px', fontWeight: 500, color: '#374151' };
-const inputStyle = { width: '100%', padding: '8px 10px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '13px', outline: 'none' };
+const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '13px', fontWeight: 500, color: 'var(--text)' };
+const inputStyle = { width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', outline: 'none' };

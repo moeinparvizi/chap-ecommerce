@@ -134,7 +134,7 @@ export default function MarketingPage() {
       <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 24px' }}>بازاریابی</h1>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '4px', marginBottom: '24px', background: 'white', borderRadius: '12px', padding: '4px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '24px', background: 'var(--card-bg)', borderRadius: '12px', padding: '4px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: activeTab === tab.id ? '#2563eb' : 'transparent', color: activeTab === tab.id ? 'white' : '#374151', cursor: 'pointer', fontWeight: 500, fontSize: '14px' }}>
             {tab.icon} {tab.label}
@@ -154,7 +154,7 @@ export default function MarketingPage() {
               <thead><tr style={theadStyle}><th style={thStyle}>نام</th><th style={thStyle}>نوع</th><th style={thStyle}>تخفیف</th><th style={thStyle}>وضعیت</th><th style={thStyle}>عملیات</th></tr></thead>
               <tbody>
                 {campaigns.map(c => (
-                  <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                  <tr key={c.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
                     <td style={tdStyle}><strong>{c.name}</strong></td>
                     <td style={tdStyle}>{c.type}</td>
                     <td style={tdStyle}><span style={{ color: '#22c55e', fontWeight: 600 }}>{c.discount}</span></td>
@@ -177,13 +177,13 @@ export default function MarketingPage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             {coupons.map(c => (
-              <div key={c.id} style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
+              <div key={c.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontFamily: 'monospace', fontWeight: 700 }}>{c.code}</span>
                   <span style={badge(c.status)}>{c.status === 'active' ? 'فعال' : 'منقضی'}</span>
                 </div>
                 <p style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#2563eb' }}>{c.value}</p>
-                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>استفاده: {c.usageCount} / {c.maxUsage || '∞'}</p>
+                <p style={{ margin: '0 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>استفاده: {c.usageCount} / {c.maxUsage || '∞'}</p>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <button onClick={() => { setEditingItem(c); setShowCouponModal(true); }} style={{ ...btnSmall, flex: 1 }}>✏️ ویرایش</button>
                   <button onClick={() => setCoupons(coupons.filter(x => x.id !== c.id))} style={{ ...btnSmallRed, flex: 1 }}>🗑️ حذف</button>
@@ -203,14 +203,14 @@ export default function MarketingPage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
             {banners.map(b => (
-              <div key={b.id} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+              <div key={b.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <div style={{ height: '150px', background: b.images.length > 0 ? `url(${b.images[0].url}) center/cover` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                   {b.images.length === 0 && <span style={{ color: 'white', fontSize: '24px', fontWeight: 600 }}>{b.name}</span>}
                   {b.images.length > 0 && <span style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '11px' }}>📷 {b.images.length} تصویر</span>}
                 </div>
                 <div style={{ padding: '12px' }}>
                   <p style={{ margin: 0, fontWeight: 500 }}>{b.name}</p>
-                  <p style={{ margin: '4px 0 12px', fontSize: '12px', color: '#64748b' }}>موقعیت: {b.position} | {b.images.length} تصویر</p>
+                  <p style={{ margin: '4px 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>موقعیت: {b.position} | {b.images.length} تصویر</p>
                   <div style={{ display: 'flex', gap: '4px' }}>
                     <button onClick={() => openEditBanner(b)} style={{ ...btnSmall, flex: 1 }}>✏️ ویرایش</button>
                     <button onClick={() => setBanners(banners.filter(x => x.id !== b.id))} style={{ ...btnSmallRed, flex: 1 }}>🗑️ حذف</button>
@@ -224,13 +224,13 @@ export default function MarketingPage() {
 
       {/* Newsletter */}
       {activeTab === 'newsletter' && (
-        <div style={{ background: 'white', borderRadius: '12px', padding: '24px' }}>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px' }}>
           <h2 style={{ margin: '0 0 16px' }}>خبرنامه</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
             {[{ l: 'مشترکین', v: '2,345', c: '#2563eb' }, { l: 'نرخ بازشدن', v: '45%', c: '#22c55e' }, { l: 'نرخ کلیک', v: '12%', c: '#8b5cf6' }].map((s, i) => (
-              <div key={i} style={{ textAlign: 'center', padding: '16px', background: '#f8fafc', borderRadius: '8px' }}>
+              <div key={i} style={{ textAlign: 'center', padding: '16px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
                 <p style={{ fontSize: '24px', fontWeight: 700, color: s.c, margin: 0 }}>{s.v}</p>
-                <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748b' }}>{s.l}</p>
+                <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-secondary)' }}>{s.l}</p>
               </div>
             ))}
           </div>
@@ -304,7 +304,7 @@ export default function MarketingPage() {
                 {bannerImages.length > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px', marginBottom: '12px' }}>
                     {bannerImages.map((image) => (
-                      <div key={image.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+                      <div key={image.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                         <img 
                           src={image.url} 
                           alt={image.name} 
@@ -349,7 +349,7 @@ export default function MarketingPage() {
                   style={{ 
                     width: '100%', 
                     padding: '12px', 
-                    border: '2px dashed ' + (bannerImages.length >= 5 ? '#d1d5db' : '#d1d5db'), 
+                    border: '2px dashed var(--border)', 
                     borderRadius: '8px', 
                     background: bannerImages.length >= 5 ? '#f9fafb' : 'white', 
                     cursor: bannerImages.length >= 5 ? 'not-allowed' : 'pointer',
@@ -359,7 +359,7 @@ export default function MarketingPage() {
                 >
                   {bannerImages.length >= 5 ? 'حداکثر ۵ تصویر' : '📷 کلیک کنید تا تصویر انتخاب کنید'}
                 </button>
-                <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#94a3b8' }}>PNG, JPG (حداکثر ۵ تصویر)</p>
+                <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>PNG, JPG (حداکثر ۵ تصویر)</p>
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
@@ -375,16 +375,16 @@ export default function MarketingPage() {
 }
 
 const overlay = { position: 'fixed' as const, top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 };
-const modal = { background: 'white', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '450px' };
+const modal = { background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '450px' };
 const modalTitle = { margin: '0 0 16px', fontSize: '18px', fontWeight: 600 };
-const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '13px', fontWeight: 500, color: '#374151' };
-const inputStyle = { width: '100%', padding: '8px 10px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '13px', outline: 'none' };
+const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '13px', fontWeight: 500, color: 'var(--text)' };
+const inputStyle = { width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', outline: 'none' };
 const btnGreen = { padding: '10px 16px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500, fontSize: '13px' };
-const btnGray = { padding: '10px 16px', background: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' };
-const btnSmall = { padding: '6px 12px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' };
+const btnGray = { padding: '10px 16px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' };
+const btnSmall = { padding: '6px 12px', background: 'var(--hover-bg)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' };
 const btnSmallRed = { padding: '6px 12px', background: '#fee2e2', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: '#991b1b' };
-const thStyle = { textAlign: 'right' as const, padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' };
-const tdStyle = { padding: '14px 16px', fontSize: '14px', color: '#374151' };
-const tableContainer = { background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' };
-const theadStyle = { background: '#f8fafc' };
+const thStyle = { textAlign: 'right' as const, padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' };
+const tdStyle = { padding: '14px 16px', fontSize: '14px', color: 'var(--text)' };
+const tableContainer = { background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' };
+const theadStyle = { background: 'var(--table-header-bg)' };
 const badge = (status: string) => ({ padding: '4px 10px', borderRadius: '20px', fontSize: '12px', background: status === 'active' ? '#dcfce7' : '#e5e7eb', color: status === 'active' ? '#166534' : '#374151' });

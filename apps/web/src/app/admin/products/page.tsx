@@ -200,8 +200,8 @@ export default function ProductsPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: 0 }}>مدیریت محصولات</h1>
-          <p style={{ color: '#64748b', marginTop: '4px' }}>{filteredProducts.length} محصول | {productStats.totalImages} تصویر</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت محصولات</h1>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredProducts.length} محصول | {productStats.totalImages} تصویر</p>
         </div>
         <button onClick={() => setShowAddModal(true)} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>➕ افزودن محصول</button>
       </div>
@@ -209,14 +209,14 @@ export default function ProductsPage() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         {[
-          { label: 'کل', value: productStats.total, color: '#0f172a' },
+          { label: 'کل', value: productStats.total, color: 'var(--text)' },
           { label: 'فعال', value: productStats.active, color: '#22c55e' },
           { label: 'پیش‌نویس', value: productStats.draft, color: '#f59e0b' },
           { label: 'ناموجود', value: productStats.outOfStock, color: '#ef4444' },
           { label: 'تصاویر', value: productStats.totalImages, color: '#8b5cf6' },
         ].map((s, i) => (
-          <div key={i} style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-            <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>{s.label}</p>
+          <div key={i} style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>{s.label}</p>
             <p style={{ fontSize: '24px', fontWeight: 700, color: s.color, margin: '4px 0' }}>{s.value}</p>
           </div>
         ))}
@@ -224,13 +224,13 @@ export default function ProductsPage() {
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <input type="text" placeholder="جستجو..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ flex: 1, minWidth: '200px', padding: '10px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '14px', outline: 'none' }} />
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
+        <input type="text" placeholder="جستجو..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ flex: 1, minWidth: '200px', padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }} />
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
           <option value="all">همه وضعیت‌ها</option>
           <option value="active">فعال</option>
           <option value="draft">پیش‌نویس</option>
         </select>
-        <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
+        <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
           <option value="all">همه دسته‌بندی‌ها</option>
           {categories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
         </select>
@@ -242,23 +242,23 @@ export default function ProductsPage() {
           const mainImage = product.images.length > 0 ? product.images[0].url : null;
           const discount = product.compareAtPrice ? Math.round((1 - product.price / product.compareAtPrice) * 100) : 0;
           return (
-            <div key={product.id} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <div key={product.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <div style={{ height: '180px', background: mainImage ? `url(${mainImage}) center/cover` : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                 {!mainImage && <span style={{ fontSize: '48px' }}>📦</span>}
                 {discount > 0 && <span style={{ position: 'absolute', top: '10px', right: '10px', background: '#ef4444', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>-{discount}%</span>}
                 {product.images.length > 0 && <span style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px' }}>📷 {product.images.length}</span>}
               </div>
               <div style={{ padding: '12px' }}>
-                <p style={{ fontSize: '10px', color: '#64748b', margin: '0 0 2px' }}>{product.brand}</p>
+                <p style={{ fontSize: '10px', color: 'var(--text-secondary)', margin: '0 0 2px' }}>{product.brand}</p>
                 <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 6px', lineHeight: '1.3' }}>{product.name}</h3>
-                <p style={{ fontSize: '11px', color: '#94a3b8', margin: '0 0 6px' }}>{product.description?.substring(0, 50)}...</p>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 6px' }}>{product.description?.substring(0, 50)}...</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                   <span style={{ color: '#fbbf24', fontSize: '12px' }}>★ {product.rating}</span>
-                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>({product.sales} فروش)</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({product.sales} فروش)</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
                   <span style={{ fontSize: '15px', fontWeight: 700 }}>${product.price}</span>
-                  {product.compareAtPrice && <span style={{ fontSize: '11px', color: '#94a3b8', textDecoration: 'line-through' }}>${product.compareAtPrice}</span>}
+                  {product.compareAtPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${product.compareAtPrice}</span>}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '11px', color: product.stock === 0 ? '#ef4444' : '#22c55e' }}>{product.stock === 0 ? 'ناموجود' : `${product.stock} موجود`}</span>
@@ -273,7 +273,7 @@ export default function ProductsPage() {
       {/* Product Modal */}
       {showProductModal && selectedProduct && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowProductModal(false)}>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{editMode ? '✏️ ویرایش محصول' : '📦 جزئیات محصول'}</h2>
               <button onClick={() => { setShowProductModal(false); setEditMode(false); }} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
@@ -303,40 +303,40 @@ export default function ProductsPage() {
                   <label style={labelStyle}>تصاویر ({editImages.length} از ۱۰)</label>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px', marginBottom: '8px' }}>
                     {editImages.map(img => (
-                      <div key={img.id} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+                      <div key={img.id} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                         <img src={img.url} alt={img.name} style={{ width: '100%', height: '80px', objectFit: 'cover' }} />
                         <button onClick={() => removeImage(img.id, 'edit')} style={{ position: 'absolute', top: '2px', right: '2px', width: '20px', height: '20px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '10px' }}>×</button>
                       </div>
                     ))}
-                    {editImages.length < 10 && <div onClick={() => editFileInputRef.current?.click()} style={{ height: '80px', border: '2px dashed #d1d5db', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: '#9ca3af' }}>+</div>}
+                    {editImages.length < 10 && <div onClick={() => editFileInputRef.current?.click()} style={{ height: '80px', border: '2px dashed var(--border)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: '#9ca3af' }}>+</div>}
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                   <button onClick={handleSaveEdit} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>💾 ذخیره تغییرات</button>
-                  <button onClick={() => setEditMode(false)} style={{ flex: 1, padding: '10px', background: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
+                  <button onClick={() => setEditMode(false)} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
                 </div>
               </div>
             ) : (
               /* VIEW MODE */
               <div>
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-                  <div style={{ width: '150px', height: '150px', borderRadius: '8px', overflow: 'hidden', background: '#f8fafc', flexShrink: 0 }}>
+                  <div style={{ width: '150px', height: '150px', borderRadius: '8px', overflow: 'hidden', background: 'var(--table-header-bg)', flexShrink: 0 }}>
                     {selectedProduct.images.length > 0 ? <img src={selectedProduct.images[0].url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '48px' }}>📦</div>}
                   </div>
                   <div style={{ flex: 1 }}>
                     <h3 style={{ margin: '0 0 4px' }}>{selectedProduct.name}</h3>
-                    <p style={{ margin: '0 0 4px', color: '#64748b', fontSize: '13px' }}>{selectedProduct.brand} | {selectedProduct.category}</p>
-                    <p style={{ margin: '0 0 8px', fontSize: '12px', color: '#94a3b8' }}>SKU: {selectedProduct.sku}</p>
-                    <p style={{ margin: '0 0 8px', color: '#64748b', fontSize: '13px' }}>{selectedProduct.description}</p>
+                    <p style={{ margin: '0 0 4px', color: 'var(--text-secondary)', fontSize: '13px' }}>{selectedProduct.brand} | {selectedProduct.category}</p>
+                    <p style={{ margin: '0 0 8px', fontSize: '12px', color: 'var(--text-muted)' }}>SKU: {selectedProduct.sku}</p>
+                    <p style={{ margin: '0 0 8px', color: 'var(--text-secondary)', fontSize: '13px' }}>{selectedProduct.description}</p>
                     <p style={{ margin: 0, fontSize: '20px', fontWeight: 700 }}>${selectedProduct.price}</p>
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '16px' }}>
                   {[{ l: 'موجودی', v: selectedProduct.stock, c: selectedProduct.stock === 0 ? '#ef4444' : '#22c55e' }, { l: 'فروش', v: selectedProduct.sales, c: '#0f172a' }, { l: 'امتیاز', v: `★ ${selectedProduct.rating}`, c: '#fbbf24' }, { l: 'تصاویر', v: selectedProduct.images.length, c: '#8b5cf6' }].map((s, i) => (
-                    <div key={i} style={{ padding: '10px', background: '#f8fafc', borderRadius: '6px', textAlign: 'center' }}>
-                      <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>{s.l}</p>
+                    <div key={i} style={{ padding: '10px', background: 'var(--table-header-bg)', borderRadius: '6px', textAlign: 'center' }}>
+                      <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-secondary)' }}>{s.l}</p>
                       <p style={{ margin: '4px 0 0', fontWeight: 700, color: s.c }}>{s.v}</p>
                     </div>
                   ))}
@@ -348,7 +348,7 @@ export default function ProductsPage() {
                     <p style={{ margin: '0 0 8px', fontWeight: 500, fontSize: '13px' }}>تصاویر:</p>
                     <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px' }}>
                       {selectedProduct.images.map(img => (
-                        <img key={img.id} src={img.url} alt={img.name} style={{ width: '100px', height: '80px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #e5e7eb' }} />
+                        <img key={img.id} src={img.url} alt={img.name} style={{ width: '100px', height: '80px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border)' }} />
                       ))}
                     </div>
                   </div>
@@ -357,7 +357,7 @@ export default function ProductsPage() {
                 <div style={{ display: 'flex', gap: '8px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
                   <button onClick={handleEditProduct} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>✏️ ویرایش</button>
                   <button onClick={() => handleDeleteProduct(selectedProduct.id)} style={{ flex: 1, padding: '10px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>🗑️ حذف</button>
-                  <button onClick={() => { setShowProductModal(false); setEditMode(false); }} style={{ flex: 1, padding: '10px', background: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>بستن</button>
+                  <button onClick={() => { setShowProductModal(false); setEditMode(false); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>بستن</button>
                 </div>
               </div>
             )}
@@ -368,7 +368,7 @@ export default function ProductsPage() {
       {/* Add Product Modal */}
       {showAddModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowAddModal(false)}>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>➕ افزودن محصول جدید</h2>
               <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
@@ -395,19 +395,19 @@ export default function ProductsPage() {
                 {addModalImages.length > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '6px', marginBottom: '8px' }}>
                     {addModalImages.map(img => (
-                      <div key={img.id} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+                      <div key={img.id} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                         <img src={img.url} alt="" style={{ width: '100%', height: '70px', objectFit: 'cover' }} />
                         <button onClick={() => removeImage(img.id, 'add')} style={{ position: 'absolute', top: '2px', right: '2px', width: '18px', height: '18px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '10px' }}>×</button>
                       </div>
                     ))}
                   </div>
                 )}
-                {addModalImages.length < 10 && <div onClick={() => addFileInputRef.current?.click()} style={{ border: '2px dashed #d1d5db', borderRadius: '8px', padding: '16px', textAlign: 'center', cursor: 'pointer' }}><span style={{ fontSize: '24px' }}>📷</span><p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '12px' }}>کلیک کنید تا تصویر انتخاب کنید</p></div>}
+                {addModalImages.length < 10 && <div onClick={() => addFileInputRef.current?.click()} style={{ border: '2px dashed var(--border)', borderRadius: '8px', padding: '16px', textAlign: 'center', cursor: 'pointer' }}><span style={{ fontSize: '24px' }}>📷</span><p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>کلیک کنید تا تصویر انتخاب کنید</p></div>}
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={handleAddProduct} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>✅ ذخیره</button>
-                <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} style={{ flex: 1, padding: '10px', background: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
+                <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
               </div>
             </div>
           </div>
@@ -417,5 +417,5 @@ export default function ProductsPage() {
   );
 }
 
-const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '13px', fontWeight: 500, color: '#374151' };
-const inputStyle = { width: '100%', padding: '8px 10px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '13px', outline: 'none' };
+const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '13px', fontWeight: 500, color: 'var(--text)' };
+const inputStyle = { width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', outline: 'none' };

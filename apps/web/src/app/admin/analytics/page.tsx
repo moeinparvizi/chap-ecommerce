@@ -34,7 +34,7 @@ export default function AnalyticsPage() {
     <div style={{ padding: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>تحلیل‌ها و گزارشات</h1>
-        <select value={period} onChange={e => setPeriod(e.target.value)} style={{ padding: '8px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '14px' }}>
+        <select value={period} onChange={e => setPeriod(e.target.value)} style={{ padding: '8px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px' }}>
           <option value="7days">۷ روز اخیر</option>
           <option value="30days">۳۰ روز اخیر</option>
           <option value="90days">۹۰ روز اخیر</option>
@@ -52,10 +52,10 @@ export default function AnalyticsPage() {
           { title: 'میانگین سفارش', value: `$${stats.avgOrderValue.current}`, change: stats.avgOrderValue.change, icon: '🛒', color: '#ec4899' },
           { title: 'ترک سبد', value: `${stats.cartAbandonment.current}%`, change: stats.cartAbandonment.change, icon: '🛒', color: '#ef4444' },
         ].map((stat, i) => (
-          <div key={i} style={{ background: 'white', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb' }}>
+          <div key={i} style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '20px', border: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <p style={{ margin: 0, fontSize: '13px', color: '#64748b' }}>{stat.title}</p>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)' }}>{stat.title}</p>
                 <p style={{ fontSize: '24px', fontWeight: 700, margin: '8px 0' }}>{stat.value}</p>
                 <span style={{ fontSize: '12px', color: stat.change >= 0 ? '#22c55e' : '#ef4444' }}>
                   {stat.change >= 0 ? '↑' : '↓'} {Math.abs(stat.change)}%
@@ -71,25 +71,25 @@ export default function AnalyticsPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
         {/* Revenue Chart Placeholder */}
-        <div style={{ background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e5e7eb' }}>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', border: '1px solid var(--border)' }}>
           <h3 style={{ margin: '0 0 16px', fontSize: '16px' }}>نمودار درآمد</h3>
           <div style={{ height: '250px', background: 'linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%)', borderRadius: '8px', display: 'flex', alignItems: 'flex-end', padding: '20px', gap: '8px' }}>
             {[40, 65, 45, 80, 60, 90, 75].map((h, i) => (
               <div key={i} style={{ flex: 1, background: 'linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%)', height: `${h}%`, borderRadius: '4px 4px 0 0', minHeight: '20px' }}></div>
             ))}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: '#94a3b8' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: 'var(--text-muted)' }}>
             {['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'].map(d => <span key={d}>{d}</span>)}
           </div>
         </div>
 
         {/* Top Products */}
-        <div style={{ background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e5e7eb' }}>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', border: '1px solid var(--border)' }}>
           <h3 style={{ margin: '0 0 16px', fontSize: '16px' }}>پرفروش‌ترین محصولات</h3>
           {topProducts.map((p, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < topProducts.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 600 }}>{i + 1}</span>
+                <span style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--hover-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 600 }}>{i + 1}</span>
                 <span style={{ fontSize: '13px' }}>{p.name}</span>
               </div>
               <div style={{ textAlign: 'left' }}>
@@ -102,25 +102,25 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Recent Sales */}
-      <div style={{ background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e5e7eb', marginTop: '20px' }}>
+      <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', border: '1px solid var(--border)', marginTop: '20px' }}>
         <h3 style={{ margin: '0 0 16px', fontSize: '16px' }}>فروش روزانه</h3>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
-              <th style={{ textAlign: 'right', padding: '10px', fontSize: '13px', color: '#64748b' }}>تاریخ</th>
-              <th style={{ textAlign: 'right', padding: '10px', fontSize: '13px', color: '#64748b' }}>سفارشات</th>
-              <th style={{ textAlign: 'right', padding: '10px', fontSize: '13px', color: '#64748b' }}>درآمد</th>
-              <th style={{ textAlign: 'right', padding: '10px', fontSize: '13px', color: '#64748b' }}>نمودار</th>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <th style={{ textAlign: 'right', padding: '10px', fontSize: '13px', color: 'var(--text-secondary)' }}>تاریخ</th>
+              <th style={{ textAlign: 'right', padding: '10px', fontSize: '13px', color: 'var(--text-secondary)' }}>سفارشات</th>
+              <th style={{ textAlign: 'right', padding: '10px', fontSize: '13px', color: 'var(--text-secondary)' }}>درآمد</th>
+              <th style={{ textAlign: 'right', padding: '10px', fontSize: '13px', color: 'var(--text-secondary)' }}>نمودار</th>
             </tr>
           </thead>
           <tbody>
             {recentSales.map((sale, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+              <tr key={i} style={{ borderBottom: '1px solid var(--border-light)' }}>
                 <td style={{ padding: '12px 10px', fontSize: '14px' }}>{sale.date}</td>
                 <td style={{ padding: '12px 10px', fontWeight: 500 }}>{sale.orders}</td>
                 <td style={{ padding: '12px 10px', fontWeight: 600, color: '#22c55e' }}>${sale.revenue.toLocaleString()}</td>
                 <td style={{ padding: '12px 10px' }}>
-                  <div style={{ width: '100%', height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: '8px', background: 'var(--hover-bg)', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{ width: `${(sale.revenue / 6000) * 100}%`, height: '100%', background: '#3b82f6', borderRadius: '4px' }}></div>
                   </div>
                 </td>

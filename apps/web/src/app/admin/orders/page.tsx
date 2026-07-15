@@ -148,10 +148,10 @@ export default function OrdersPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>
             مدیریت سفارشات
           </h1>
-          <p style={{ color: '#64748b', marginTop: '4px' }}>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>
             {filteredOrders.length} سفارش یافت شد
           </p>
         </div>
@@ -173,32 +173,32 @@ export default function OrdersPage() {
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>کل سفارشات</p>
-          <p style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: '4px 0' }}>{orderStats.total}</p>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>کل سفارشات</p>
+          <p style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: '4px 0' }}>{orderStats.total}</p>
         </div>
-        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>در انتظار</p>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>در انتظار</p>
           <p style={{ fontSize: '24px', fontWeight: 700, color: '#f59e0b', margin: '4px 0' }}>{orderStats.pending}</p>
         </div>
-        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>در حال پردازش</p>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>در حال پردازش</p>
           <p style={{ fontSize: '24px', fontWeight: 700, color: '#8b5cf6', margin: '4px 0' }}>{orderStats.processing}</p>
         </div>
-        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>ارسال شده</p>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>ارسال شده</p>
           <p style={{ fontSize: '24px', fontWeight: 700, color: '#3b82f6', margin: '4px 0' }}>{orderStats.shipped}</p>
         </div>
-        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>تحویل شده</p>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>تحویل شده</p>
           <p style={{ fontSize: '24px', fontWeight: 700, color: '#22c55e', margin: '4px 0' }}>{orderStats.delivered}</p>
         </div>
-        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>لغو شده</p>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>لغو شده</p>
           <p style={{ fontSize: '24px', fontWeight: 700, color: '#ef4444', margin: '4px 0' }}>{orderStats.cancelled}</p>
         </div>
-        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>درآمد کل</p>
+        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>درآمد کل</p>
           <p style={{ fontSize: '24px', fontWeight: 700, color: '#22c55e', margin: '4px 0' }}>${orderStats.totalRevenue.toLocaleString()}</p>
         </div>
       </div>
@@ -219,7 +219,7 @@ export default function OrdersPage() {
             flex: 1,
             minWidth: '250px',
             padding: '10px 16px',
-            border: '1px solid #e5e7eb',
+            border: '1px solid var(--border)',
             borderRadius: '8px',
             fontSize: '14px',
             outline: 'none'
@@ -230,7 +230,7 @@ export default function OrdersPage() {
           onChange={(e) => setStatusFilter(e.target.value)}
           style={{
             padding: '10px 16px',
-            border: '1px solid #e5e7eb',
+            border: '1px solid var(--border)',
             borderRadius: '8px',
             fontSize: '14px',
             outline: 'none',
@@ -250,7 +250,7 @@ export default function OrdersPage() {
           onChange={(e) => setPaymentFilter(e.target.value)}
           style={{
             padding: '10px 16px',
-            border: '1px solid #e5e7eb',
+            border: '1px solid var(--border)',
             borderRadius: '8px',
             fontSize: '14px',
             outline: 'none',
@@ -267,36 +267,36 @@ export default function OrdersPage() {
 
       {/* Orders Table */}
       <div style={{
-        background: 'white',
+        background: 'var(--card-bg)',
         borderRadius: '12px',
         overflow: 'hidden',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
       }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#f8fafc' }}>
-              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' }}>
+            <tr style={{ background: 'var(--table-header-bg)' }}>
+              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 شماره سفارش
               </th>
-              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' }}>
+              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 مشتری
               </th>
-              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' }}>
+              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 اقلام
               </th>
-              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' }}>
+              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 مبلغ کل
               </th>
-              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' }}>
+              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 وضعیت سفارش
               </th>
-              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' }}>
+              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 وضعیت پرداخت
               </th>
-              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' }}>
+              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 تاریخ
               </th>
-              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#374151', borderBottom: '1px solid #e5e7eb' }}>
+              <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 عملیات
               </th>
             </tr>
@@ -307,18 +307,18 @@ export default function OrdersPage() {
               const paymentColor = getPaymentStatusColor(order.paymentStatus);
               
               return (
-                <tr key={order.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                <tr key={order.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
                   <td style={{ padding: '14px 16px', fontWeight: 600, color: '#2563eb' }}>
                     {order.orderNumber}
                   </td>
                   <td style={{ padding: '14px 16px' }}>
-                    <div style={{ fontWeight: 500, color: '#0f172a' }}>{order.customer}</div>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>{order.email}</div>
+                    <div style={{ fontWeight: 500, color: 'var(--text)' }}>{order.customer}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{order.email}</div>
                   </td>
-                  <td style={{ padding: '14px 16px', color: '#374151' }}>
+                  <td style={{ padding: '14px 16px', color: 'var(--text)' }}>
                     {order.items} قلم
                   </td>
-                  <td style={{ padding: '14px 16px', fontWeight: 600, color: '#0f172a' }}>
+                  <td style={{ padding: '14px 16px', fontWeight: 600, color: 'var(--text)' }}>
                     ${order.total.toFixed(2)}
                   </td>
                   <td style={{ padding: '14px 16px' }}>
@@ -345,7 +345,7 @@ export default function OrdersPage() {
                       {getPaymentStatusText(order.paymentStatus)}
                     </span>
                   </td>
-                  <td style={{ padding: '14px 16px', fontSize: '13px', color: '#64748b' }}>
+                  <td style={{ padding: '14px 16px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                     {order.createdAt}
                   </td>
                   <td style={{ padding: '14px 16px' }}>
@@ -353,12 +353,12 @@ export default function OrdersPage() {
                       onClick={() => handleViewOrder(order)}
                       style={{
                         padding: '6px 12px',
-                        background: '#f1f5f9',
+                        background: 'var(--hover-bg)',
                         border: 'none',
                         borderRadius: '6px',
                         fontSize: '12px',
                         cursor: 'pointer',
-                        color: '#374151'
+                        color: 'var(--text)'
                       }}
                     >
                       مشاهده
@@ -386,7 +386,7 @@ export default function OrdersPage() {
           zIndex: 1000
         }} onClick={() => setShowOrderModal(false)}>
           <div style={{
-            background: 'white',
+            background: 'var(--card-bg)',
             borderRadius: '12px',
             padding: '24px',
             width: '100%',
@@ -400,7 +400,7 @@ export default function OrdersPage() {
               </h2>
               <button
                 onClick={() => setShowOrderModal(false)}
-                style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#64748b' }}
+                style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: 'var(--text-secondary)' }}
               >
                 ×
               </button>
@@ -408,30 +408,30 @@ export default function OrdersPage() {
 
             <div style={{ display: 'grid', gap: '16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>مشتری</p>
+                <div style={{ padding: '12px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>مشتری</p>
                   <p style={{ margin: '4px 0 0', fontWeight: 600 }}>{selectedOrder.customer}</p>
                 </div>
-                <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>ایمیل</p>
+                <div style={{ padding: '12px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>ایمیل</p>
                   <p style={{ margin: '4px 0 0', fontWeight: 500 }}>{selectedOrder.email}</p>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>مبلغ کل</p>
+                <div style={{ padding: '12px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>مبلغ کل</p>
                   <p style={{ margin: '4px 0 0', fontWeight: 700, fontSize: '18px' }}>${selectedOrder.total.toFixed(2)}</p>
                 </div>
-                <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>تعداد اقلام</p>
+                <div style={{ padding: '12px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>تعداد اقلام</p>
                   <p style={{ margin: '4px 0 0', fontWeight: 600 }}>{selectedOrder.items} قلم</p>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>وضعیت سفارش</p>
+                <div style={{ padding: '12px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>وضعیت سفارش</p>
                   <span style={{
                     display: 'inline-block',
                     marginTop: '4px',
@@ -445,8 +445,8 @@ export default function OrdersPage() {
                     {getStatusText(selectedOrder.status)}
                   </span>
                 </div>
-                <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>وضعیت پرداخت</p>
+                <div style={{ padding: '12px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>وضعیت پرداخت</p>
                   <span style={{
                     display: 'inline-block',
                     marginTop: '4px',
@@ -463,18 +463,18 @@ export default function OrdersPage() {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>تاریخ ایجاد</p>
+                <div style={{ padding: '12px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>تاریخ ایجاد</p>
                   <p style={{ margin: '4px 0 0', fontWeight: 500 }}>{selectedOrder.createdAt}</p>
                 </div>
-                <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>آخرین بروزرسانی</p>
+                <div style={{ padding: '12px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>آخرین بروزرسانی</p>
                   <p style={{ margin: '4px 0 0', fontWeight: 500 }}>{selectedOrder.updatedAt}</p>
                 </div>
               </div>
 
               {/* Status Update */}
-              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
                 <p style={{ margin: '0 0 8px', fontWeight: 500, fontSize: '14px' }}>تغییر وضعیت:</p>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
@@ -485,7 +485,7 @@ export default function OrdersPage() {
                       style={{
                         padding: '6px 12px',
                         fontSize: '12px',
-                        border: '1px solid #e5e7eb',
+                        border: '1px solid var(--border)',
                         borderRadius: '6px',
                         background: selectedOrder.status === status ? getStatusColor(status).bg : 'white',
                         color: selectedOrder.status === status ? getStatusColor(status).text : '#374151',
