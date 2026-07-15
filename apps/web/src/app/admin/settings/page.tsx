@@ -177,11 +177,11 @@ export default function SettingsPage() {
               <h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات پرداخت</h2>
               <div style={{ display: 'grid', gap: '16px' }}>
                 <div style={{ padding: '16px', background: 'rgba(16,185,129,0.1)', borderRadius: '10px', border: '1px solid rgba(16,185,129,0.2)' }}>
-                  <p style={{ margin: 0, color: '#10b981', fontWeight: 500 }}>{Icons.Check size={14} /} Stripe متصل است</p>
+                  <p style={{ margin: 0, color: '#10b981', fontWeight: 500 }}>{<Icons.Check size={14} />} Stripe متصل است</p>
                   <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-secondary)' }}>پرداخت آماده استفاده است</p>
                 </div>
                 <div style={{ padding: '16px', background: 'rgba(245,158,11,0.1)', borderRadius: '10px', border: '1px solid rgba(245,158,11,0.2)' }}>
-                  <p style={{ margin: 0, color: '#f59e0b', fontWeight: 500 }}>{Icons.AlertCircle size={14} /} PayPal در انتظار پیکربندی</p>
+                  <p style={{ margin: 0, color: '#f59e0b', fontWeight: 500 }}>{<Icons.AlertCircle size={14} />} PayPal در انتظار پیکربندی</p>
                   <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-secondary)' }}>برای فعال‌سازی تنظیمات را وارد کنید</p>
                 </div>
               </div>
@@ -264,7 +264,7 @@ export default function SettingsPage() {
                   </select>
                   {settings.maintenanceMode === 'true' && (
                     <p style={{ marginTop: '8px', padding: '8px', background: 'rgba(245,158,11,0.1)', borderRadius: '6px', fontSize: '13px', color: '#f59e0b' }}>
-                      {Icons.AlertCircle size={14} /} سایت در حالت تعمیرات است و برای کاربران قابل دسترسی نیست
+                      {<Icons.AlertCircle size={14} />} سایت در حالت تعمیرات است و برای کاربران قابل دسترسی نیست
                     </p>
                   )}
                 </div>
@@ -275,7 +275,7 @@ export default function SettingsPage() {
           {/* Save Button */}
           <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'flex-end' }}>
             <button className="btn btn-success" onClick={handleSave} disabled={saving}>
-              {saving ? <>{Icons.Save size={14} /} در حال ذخیره...</> : <>{Icons.Save size={14} /} ذخیره تنظیمات</>}
+              {saving ? <>{<Icons.Save size={14} />} در حال ذخیره...</> : <>{<Icons.Save size={14} />} ذخیره تنظیمات</>}
             </button>
           </div>
         </div>

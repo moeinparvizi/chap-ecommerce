@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Icons } from '../components/Icons';
+import { Icons } from '../../components/Icons';
 
 export default function AnalyticsPage() {
   const [period, setPeriod] = useState('7days');

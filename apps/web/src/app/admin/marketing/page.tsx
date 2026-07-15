@@ -148,7 +148,7 @@ export default function MarketingPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h2 style={{ margin: 0 }}>کمپین‌ها</h2>
-            <button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} style={btnGreen}>{Icons.Plus size={14} /} جدید</button>
+            <button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} style={btnGreen}>{<Icons.Plus size={14} />} جدید</button>
           </div>
           <div style={tableContainer}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -160,7 +160,7 @@ export default function MarketingPage() {
                     <td style={tdStyle}>{c.type}</td>
                     <td style={tdStyle}><span style={{ color: '#22c55e', fontWeight: 600 }}>{c.discount}</span></td>
                     <td style={tdStyle}><span style={badge(c.status)}>{c.status === 'active' ? 'فعال' : c.status === 'scheduled' ? 'برنامه‌ریزی' : 'پایان'}</span></td>
-                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCampaignModal(true); }} style={btnSmall}>{Icons.Edit size={14} /}</button><button onClick={() => setCampaigns(campaigns.filter(x => x.id !== c.id))} style={btnSmallRed}>{Icons.Trash size={14} /}</button></div></td>
+                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCampaignModal(true); }} style={btnSmall}>{<Icons.Edit size={14} />}</button><button onClick={() => setCampaigns(campaigns.filter(x => x.id !== c.id))} style={btnSmallRed}>{<Icons.Trash size={14} />}</button></div></td>
                   </tr>
                 ))}
               </tbody>
@@ -174,7 +174,7 @@ export default function MarketingPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h2 style={{ margin: 0 }}>کوپن‌ها</h2>
-            <button onClick={() => { setEditingItem(null); setShowCouponModal(true); }} style={btnGreen}>{Icons.Plus size={14} /} جدید</button>
+            <button onClick={() => { setEditingItem(null); setShowCouponModal(true); }} style={btnGreen}>{<Icons.Plus size={14} />} جدید</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             {coupons.map(c => (
@@ -186,8 +186,8 @@ export default function MarketingPage() {
                 <p style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#2563eb' }}>{c.value}</p>
                 <p style={{ margin: '0 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>استفاده: {c.usageCount} / {c.maxUsage || '∞'}</p>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <button onClick={() => { setEditingItem(c); setShowCouponModal(true); }} style={{ ...btnSmall, flex: 1 }}>{Icons.Edit size={14} /} ویرایش</button>
-                  <button onClick={() => setCoupons(coupons.filter(x => x.id !== c.id))} style={{ ...btnSmallRed, flex: 1 }}>{Icons.Trash size={14} /} حذف</button>
+                  <button onClick={() => { setEditingItem(c); setShowCouponModal(true); }} style={{ ...btnSmall, flex: 1 }}>{<Icons.Edit size={14} />} ویرایش</button>
+                  <button onClick={() => setCoupons(coupons.filter(x => x.id !== c.id))} style={{ ...btnSmallRed, flex: 1 }}>{<Icons.Trash size={14} />} حذف</button>
                 </div>
               </div>
             ))}
@@ -200,21 +200,21 @@ export default function MarketingPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h2 style={{ margin: 0 }}>بنرها</h2>
-            <button onClick={openAddBanner} style={btnGreen}>{Icons.Plus size={14} /} جدید</button>
+            <button onClick={openAddBanner} style={btnGreen}>{<Icons.Plus size={14} />} جدید</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
             {banners.map(b => (
               <div key={b.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <div style={{ height: '150px', background: b.images.length > 0 ? `url(${b.images[0].url}) center/cover` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                   {b.images.length === 0 && <span style={{ color: 'white', fontSize: '24px', fontWeight: 600 }}>{b.name}</span>}
-                  {b.images.length > 0 && <span style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '11px' }}>{Icons.Image size={11} /} {b.images.length} تصویر</span>}
+                  {b.images.length > 0 && <span style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '11px' }}>{<Icons.Image size={14} />} {b.images.length} تصویر</span>}
                 </div>
                 <div style={{ padding: '12px' }}>
                   <p style={{ margin: 0, fontWeight: 500 }}>{b.name}</p>
                   <p style={{ margin: '4px 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>موقعیت: {b.position} | {b.images.length} تصویر</p>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    <button onClick={() => openEditBanner(b)} style={{ ...btnSmall, flex: 1 }}>{Icons.Edit size={14} /} ویرایش</button>
-                    <button onClick={() => setBanners(banners.filter(x => x.id !== b.id))} style={{ ...btnSmallRed, flex: 1 }}>{Icons.Trash size={14} /} حذف</button>
+                    <button onClick={() => openEditBanner(b)} style={{ ...btnSmall, flex: 1 }}>{<Icons.Edit size={14} />} ویرایش</button>
+                    <button onClick={() => setBanners(banners.filter(x => x.id !== b.id))} style={{ ...btnSmallRed, flex: 1 }}>{<Icons.Trash size={14} />} حذف</button>
                   </div>
                 </div>
               </div>
@@ -244,7 +244,7 @@ export default function MarketingPage() {
       {showCampaignModal && (
         <div style={overlay} onClick={closeAllModals}>
           <div style={modal} onClick={e => e.stopPropagation()}>
-            <h2 style={modalTitle}>{editingItem ? <>{Icons.Edit size={14} /} ویرایش کمپین</> : <>{Icons.Plus size={14} /} کمپین جدید</>}</h2>
+            <h2 style={modalTitle}>{editingItem ? <>{<Icons.Edit size={14} />} ویرایش کمپین</> : <>{<Icons.Plus size={14} />} کمپین جدید</>}</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام کمپین *</label><input id="c-name" style={inputStyle} defaultValue={editingItem?.name || ''} placeholder="نام کمپین" /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -252,7 +252,7 @@ export default function MarketingPage() {
                 <div><label style={labelStyle}>تخفیف</label><input id="c-discount" style={inputStyle} defaultValue={editingItem?.discount || ''} placeholder="20%" /></div>
               </div>
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleSaveCampaign} style={{ ...btnGreen, flex: 1 }}>{Icons.Save size={14} /} ذخیره</button>
+                <button onClick={handleSaveCampaign} style={{ ...btnGreen, flex: 1 }}>{<Icons.Save size={14} />} ذخیره</button>
                 <button onClick={closeAllModals} style={{ ...btnGray, flex: 1 }}>انصراف</button>
               </div>
             </div>
@@ -264,7 +264,7 @@ export default function MarketingPage() {
       {showCouponModal && (
         <div style={overlay} onClick={closeAllModals}>
           <div style={modal} onClick={e => e.stopPropagation()}>
-            <h2 style={modalTitle}>{editingItem ? <>{Icons.Edit size={14} /} ویرایش کوپن</> : <>{Icons.Tag size={14} /} کوپن جدید</>}</h2>
+            <h2 style={modalTitle}>{editingItem ? <>{<Icons.Edit size={14} />} ویرایش کوپن</> : <>{<Icons.Tag size={14} />} کوپن جدید</>}</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>کد کوپن *</label><input id="cp-code" style={inputStyle} defaultValue={editingItem?.code || ''} placeholder="SUMMER30" /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -272,7 +272,7 @@ export default function MarketingPage() {
                 <div><label style={labelStyle}>مقدار *</label><input id="cp-value" style={inputStyle} defaultValue={editingItem?.value || ''} placeholder="20" /></div>
               </div>
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleSaveCoupon} style={{ ...btnGreen, flex: 1 }}>{Icons.Save size={14} /} ذخیره</button>
+                <button onClick={handleSaveCoupon} style={{ ...btnGreen, flex: 1 }}>{<Icons.Save size={14} />} ذخیره</button>
                 <button onClick={closeAllModals} style={{ ...btnGray, flex: 1 }}>انصراف</button>
               </div>
             </div>
@@ -284,7 +284,7 @@ export default function MarketingPage() {
       {showBannerModal && (
         <div style={overlay} onClick={closeAllModals}>
           <div style={{ ...modal, maxWidth: '550px' }} onClick={e => e.stopPropagation()}>
-            <h2 style={modalTitle}>{editingItem ? <>{Icons.Edit size={14} /} ویرایش بنر</> : <>{Icons.Image size={14} /} بنر جدید</>}</h2>
+            <h2 style={modalTitle}>{editingItem ? <>{<Icons.Edit size={14} />} ویرایش بنر</> : <>{<Icons.Image size={14} />} بنر جدید</>}</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div><label style={labelStyle}>نام بنر *</label><input id="b-name" style={inputStyle} defaultValue={editingItem?.name || ''} placeholder="نام بنر" /></div>
               
@@ -358,13 +358,13 @@ export default function MarketingPage() {
                     fontSize: '14px'
                   }}
                 >
-                  {bannerImages.length >= 5 ? 'حداکثر ۵ تصویر' : <>{Icons.Image size={14} /} کلیک کنید تا تصویر انتخاب کنید</>}
+                  {bannerImages.length >= 5 ? 'حداکثر ۵ تصویر' : <>{<Icons.Image size={14} />} کلیک کنید تا تصویر انتخاب کنید</>}
                 </button>
                 <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>PNG, JPG (حداکثر ۵ تصویر)</p>
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleSaveBanner} style={{ ...btnGreen, flex: 1 }}>{Icons.Save size={14} /} ذخیره</button>
+                <button onClick={handleSaveBanner} style={{ ...btnGreen, flex: 1 }}>{<Icons.Save size={14} />} ذخیره</button>
                 <button onClick={closeAllModals} style={{ ...btnGray, flex: 1 }}>انصراف</button>
               </div>
             </div>

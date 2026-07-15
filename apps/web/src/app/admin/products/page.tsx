@@ -204,7 +204,7 @@ export default function ProductsPage() {
           <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت محصولات</h1>
           <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredProducts.length} محصول | {productStats.totalImages} تصویر</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{Icons.Plus size={14} /} افزودن محصول</button>
+        <button onClick={() => setShowAddModal(true)} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Plus size={14} />} افزودن محصول</button>
       </div>
 
       {/* Stats */}
@@ -245,16 +245,16 @@ export default function ProductsPage() {
           return (
             <div key={product.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <div style={{ height: '180px', background: mainImage ? `url(${mainImage}) center/cover` : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                {!mainImage && <span style={{ fontSize: '48px' }}>{Icons.Package size={48} /}</span>}
+                {!mainImage && <span style={{ fontSize: '48px' }}>{<Icons.Package size={14} />}</span>}
                 {discount > 0 && <span style={{ position: 'absolute', top: '10px', right: '10px', background: '#ef4444', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>-{discount}%</span>}
-                {product.images.length > 0 && <span style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px' }}>{Icons.Image size={12} /} {product.images.length}</span>}
+                {product.images.length > 0 && <span style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '11px' }}>{<Icons.Image size={14} />} {product.images.length}</span>}
               </div>
               <div style={{ padding: '12px' }}>
                 <p style={{ fontSize: '10px', color: 'var(--text-secondary)', margin: '0 0 2px' }}>{product.brand}</p>
                 <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 6px', lineHeight: '1.3' }}>{product.name}</h3>
                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 6px' }}>{product.description?.substring(0, 50)}...</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                  <span style={{ color: '#fbbf24', fontSize: '12px' }}>{Icons.Star size={12} /} {product.rating}</span>
+                  <span style={{ color: '#fbbf24', fontSize: '12px' }}>{<Icons.Star size={14} />} {product.rating}</span>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({product.sales} فروش)</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
@@ -276,7 +276,7 @@ export default function ProductsPage() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowProductModal(false)}>
           <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{editMode ? <>{Icons.Edit size={14} /} ویرایش محصول</> : <>{Icons.Package size={14} /} جزئیات محصول</>}</h2>
+              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{editMode ? <>{<Icons.Edit size={14} />} ویرایش محصول</> : <>{<Icons.Package size={14} />} جزئیات محصول</>}</h2>
               <button onClick={() => { setShowProductModal(false); setEditMode(false); }} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
             </div>
 
@@ -314,7 +314,7 @@ export default function ProductsPage() {
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                  <button onClick={handleSaveEdit} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{Icons.Save size={14} /} ذخیره تغییرات</button>
+                  <button onClick={handleSaveEdit} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Save size={14} />} ذخیره تغییرات</button>
                   <button onClick={() => setEditMode(false)} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
                 </div>
               </div>
@@ -323,7 +323,7 @@ export default function ProductsPage() {
               <div>
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                   <div style={{ width: '150px', height: '150px', borderRadius: '8px', overflow: 'hidden', background: 'var(--table-header-bg)', flexShrink: 0 }}>
-                    {selectedProduct.images.length > 0 ? <img src={selectedProduct.images[0].url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '48px' }}>{Icons.Package size={48} /}</div>}
+                    {selectedProduct.images.length > 0 ? <img src={selectedProduct.images[0].url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '48px' }}>{<Icons.Package size={14} />}</div>}
                   </div>
                   <div style={{ flex: 1 }}>
                     <h3 style={{ margin: '0 0 4px' }}>{selectedProduct.name}</h3>
@@ -335,7 +335,7 @@ export default function ProductsPage() {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '16px' }}>
-                  {[{ l: 'موجودی', v: selectedProduct.stock, c: selectedProduct.stock === 0 ? '#ef4444' : '#22c55e' }, { l: 'فروش', v: selectedProduct.sales, c: '#0f172a' }, { l: 'امتیاز', v: <>{Icons.Star size={12} /> {selectedProduct.rating}</>, c: '#fbbf24' }, { l: 'تصاویر', v: selectedProduct.images.length, c: '#8b5cf6' }].map((s, i) => (
+                  {[{ l: 'موجودی', v: selectedProduct.stock, c: selectedProduct.stock === 0 ? '#ef4444' : '#22c55e' }, { l: 'فروش', v: selectedProduct.sales, c: '#0f172a' }, { l: 'امتیاز', v: <><Icons.Star size={14} /> {selectedProduct.rating}</>, c: '#fbbf24' }, { l: 'تصاویر', v: selectedProduct.images.length, c: '#8b5cf6' }].map((s, i) => (
                     <div key={i} style={{ padding: '10px', background: 'var(--table-header-bg)', borderRadius: '6px', textAlign: 'center' }}>
                       <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-secondary)' }}>{s.l}</p>
                       <p style={{ margin: '4px 0 0', fontWeight: 700, color: s.c }}>{s.v}</p>
@@ -356,8 +356,8 @@ export default function ProductsPage() {
                 )}
 
                 <div style={{ display: 'flex', gap: '8px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-                  <button onClick={handleEditProduct} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{Icons.Edit size={14} /} ویرایش</button>
-                  <button onClick={() => handleDeleteProduct(selectedProduct.id)} style={{ flex: 1, padding: '10px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{Icons.Trash size={14} /} حذف</button>
+                  <button onClick={handleEditProduct} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Edit size={14} />} ویرایش</button>
+                  <button onClick={() => handleDeleteProduct(selectedProduct.id)} style={{ flex: 1, padding: '10px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>{<Icons.Trash size={14} />} حذف</button>
                   <button onClick={() => { setShowProductModal(false); setEditMode(false); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>بستن</button>
                 </div>
               </div>
@@ -371,7 +371,7 @@ export default function ProductsPage() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowAddModal(false)}>
           <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{Icons.Plus size={14} /} افزودن محصول جدید</h2>
+              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{<Icons.Plus size={14} />} افزودن محصول جدید</h2>
               <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
             </div>
             <div style={{ display: 'grid', gap: '12px' }}>
@@ -403,11 +403,11 @@ export default function ProductsPage() {
                     ))}
                   </div>
                 )}
-                {addModalImages.length < 10 && <div onClick={() => addFileInputRef.current?.click()} style={{ border: '2px dashed var(--border)', borderRadius: '8px', padding: '16px', textAlign: 'center', cursor: 'pointer' }}><span style={{ fontSize: '24px' }}>{Icons.Image size={24} /}</span><p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>کلیک کنید تا تصویر انتخاب کنید</p></div>}
+                {addModalImages.length < 10 && <div onClick={() => addFileInputRef.current?.click()} style={{ border: '2px dashed var(--border)', borderRadius: '8px', padding: '16px', textAlign: 'center', cursor: 'pointer' }}><span style={{ fontSize: '24px' }}>{<Icons.Image size={14} />}</span><p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>کلیک کنید تا تصویر انتخاب کنید</p></div>}
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleAddProduct} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{Icons.Check size={14} /} ذخیره</button>
+                <button onClick={handleAddProduct} style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>{<Icons.Check size={14} />} ذخیره</button>
                 <button onClick={() => { setShowAddModal(false); setAddModalImages([]); }} style={{ flex: 1, padding: '10px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>انصراف</button>
               </div>
             </div>
