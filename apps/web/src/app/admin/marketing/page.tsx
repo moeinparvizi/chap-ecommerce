@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Icons } from '../../components/Icons';
+import { api } from '../../lib/api';
 
-interface Campaign { id: string; name: string; type: string; status: 'active' | 'scheduled' | 'ended'; discount: string; startDate: string; endDate: string; usageCount: number; }
-interface Coupon { id: string; code: string; type: string; value: string; usageCount: number; maxUsage: number; status: 'active' | 'expired' | 'disabled'; }
+interface Campaign { id: string; name: string; type: string; status: string; discount: string; startDate: string; endDate: string; usageCount: number; }
+interface Coupon { id: string; code: string; type: string; value: string; usageCount: number; maxUsage: number; status: string; }
 interface BannerImage { id: string; url: string; name: string; }
 interface Banner { id: string; name: string; position: string; images: BannerImage[]; }
 
@@ -14,262 +15,240 @@ export default function MarketingPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
 
-  // Load from localStorage
-  useEffect(() => {
-    const savedCampaigns = localStorage.getItem('admin_campaigns');
-    const savedCoupons = localStorage.getItem('admin_coupons');
-    const savedBanners = localStorage.getItem('admin_banners');
-    setCampaigns(savedCampaigns ? JSON.parse(savedCampaigns) : [
-      { id: '1', name: 'حراج فصل تابستان', type: 'فصلی', status: 'active', discount: '30%', startDate: '2024-06-01', endDate: '2024-06-30', usageCount: 456 },
-      { id: '2', name: 'تخفیف مشتریان جدید', type: 'خوشامدگویی', status: 'active', discount: '20%', startDate: '2024-01-01', endDate: '2024-12-31', usageCount: 234 },
-    ]);
-    setCoupons(savedCoupons ? JSON.parse(savedCoupons) : [
-      { id: '1', code: 'WELCOME20', type: 'درصدی', value: '20%', usageCount: 234, maxUsage: 500, status: 'active' },
-      { id: '2', code: 'SUMMER30', type: 'درصدی', value: '30%', usageCount: 456, maxUsage: 1000, status: 'active' },
-    ]);
-    setBanners(savedBanners ? JSON.parse(savedBanners) : [
-      { id: '1', name: 'بنر اصلی صفحه خانه', position: 'home', images: [] },
-      { id: '2', name: 'بنر دسته\u200cبندی موبایل', position: 'mobile', images: [] },
-    ]);
-  }, []);
-
-  // Auto-save to localStorage
-  useEffect(() => { if (campaigns.length > 0) localStorage.setItem('admin_campaigns', JSON.stringify(campaigns)); }, [campaigns]);
-  useEffect(() => { if (coupons.length > 0) localStorage.setItem('admin_coupons', JSON.stringify(coupons)); }, [coupons]);
-  useEffect(() => { if (banners.length > 0) localStorage.setItem('admin_banners', JSON.stringify(banners)); }, [banners]);
-
-  // Modals
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [showCouponModal, setShowCouponModal] = useState(false);
   const [showBannerModal, setShowBannerModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  
-  // Banner images state (up to 5)
   const [bannerImages, setBannerImages] = useState<BannerImage[]>([]);
   const bannerFileRef = useRef<HTMLInputElement>(null);
 
   const tabs = [
-    { id: 'campaigns', label: 'کمپین‌ها', icon: <Icons.Megaphone size={14} /> },
-    { id: 'coupons', label: 'کوپن‌ها', icon: <Icons.Tag size={14} /> },
+    { id: 'campaigns', label: 'کمپین\u200cها', icon: <Icons.Megaphone size={14} /> },
+    { id: 'coupons', label: 'کوپن\u200cها', icon: <Icons.Tag size={14} /> },
     { id: 'banners', label: 'بنرها', icon: <Icons.Image size={14} /> },
     { id: 'newsletter', label: 'خبرنامه', icon: <Icons.Mail size={14} /> },
   ];
 
-  const closeAllModals = () => {
-    setShowCampaignModal(false);
-    setShowCouponModal(false);
-    setShowBannerModal(false);
-    setEditingItem(null);
-    setBannerImages([]);
+  const refreshData = async () => {
+    try {
+      const [cData, cpData, bData] = await Promise.all([
+        api.getCampaigns() as Promise<any[]>,
+        api.getCoupons() as Promise<any[]>,
+        api.getBanners() as Promise<any[]>,
+      ]);
+      setCampaigns(cData.map((c: any) => ({ id: c.id, name: c.name, type: c.type, status: c.status, discount: c.discount, startDate: c.startDate, endDate: c.endDate, usageCount: c.usageCount })));
+      setCoupons(cpData.map((c: any) => ({ id: c.id, code: c.code, type: c.type, value: c.value, usageCount: c.usageCount, maxUsage: c.maxUsage, status: c.status })));
+      setBanners(bData.map((b: any) => ({ id: b.id, name: b.name, position: b.position, images: (b.images || []).map((img: any) => ({ id: img.id, url: img.url, name: img.name })) })));
+    } catch (e) { console.error(e); }
   };
 
-  // Banner image upload (supports up to 5 images)
+  useEffect(() => { refreshData(); }, []);
+
+  const closeAllModals = () => { setShowCampaignModal(false); setShowCouponModal(false); setShowBannerModal(false); setEditingItem(null); setBannerImages([]); };
+
   const handleBannerImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    
-    const remainingSlots = 5 - bannerImages.length;
-    if (remainingSlots <= 0) {
-      alert('حداکثر ۵ تصویر مجاز است');
-      return;
-    }
-
-    Array.from(files).slice(0, remainingSlots).forEach(file => {
+    const remaining = 5 - bannerImages.length;
+    if (remaining <= 0) { alert('حداکثر ۵ تصویر مجاز است'); return; }
+    Array.from(files).slice(0, remaining).forEach(file => {
       if (!file.type.startsWith('image/')) return;
       const reader = new FileReader();
-      reader.onload = (event) => {
-        const newImage: BannerImage = {
-          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-          url: event.target?.result as string,
-          name: file.name,
-        };
-        setBannerImages(prev => [...prev, newImage]);
-      };
+      reader.onload = (event) => { setBannerImages(prev => [...prev, { id: Date.now().toString() + Math.random().toString(36).substr(2, 9), url: event.target?.result as string, name: file.name }]); };
       reader.readAsDataURL(file);
     });
     if (bannerFileRef.current) bannerFileRef.current.value = '';
   };
 
-  const removeBannerImage = (id: string) => {
-    setBannerImages(prev => prev.filter(img => img.id !== id));
-  };
+  const removeBannerImage = (id: string) => setBannerImages(prev => prev.filter(img => img.id !== id));
 
-  // Save handlers
-  const handleSaveCampaign = () => {
+  const handleSaveCampaign = async () => {
     const name = (document.getElementById('c-name') as HTMLInputElement)?.value;
     const type = (document.getElementById('c-type') as HTMLSelectElement)?.value;
     const discount = (document.getElementById('c-discount') as HTMLInputElement)?.value;
     if (!name) { alert('نام ضروری است'); return; }
-    if (editingItem) {
-      setCampaigns(campaigns.map(c => c.id === editingItem.id ? { ...c, name, type, discount } : c));
-    } else {
-      setCampaigns([{ id: Date.now().toString(), name, type, status: 'scheduled', discount: discount || '10%', startDate: new Date().toISOString().split('T')[0], endDate: '', usageCount: 0 }, ...campaigns]);
-    }
-    closeAllModals();
+    try {
+      if (editingItem) {
+        await api.updateCampaign(editingItem.id, { name, type, discount });
+      } else {
+        await api.createCampaign({ name, type, discount: discount || '10%', status: 'scheduled', startDate: new Date().toISOString().split('T')[0], endDate: '', usageCount: 0 });
+      }
+      await refreshData();
+      closeAllModals();
+    } catch (e) { alert('خطا'); }
   };
 
-  const handleSaveCoupon = () => {
+  const handleSaveCoupon = async () => {
     const code = (document.getElementById('cp-code') as HTMLInputElement)?.value;
     const type = (document.getElementById('cp-type') as HTMLSelectElement)?.value;
     const value = (document.getElementById('cp-value') as HTMLInputElement)?.value;
     if (!code || !value) { alert('کد و مقدار ضروری است'); return; }
-    if (editingItem) {
-      setCoupons(coupons.map(c => c.id === editingItem.id ? { ...c, code: code.toUpperCase(), type, value } : c));
-    } else {
-      setCoupons([{ id: Date.now().toString(), code: code.toUpperCase(), type, value: type === 'free_shipping' ? 'ارسال رایگان' : (type === 'fixed_amount' ? `$${value}` : `${value}%`), usageCount: 0, maxUsage: 0, status: 'active' }, ...coupons]);
-    }
-    closeAllModals();
+    try {
+      if (editingItem) {
+        await api.updateCoupon(editingItem.id, { code: code.toUpperCase(), type, value });
+      } else {
+        await api.createCoupon({ code: code.toUpperCase(), type, value: type === 'free_shipping' ? 'ارسال رایگان' : (type === 'fixed_amount' ? `$${value}` : `${value}%`), usageCount: 0, maxUsage: 0, status: 'active' });
+      }
+      await refreshData();
+      closeAllModals();
+    } catch (e) { alert('خطا'); }
   };
 
-  const handleSaveBanner = () => {
+  const handleSaveBanner = async () => {
     const name = (document.getElementById('b-name') as HTMLInputElement)?.value;
     const position = (document.getElementById('b-position') as HTMLSelectElement)?.value;
     if (!name) { alert('نام ضروری است'); return; }
-    if (editingItem) {
-      setBanners(banners.map(b => b.id === editingItem.id ? { ...b, name, position, images: [...bannerImages] } : b));
-    } else {
-      setBanners([{ id: Date.now().toString(), name, position, images: [...bannerImages] }, ...banners]);
-    }
-    closeAllModals();
+    try {
+      if (editingItem) {
+        await api.updateBanner(editingItem.id, { name, position, images: bannerImages.map(img => ({ url: img.url, name: img.name })) });
+      } else {
+        await api.createBanner({ name, position, images: bannerImages.map(img => ({ url: img.url, name: img.name })) });
+      }
+      await refreshData();
+      closeAllModals();
+    } catch (e) { alert('خطا'); }
   };
 
-  const openAddBanner = () => {
-    setEditingItem(null);
-    setBannerImages([]);
-    setShowBannerModal(true);
-  };
+  const handleDeleteCampaign = async (id: string) => { if (confirm('حذف شود؟')) { await api.deleteCampaign(id); await refreshData(); } };
+  const handleDeleteCoupon = async (id: string) => { if (confirm('حذف شود؟')) { await api.deleteCoupon(id); await refreshData(); } };
+  const handleDeleteBanner = async (id: string) => { if (confirm('حذف شود؟')) { await api.deleteBanner(id); await refreshData(); } };
 
-  const openEditBanner = (banner: Banner) => {
-    setEditingItem(banner);
-    setBannerImages([...banner.images]);
-    setShowBannerModal(true);
-  };
+  const btnGreen: React.CSSProperties = { padding: '8px 16px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' };
+  const btnSmall: React.CSSProperties = { padding: '4px 8px', background: 'var(--hover-bg)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '4px' };
+  const btnSmallRed: React.CSSProperties = { ...btnSmall, background: 'var(--badge-danger-bg)', color: 'var(--badge-danger-text)' };
+  const tdStyle: React.CSSProperties = { padding: '12px', fontSize: '13px', borderBottom: '1px solid var(--border-light)' };
+  const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 12px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', background: 'var(--input-bg)', color: 'var(--text)' };
+  const modalTitle: React.CSSProperties = { margin: 0, fontSize: '16px', fontWeight: 600 };
 
-  return (
-    <div style={{ padding: '24px' }}>
-      <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 24px' }}>بازاریابی</h1>
-
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: '4px', marginBottom: '24px', background: 'var(--card-bg)', borderRadius: '12px', padding: '4px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-        {tabs.map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: activeTab === tab.id ? '#2563eb' : 'transparent', color: activeTab === tab.id ? 'white' : '#374151', cursor: 'pointer', fontWeight: 500, fontSize: '14px' }}>
-            {tab.icon} {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Campaigns */}
-      {activeTab === 'campaigns' && (
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'campaigns': return (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0 }}>کمپین‌ها</h2>
-            <button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} style={btnGreen}>{<Icons.Plus size={14} />} جدید</button>
+            <h2 style={{ margin: 0 }}>کمپین\u200cها</h2>
+            <button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} style={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
-          <div style={tableContainer}>
+          <div className="table-container">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead><tr style={theadStyle}><th style={thStyle}>نام</th><th style={thStyle}>نوع</th><th style={thStyle}>تخفیف</th><th style={thStyle}>وضعیت</th><th style={thStyle}>عملیات</th></tr></thead>
+              <thead><tr>
+                <th style={tdStyle}>نام</th><th style={tdStyle}>نوع</th><th style={tdStyle}>تخفیف</th><th style={tdStyle}>وضعیت</th><th style={tdStyle}>عملیات</th>
+              </tr></thead>
               <tbody>
                 {campaigns.map(c => (
-                  <tr key={c.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                    <td style={tdStyle}><strong>{c.name}</strong></td>
-                    <td style={tdStyle}>{c.type}</td>
-                    <td style={tdStyle}><span style={{ color: '#22c55e', fontWeight: 600 }}>{c.discount}</span></td>
-                    <td style={tdStyle}><span style={badge(c.status)}>{c.status === 'active' ? 'فعال' : c.status === 'scheduled' ? 'برنامه‌ریزی' : 'پایان'}</span></td>
-                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCampaignModal(true); }} style={btnSmall}>{<Icons.Edit size={14} />}</button><button onClick={() => setCampaigns(campaigns.filter(x => x.id !== c.id))} style={btnSmallRed}>{<Icons.Trash size={14} />}</button></div></td>
+                  <tr key={c.id}>
+                    <td style={tdStyle}>{c.name}</td><td style={tdStyle}>{c.type}</td>
+                    <td style={{ ...tdStyle, color: '#22c55e', fontWeight: 600 }}>{c.discount}</td>
+                    <td style={tdStyle}><span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '11px', background: c.status === 'active' ? 'var(--badge-success-bg)' : 'var(--hover-bg)', color: c.status === 'active' ? 'var(--badge-success-text)' : 'var(--text-secondary)' }}>{c.status === 'active' ? 'فعال' : c.status === 'scheduled' ? 'برنامه\u200cریزی شده' : 'پایان یافته'}</span></td>
+                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCampaignModal(true); }} style={btnSmall}><Icons.Edit size={14} /></button><button onClick={() => handleDeleteCampaign(c.id)} style={btnSmallRed}><Icons.Trash size={14} /></button></div></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-      )}
-
-      {/* Coupons */}
-      {activeTab === 'coupons' && (
+      );
+      case 'coupons': return (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0 }}>کوپن‌ها</h2>
-            <button onClick={() => { setEditingItem(null); setShowCouponModal(true); }} style={btnGreen}>{<Icons.Plus size={14} />} جدید</button>
+            <h2 style={{ margin: 0 }}>کوپن\u200cها</h2>
+            <button onClick={() => { setEditingItem(null); setShowCouponModal(true); }} style={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-            {coupons.map(c => (
-              <div key={c.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 700 }}>{c.code}</span>
-                  <span style={badge(c.status)}>{c.status === 'active' ? 'فعال' : 'منقضی'}</span>
-                </div>
-                <p style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#2563eb' }}>{c.value}</p>
-                <p style={{ margin: '0 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>استفاده: {c.usageCount} / {c.maxUsage || '∞'}</p>
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <button onClick={() => { setEditingItem(c); setShowCouponModal(true); }} style={{ ...btnSmall, flex: 1 }}>{<Icons.Edit size={14} />} ویرایش</button>
-                  <button onClick={() => setCoupons(coupons.filter(x => x.id !== c.id))} style={{ ...btnSmallRed, flex: 1 }}>{<Icons.Trash size={14} />} حذف</button>
-                </div>
-              </div>
-            ))}
+          <div className="table-container">
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead><tr>
+                <th style={tdStyle}>کد</th><th style={tdStyle}>نوع</th><th style={tdStyle}>مقدار</th><th style={tdStyle}>وضعیت</th><th style={tdStyle}>عملیات</th>
+              </tr></thead>
+              <tbody>
+                {coupons.map(c => (
+                  <tr key={c.id}>
+                    <td style={{ ...tdStyle, fontFamily: 'monospace', fontWeight: 600 }}>{c.code}</td><td style={tdStyle}>{c.type}</td>
+                    <td style={{ ...tdStyle, color: '#22c55e', fontWeight: 600 }}>{c.value}</td>
+                    <td style={tdStyle}><span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '11px', background: c.status === 'active' ? 'var(--badge-success-bg)' : 'var(--hover-bg)', color: c.status === 'active' ? 'var(--badge-success-text)' : 'var(--text-secondary)' }}>{c.status === 'active' ? 'فعال' : 'غیرفعال'}</span></td>
+                    <td style={tdStyle}><div style={{ display: 'flex', gap: '4px' }}><button onClick={() => { setEditingItem(c); setShowCouponModal(true); }} style={btnSmall}><Icons.Edit size={14} /> ویرایش</button><button onClick={() => handleDeleteCoupon(c.id)} style={btnSmallRed}><Icons.Trash size={14} /> حذف</button></div></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-      )}
-
-      {/* Banners */}
-      {activeTab === 'banners' && (
+      );
+      case 'banners': return (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h2 style={{ margin: 0 }}>بنرها</h2>
-            <button onClick={openAddBanner} style={btnGreen}>{<Icons.Plus size={14} />} جدید</button>
+            <button onClick={() => { setEditingItem(null); setBannerImages([]); setShowBannerModal(true); }} style={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
             {banners.map(b => (
-              <div key={b.id} style={{ background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+              <div key={b.id} className="card" style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{ height: '150px', background: b.images.length > 0 ? `url(${b.images[0].url}) center/cover` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                  {b.images.length === 0 && <span style={{ color: 'white', fontSize: '24px', fontWeight: 600 }}>{b.name}</span>}
-                  {b.images.length > 0 && <span style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '11px' }}>{<Icons.Image size={14} />} {b.images.length} تصویر</span>}
+                  {b.images.length > 0 && <span style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Image size={11} /> {b.images.length} تصویر</span>}
                 </div>
                 <div style={{ padding: '12px' }}>
-                  <p style={{ margin: 0, fontWeight: 500 }}>{b.name}</p>
-                  <p style={{ margin: '4px 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>موقعیت: {b.position} | {b.images.length} تصویر</p>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600 }}>{b.name}</h3>
+                  <p style={{ margin: '0 0 8px', fontSize: '12px', color: 'var(--text-muted)' }}>موقعیت: {b.position}</p>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    <button onClick={() => openEditBanner(b)} style={{ ...btnSmall, flex: 1 }}>{<Icons.Edit size={14} />} ویرایش</button>
-                    <button onClick={() => setBanners(banners.filter(x => x.id !== b.id))} style={{ ...btnSmallRed, flex: 1 }}>{<Icons.Trash size={14} />} حذف</button>
+                    <button onClick={() => { setEditingItem(b); setBannerImages(b.images); setShowBannerModal(true); }} style={btnSmall}><Icons.Edit size={14} /> ویرایش</button>
+                    <button onClick={() => handleDeleteBanner(b.id)} style={btnSmallRed}><Icons.Trash size={14} /> حذف</button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      )}
-
-      {/* Newsletter */}
-      {activeTab === 'newsletter' && (
-        <div style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px' }}>
+      );
+      case 'newsletter': return (
+        <div>
           <h2 style={{ margin: '0 0 16px' }}>خبرنامه</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-            {[{ l: 'مشترکین', v: '2,345', c: '#2563eb' }, { l: 'نرخ بازشدن', v: '45%', c: '#22c55e' }, { l: 'نرخ کلیک', v: '12%', c: '#8b5cf6' }].map((s, i) => (
-              <div key={i} style={{ textAlign: 'center', padding: '16px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
-                <p style={{ fontSize: '24px', fontWeight: 700, color: s.c, margin: 0 }}>{s.v}</p>
-                <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-secondary)' }}>{s.l}</p>
-              </div>
-            ))}
+          <div className="card">
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '16px' }}>مدیریت ایمیل\u200cهای خبرنامه</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px' }}>
+              {[{ l: 'مشترکین', v: '1,234', ic: <Icons.Users size={20} /> }, { l: 'نرخ بازشدن', v: '45.2%', ic: <Icons.TrendingUp size={20} /> }, { l: 'نرخ کلیک', v: '12.8%', ic: <Icons.ExternalLink size={20} /> }, { l: 'ایمیل ارسالی', v: '3,456', ic: <Icons.Mail size={20} /> }].map((s, i) => (
+                <div key={i} style={{ textAlign: 'center', padding: '16px', background: 'var(--table-header-bg)', borderRadius: '8px' }}>
+                  <div style={{ marginBottom: '8px', color: 'var(--text-secondary)' }}>{s.ic}</div>
+                  <p style={{ margin: 0, fontSize: '20px', fontWeight: 700 }}>{s.v}</p>
+                  <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>{s.l}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      )}
+      );
+    }
+  };
 
-      {/* ===== MODALS ===== */}
+  return (
+    <div style={{ padding: '24px' }}>
+      <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 20px' }}>بازاریابی</h1>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+        {tabs.map(tab => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: activeTab === tab.id ? 'var(--primary)' : 'transparent', color: activeTab === tab.id ? 'white' : 'var(--text-secondary)', cursor: 'pointer', fontWeight: 500, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+            {tab.icon} {tab.label}
+          </button>
+        ))}
+      </div>
+      {renderTabContent()}
+
+      <input ref={bannerFileRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleBannerImageUpload} />
 
       {/* Campaign Modal */}
       {showCampaignModal && (
-        <div style={overlay} onClick={closeAllModals}>
-          <div style={modal} onClick={e => e.stopPropagation()}>
-            <h2 style={modalTitle}>{editingItem ? <>{<Icons.Edit size={14} />} ویرایش کمپین</> : <>{<Icons.Plus size={14} />} کمپین جدید</>}</h2>
+        <div className="modal-overlay" onClick={closeAllModals}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h2 style={modalTitle}>{editingItem ? 'ویرایش کمپین' : 'کمپین جدید'}</h2>
+              <button onClick={closeAllModals} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px' }}><Icons.X size={20} /></button>
+            </div>
             <div style={{ display: 'grid', gap: '12px' }}>
-              <div><label style={labelStyle}>نام کمپین *</label><input id="c-name" style={inputStyle} defaultValue={editingItem?.name || ''} placeholder="نام کمپین" /></div>
+              <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>نام</label><input id="c-name" defaultValue={editingItem?.name} style={inputStyle} /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div><label style={labelStyle}>نوع</label><select id="c-type" style={inputStyle} defaultValue={editingItem?.type || 'فصلی'}><option value="فصلی">فصلی</option><option value="فلاش سیل">فلاش سیل</option><option value="خوشامدگویی">خوشامدگویی</option></select></div>
-                <div><label style={labelStyle}>تخفیف</label><input id="c-discount" style={inputStyle} defaultValue={editingItem?.discount || ''} placeholder="20%" /></div>
+                <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>نوع</label><select id="c-type" defaultValue={editingItem?.type || 'seasonal'} style={inputStyle}><option value="seasonal">فصلی</option><option value="welcome">خوشامدگویی</option><option value="loyalty">وفاداری</option></select></div>
+                <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>تخفیف</label><input id="c-discount" defaultValue={editingItem?.discount} style={inputStyle} /></div>
               </div>
-              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleSaveCampaign} style={{ ...btnGreen, flex: 1 }}>{<Icons.Save size={14} />} ذخیره</button>
-                <button onClick={closeAllModals} style={{ ...btnGray, flex: 1 }}>انصراف</button>
-              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+              <button onClick={handleSaveCampaign} style={{ ...btnGreen, flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
+              <button onClick={closeAllModals} className="btn btn-ghost" style={{ flex: 1 }}>انصراف</button>
             </div>
           </div>
         </div>
@@ -277,111 +256,60 @@ export default function MarketingPage() {
 
       {/* Coupon Modal */}
       {showCouponModal && (
-        <div style={overlay} onClick={closeAllModals}>
-          <div style={modal} onClick={e => e.stopPropagation()}>
-            <h2 style={modalTitle}>{editingItem ? <>{<Icons.Edit size={14} />} ویرایش کوپن</> : <>{<Icons.Tag size={14} />} کوپن جدید</>}</h2>
+        <div className="modal-overlay" onClick={closeAllModals}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h2 style={modalTitle}>{editingItem ? 'ویرایش کوپن' : 'کوپن جدید'}</h2>
+              <button onClick={closeAllModals} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px' }}><Icons.X size={20} /></button>
+            </div>
             <div style={{ display: 'grid', gap: '12px' }}>
-              <div><label style={labelStyle}>کد کوپن *</label><input id="cp-code" style={inputStyle} defaultValue={editingItem?.code || ''} placeholder="SUMMER30" /></div>
+              <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>کد</label><input id="cp-code" defaultValue={editingItem?.code} style={inputStyle} /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div><label style={labelStyle}>نوع</label><select id="cp-type" style={inputStyle} defaultValue={editingItem?.type || 'درصدی'}><option value="percentage">درصدی</option><option value="fixed_amount">مبلغ ثابت</option><option value="free_shipping">ارسال رایگان</option></select></div>
-                <div><label style={labelStyle}>مقدار *</label><input id="cp-value" style={inputStyle} defaultValue={editingItem?.value || ''} placeholder="20" /></div>
+                <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>نوع</label><select id="cp-type" defaultValue={editingItem?.type || 'percentage'} style={inputStyle}><option value="percentage">درصدی</option><option value="fixed_amount">مبلغ ثابت</option><option value="free_shipping">ارسال رایگان</option></select></div>
+                <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>مقدار</label><input id="cp-value" defaultValue={editingItem?.value} style={inputStyle} /></div>
               </div>
-              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleSaveCoupon} style={{ ...btnGreen, flex: 1 }}>{<Icons.Save size={14} />} ذخیره</button>
-                <button onClick={closeAllModals} style={{ ...btnGray, flex: 1 }}>انصراف</button>
-              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+              <button onClick={handleSaveCoupon} style={{ ...btnGreen, flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
+              <button onClick={closeAllModals} className="btn btn-ghost" style={{ flex: 1 }}>انصراف</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Banner Modal with Multi-Image Upload */}
+      {/* Banner Modal */}
       {showBannerModal && (
-        <div style={overlay} onClick={closeAllModals}>
-          <div style={{ ...modal, maxWidth: '550px' }} onClick={e => e.stopPropagation()}>
-            <h2 style={modalTitle}>{editingItem ? <>{<Icons.Edit size={14} />} ویرایش بنر</> : <>{<Icons.Image size={14} />} بنر جدید</>}</h2>
+        <div className="modal-overlay" onClick={closeAllModals}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h2 style={modalTitle}>{editingItem ? 'ویرایش بنر' : 'بنر جدید'}</h2>
+              <button onClick={closeAllModals} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '20px' }}><Icons.X size={20} /></button>
+            </div>
             <div style={{ display: 'grid', gap: '12px' }}>
-              <div><label style={labelStyle}>نام بنر *</label><input id="b-name" style={inputStyle} defaultValue={editingItem?.name || ''} placeholder="نام بنر" /></div>
-              
-              <div><label style={labelStyle}>موقعیت</label>
-                <select id="b-position" style={inputStyle} defaultValue={editingItem?.position || 'home'}>
-                  <option value="home">صفحه خانه</option>
-                  <option value="mobile">موبایل</option>
-                  <option value="category">دسته‌بندی</option>
-                  <option value="sale">تخفیف‌ها</option>
-                </select>
-              </div>
-
-              {/* Multi-Image Upload Section */}
+              <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>نام</label><input id="b-name" defaultValue={editingItem?.name} style={inputStyle} /></div>
+              <div><label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>موقعیت</label><select id="b-position" defaultValue={editingItem?.position || 'home'} style={inputStyle}><option value="home">صفحه خانه</option><option value="category">دسته\u200cبندی</option><option value="product">محصول</option></select></div>
               <div>
-                <label style={labelStyle}>تصاویر بنر ({bannerImages.length} از ۵)</label>
-                
-                {/* Images Grid */}
-                {bannerImages.length > 0 && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px', marginBottom: '12px' }}>
-                    {bannerImages.map((image) => (
-                      <div key={image.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                        <img 
-                          src={image.url} 
-                          alt={image.name} 
-                          style={{ width: '100%', height: '80px', objectFit: 'cover' }} 
-                        />
-                        <button 
-                          onClick={() => removeBannerImage(image.id)}
-                          style={{ 
-                            position: 'absolute', 
-                            top: '4px', 
-                            right: '4px', 
-                            width: '20px', 
-                            height: '20px', 
-                            borderRadius: '50%', 
-                            background: '#ef4444', 
-                            color: 'white', 
-                            border: 'none', 
-                            cursor: 'pointer',
-                            fontSize: '10px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >×</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Upload Button */}
-                <input 
-                  ref={bannerFileRef}
-                  type="file" 
-                  accept="image/*" 
-                  multiple
-                  style={{ display: 'none' }} 
-                  onChange={handleBannerImageUpload} 
-                />
-                <button 
-                  onClick={() => bannerFileRef.current?.click()}
-                  disabled={bannerImages.length >= 5}
-                  style={{ 
-                    width: '100%', 
-                    padding: '12px', 
-                    border: '2px dashed var(--border)', 
-                    borderRadius: '8px', 
-                    background: bannerImages.length >= 5 ? '#f9fafb' : 'white', 
-                    cursor: bannerImages.length >= 5 ? 'not-allowed' : 'pointer',
-                    color: bannerImages.length >= 5 ? '#9ca3af' : '#64748b',
-                    fontSize: '14px'
-                  }}
-                >
-                  {bannerImages.length >= 5 ? 'حداکثر ۵ تصویر' : <>{<Icons.Image size={14} />} کلیک کنید تا تصویر انتخاب کنید</>}
-                </button>
-                <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>PNG, JPG (حداکثر ۵ تصویر)</p>
+                <label style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>تصاویر (حداکثر ۵)</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px' }}>
+                  {bannerImages.map(img => (
+                    <div key={img.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                      <img src={img.url} alt={img.name} style={{ width: '100%', height: '80px', objectFit: 'cover', display: 'block' }} />
+                      <button onClick={() => removeBannerImage(img.id)} style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.X size={10} /></button>
+                    </div>
+                  ))}
+                  {bannerImages.length < 5 && (
+                    <button onClick={() => bannerFileRef.current?.click()} style={{ height: '80px', border: '2px dashed var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'transparent', color: 'var(--text-muted)', fontSize: '11px', flexDirection: 'column', gap: '4px' }}>
+                      <Icons.Plus size={16} />
+                      انتخاب تصویر
+                    </button>
+                  )}
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>{bannerImages.length} از ۵ تصویر انتخاب شده</p>
               </div>
-
-              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={handleSaveBanner} style={{ ...btnGreen, flex: 1 }}>{<Icons.Save size={14} />} ذخیره</button>
-                <button onClick={closeAllModals} style={{ ...btnGray, flex: 1 }}>انصراف</button>
-              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+              <button onClick={handleSaveBanner} style={{ ...btnGreen, flex: 1 }}>{editingItem ? 'ذخیره' : 'ایجاد'}</button>
+              <button onClick={closeAllModals} className="btn btn-ghost" style={{ flex: 1 }}>انصراف</button>
             </div>
           </div>
         </div>
@@ -389,18 +317,3 @@ export default function MarketingPage() {
     </div>
   );
 }
-
-const overlay = { position: 'fixed' as const, top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 };
-const modal = { background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', width: '100%', maxWidth: '450px' };
-const modalTitle = { margin: '0 0 16px', fontSize: '18px', fontWeight: 600 };
-const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '13px', fontWeight: 500, color: 'var(--text)' };
-const inputStyle = { width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', outline: 'none' };
-const btnGreen = { padding: '10px 16px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500, fontSize: '13px' };
-const btnGray = { padding: '10px 16px', background: 'var(--hover-bg)', color: 'var(--text)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' };
-const btnSmall = { padding: '6px 12px', background: 'var(--hover-bg)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' };
-const btnSmallRed = { padding: '6px 12px', background: '#fee2e2', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: '#991b1b' };
-const thStyle = { textAlign: 'right' as const, padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: 'var(--text)', borderBottom: '1px solid var(--border)' };
-const tdStyle = { padding: '14px 16px', fontSize: '14px', color: 'var(--text)' };
-const tableContainer = { background: 'var(--card-bg)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' };
-const theadStyle = { background: 'var(--table-header-bg)' };
-const badge = (status: string) => ({ padding: '4px 10px', borderRadius: '20px', fontSize: '12px', background: status === 'active' ? '#dcfce7' : '#e5e7eb', color: status === 'active' ? '#166534' : '#374151' });
