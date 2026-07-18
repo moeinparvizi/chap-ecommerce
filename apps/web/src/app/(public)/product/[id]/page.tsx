@@ -14,6 +14,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [addedMessage, setAddedMessage] = useState(false);
 
   useEffect(() => {
     api.getProducts().then((data: any[]) => {
@@ -28,6 +29,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const discount = product.compareAtPrice ? Math.round((1 - product.price / product.compareAtPrice) * 100) : 0;
   const mainImage = product.images?.[selectedImage]?.url || 'https://picsum.photos/600/400';
+
+  const addToCart = () => {
+    if (!product || product.stock === 0) return;
+    const saved = localStorage.getItem('cart');
+    const cart: any[] = saved ? JSON.parse(saved) : [];
+    const existing = cart.find((c: any) => c.id === product.id);
+    if (existing) { existing.quantity += quantity; } else { cart.push({ id: product.id, name: product.name, price: product.price, image: mainImage, quantity }); }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    setAddedMessage(true);
+    setTimeout(() => setAddedMessage(false), 3000);
+  };
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '24px 20px' }}>
@@ -82,8 +94,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <span style={{ padding: '10px 16px', fontSize: '16px', fontWeight: 600 }}>{quantity}</span>
               <button onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} style={{ padding: '10px 16px', background: 'var(--hover-bg)', border: 'none', cursor: 'pointer', fontSize: '18px', color: 'var(--text)' }}>+</button>
             </div>
-            <button style={{ flex: 1, padding: '12px', borderRadius: '12px', border: 'none', background: product.stock > 0 ? 'var(--primary)' : 'var(--hover-bg)', color: product.stock > 0 ? 'white' : 'var(--text-muted)', fontWeight: 700, fontSize: '15px', cursor: product.stock > 0 ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} disabled={product.stock === 0}>
-              <Icons.ShoppingCart size={18} /> {product.stock > 0 ? 'افزودن به سبد' : 'ناموجود'}
+            <button onClick={addToCart} style={{ flex: 1, padding: '12px', borderRadius: '12px', border: 'none', background: product.stock > 0 ? 'var(--primary)' : 'var(--hover-bg)', color: product.stock > 0 ? 'white' : 'var(--text-muted)', fontWeight: 700, fontSize: '15px', cursor: product.stock > 0 ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} disabled={product.stock === 0}>
+              {addedMessage ? <><Icons.Check size={18} /> اضافه شد!</> : <><Icons.ShoppingCart size={18} /> {product.stock > 0 ? 'افزودن به سبد' : 'ناموجود'}</>}
             </button>
           </div>
           {/* Description */}
