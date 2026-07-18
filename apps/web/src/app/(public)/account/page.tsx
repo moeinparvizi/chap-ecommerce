@@ -53,10 +53,14 @@ export default function AccountPage() {
       </div>
 
       {/* Quick Actions */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '24px' }}>
         <button onClick={() => router.push('/account/orders')} className="card" style={{ padding: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', textAlign: 'right', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(59,130,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Package size={20} color="#3b82f6" /></div>
           <div><p style={{ fontWeight: 600, margin: 0 }}>خریدهای من</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>{totalOrders} سفارش</p></div>
+        </button>
+        <button onClick={() => router.push('/account/locations')} className="card" style={{ padding: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', textAlign: 'right', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.MapPin size={20} color="#f59e0b" /></div>
+          <div><p style={{ fontWeight: 600, margin: 0 }}>لوکیشن‌ها</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>آدرس‌های شما</p></div>
         </button>
         <button onClick={() => router.push('/account/comments')} className="card" style={{ padding: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', textAlign: 'right', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(139,92,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.MessageSquare size={20} color="#8b5cf6" /></div>
