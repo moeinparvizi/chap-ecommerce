@@ -9,20 +9,26 @@ export default function CommentsPage() {
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('');
+  const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem('comments');
     if (saved) setComments(JSON.parse(saved));
+    import('@/app/lib/api').then(({ api }) => {
+      api.getProducts().then((d: any) => setProducts(d)).catch(() => {});
+    });
   }, []);
 
   const addComment = () => {
     if (!newComment.trim()) return;
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
     const comment = {
       id: Date.now().toString(),
       text: newComment,
-      product: selectedProduct || 'عمومی',
+      productId: selectedProduct || '',
+      productName: selectedProduct ? products.find((p: any) => p.id === selectedProduct)?.name || '' : '',
+      author: user.name || 'کاربر',
       date: new Date().toLocaleDateString('fa-IR'),
-      likes: 0,
     };
     const updated = [...comments, comment];
     setComments(updated);
@@ -37,43 +43,60 @@ export default function CommentsPage() {
     localStorage.setItem('comments', JSON.stringify(updated));
   };
 
+  const grouped = comments.reduce((acc: Record<string, any[]>, c: any) => {
+    const key = c.productName || 'عمومی';
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(c);
+    return acc;
+  }, {});
+
   return (
     <div>
-      <h1 style={{ fontSize: '22px', fontWeight: 700, margin: '0 0 24px' }}>کامنت‌های من</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>کامنت‌های من</h1>
+        <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{comments.length} کامنت</span>
+      </div>
 
       {/* New Comment */}
       <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
-        <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }}>نظر جدید</h3>
-        <input type="text" placeholder="نام محصول (اختیاری)" value={selectedProduct} onChange={e => setSelectedProduct(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', marginBottom: '10px', outline: 'none' }} />
+        <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }}>کامنت جدید</h3>
+        <select value={selectedProduct} onChange={e => setSelectedProduct(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', marginBottom: '10px', outline: 'none' }}>
+          <option value="">انتخاب محصول (اختیاری)</option>
+          {products.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+        </select>
         <textarea placeholder="نظر خود را بنویسید..." value={newComment} onChange={e => setNewComment(e.target.value)} rows={3} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
           <button onClick={addComment} disabled={!newComment.trim()} className="btn btn-primary" style={{ padding: '8px 20px', opacity: newComment.trim() ? 1 : 0.5 }}><Icons.Send size={14} /> ارسال نظر</button>
         </div>
       </div>
 
-      {/* Comments List */}
-      {comments.length === 0 ? (
+      {/* Grouped Comments */}
+      {Object.keys(grouped).length === 0 ? (
         <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
           <Icons.MessageSquare size={48} color="var(--text-muted)" />
           <h3 style={{ marginTop: '12px', color: 'var(--text-secondary)' }}>هنوز کامنتی ندارید</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>اولین نظر خود را بنویسید</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>از صفحه محصولات نظر خود را ثبت کنید</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gap: '12px' }}>
-          {comments.map(c => (
-            <div key={c.id} className="card" style={{ padding: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600 }}>ن</div>
-                  <div>
-                    <p style={{ fontSize: '12px', fontWeight: 500, margin: 0 }}>شما</p>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>{c.date}</p>
-                  </div>
-                </div>
-                <button onClick={() => deleteComment(c.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: '4px' }}><Icons.Trash size={14} /></button>
+        <div style={{ display: 'grid', gap: '16px' }}>
+          {Object.entries(grouped).map(([product, items]) => (
+            <div key={product} className="card" style={{ padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', paddingBottom: '10px', borderBottom: '1px solid var(--border)' }}>
+                <Icons.Package size={16} color="var(--primary)" />
+                <h3 style={{ fontSize: '15px', fontWeight: 600, margin: 0 }}>{product}</h3>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--hover-bg)', padding: '2px 8px', borderRadius: '4px' }}>{items.length}</span>
               </div>
-              <p style={{ fontSize: '14px', margin: '10px 0 0', lineHeight: 1.6 }}>{c.text}</p>
-              {c.product !== 'عمومی' && <span style={{ display: 'inline-block', marginTop: '8px', padding: '2px 8px', borderRadius: '4px', background: 'var(--hover-bg)', fontSize: '11px', color: 'var(--text-secondary)' }}>{c.product}</span>}
+              <div style={{ display: 'grid', gap: '10px' }}>
+                {items.map((c: any) => (
+                  <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '12px', borderRadius: '8px', background: 'var(--hover-bg)' }}>
+                    <div>
+                      <p style={{ fontSize: '14px', margin: '0 0 4px', lineHeight: 1.6 }}>{c.text}</p>
+                      <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>{c.date}</p>
+                    </div>
+                    <button onClick={() => deleteComment(c.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: '4px', flexShrink: 0 }}><Icons.Trash size={14} /></button>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

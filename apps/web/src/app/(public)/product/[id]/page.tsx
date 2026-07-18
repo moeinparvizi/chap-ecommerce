@@ -116,6 +116,145 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </div>
+
+      {/* Reviews & Comments Section */}
+      <ProductReviewsComments productId={id} productName={product.name} />
+    </div>
+  );
+}
+
+function ProductReviewsComments({ productId, productName }: { productId: string; productName: string }) {
+  const [activeTab, setActiveTab] = useState<'reviews' | 'comments'>('reviews');
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [comments, setComments] = useState<any[]>([]);
+  const [newReview, setNewReview] = useState({ rating: 5, title: '', text: '' });
+  const [newComment, setNewComment] = useState('');
+
+  useEffect(() => {
+    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const allComments = JSON.parse(localStorage.getItem('comments') || '[]');
+    setReviews(allReviews.filter((r: any) => r.productId === productId));
+    setComments(allComments.filter((c: any) => c.productId === productId));
+  }, [productId]);
+
+  const addReview = () => {
+    if (!newReview.text.trim()) return;
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const review = { id: Date.now().toString(), productId, productName, rating: newReview.rating, title: newReview.title, text: newReview.text, author: user.name || 'کاربر', date: new Date().toLocaleDateString('fa-IR') };
+    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const updated = [...allReviews, review];
+    localStorage.setItem('reviews', JSON.stringify(updated));
+    setReviews(updated.filter((r: any) => r.productId === productId));
+    setNewReview({ rating: 5, title: '', text: '' });
+  };
+
+  const addComment = () => {
+    if (!newComment.trim()) return;
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const comment = { id: Date.now().toString(), productId, productName, text: newComment, author: user.name || 'کاربر', date: new Date().toLocaleDateString('fa-IR') };
+    const allComments = JSON.parse(localStorage.getItem('comments') || '[]');
+    const updated = [...allComments, comment];
+    localStorage.setItem('comments', JSON.stringify(updated));
+    setComments(updated.filter((c: any) => c.productId === productId));
+    setNewComment('');
+  };
+
+  const avgRating = reviews.length > 0 ? (reviews.reduce((s: number, r: any) => s + r.rating, 0) / reviews.length).toFixed(1) : '0';
+
+  return (
+    <div style={{ marginTop: '40px', paddingTop: '30px', borderTop: '2px solid var(--border)' }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '24px', borderBottom: '2px solid var(--border)', paddingBottom: '0' }}>
+        <button onClick={() => setActiveTab('reviews')} style={{ padding: '10px 20px', borderRadius: '0', border: 'none', borderBottom: activeTab === 'reviews' ? '3px solid var(--primary)' : '3px solid transparent', background: 'transparent', color: activeTab === 'reviews' ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px', fontWeight: activeTab === 'reviews' ? 700 : 500, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '-2px' }}>
+          <Icons.Star size={16} /> ریویوها ({reviews.length})
+        </button>
+        <button onClick={() => setActiveTab('comments')} style={{ padding: '10px 20px', borderRadius: '0', border: 'none', borderBottom: activeTab === 'comments' ? '3px solid var(--primary)' : '3px solid transparent', background: 'transparent', color: activeTab === 'comments' ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px', fontWeight: activeTab === 'comments' ? 700 : 500, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '-2px' }}>
+          <Icons.MessageSquare size={16} /> کامنت‌ها ({comments.length})
+        </button>
+      </div>
+
+      {/* Reviews Tab */}
+      {activeTab === 'reviews' && (
+        <div>
+          {/* Summary */}
+          {reviews.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '20px', borderRadius: '12px', background: 'var(--hover-bg)', marginBottom: '20px' }}>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '32px', fontWeight: 800, color: 'var(--primary)', margin: 0 }}>{avgRating}</p>
+                <div style={{ display: 'flex', gap: '2px', marginTop: '4px' }}>{[1,2,3,4,5].map(s => <Icons.Star key={s} size={14} color={s <= Math.round(Number(avgRating)) ? '#fbbf24' : '#d1d5db'} />)}</div>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0' }}>{reviews.length} ریویو</p>
+              </div>
+            </div>
+          )}
+
+          {/* Add Review Form */}
+          <div style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px' }}>
+            <h4 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }}>ریویو بنویسید</h4>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>امتیاز:</span>
+              <div style={{ display: 'flex', gap: '2px' }}>{[1,2,3,4,5].map(s => <button key={s} onClick={() => setNewReview({ ...newReview, rating: s })} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}><Icons.Star size={22} color={s <= newReview.rating ? '#fbbf24' : '#d1d5db'} /></button>)}</div>
+            </div>
+            <input type="text" placeholder="عنوان ریویو (اختیاری)" value={newReview.title} onChange={e => setNewReview({ ...newReview, title: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', marginBottom: '10px' }} />
+            <textarea placeholder="تجربه خود از این محصول را بنویسید..." value={newReview.text} onChange={e => setNewReview({ ...newReview, text: e.target.value })} rows={3} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', resize: 'vertical', outline: 'none', fontFamily: 'inherit', marginBottom: '10px' }} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}><button onClick={addReview} disabled={!newReview.text.trim()} className="btn btn-primary" style={{ padding: '8px 20px', opacity: newReview.text.trim() ? 1 : 0.5 }}><Icons.Send size={14} /> ارسال ریویو</button></div>
+          </div>
+
+          {/* Reviews List */}
+          {reviews.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)' }}><Icons.Star size={32} /><p style={{ marginTop: '8px' }}>هنوز ریویویی ثبت نشده</p></div>
+          ) : (
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {reviews.map(r => (
+                <div key={r.id} style={{ padding: '16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '14px' }}>{r.rating}</div>
+                      <div>
+                        <p style={{ fontSize: '13px', fontWeight: 600, margin: 0 }}>{r.author || 'کاربر'}</p>
+                        <div style={{ display: 'flex', gap: '2px', marginTop: '2px' }}>{[1,2,3,4,5].map(s => <Icons.Star key={s} size={11} color={s <= r.rating ? '#fbbf24' : '#d1d5db'} />)}</div>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{r.date}</span>
+                  </div>
+                  {r.title && <h4 style={{ fontSize: '14px', fontWeight: 600, margin: '10px 0 4px' }}>{r.title}</h4>}
+                  <p style={{ fontSize: '14px', margin: '0', lineHeight: 1.7, color: 'var(--text-secondary)' }}>{r.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Comments Tab */}
+      {activeTab === 'comments' && (
+        <div>
+          {/* Add Comment Form */}
+          <div style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px' }}>
+            <h4 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }}>کامنت بگذارید</h4>
+            <textarea placeholder="نظر خود را بنویسید..." value={newComment} onChange={e => setNewComment(e.target.value)} rows={3} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', resize: 'vertical', outline: 'none', fontFamily: 'inherit', marginBottom: '10px' }} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}><button onClick={addComment} disabled={!newComment.trim()} className="btn btn-primary" style={{ padding: '8px 20px', opacity: newComment.trim() ? 1 : 0.5 }}><Icons.Send size={14} /> ارسال کامنت</button></div>
+          </div>
+
+          {/* Comments List */}
+          {comments.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)' }}><Icons.MessageSquare size={32} /><p style={{ marginTop: '8px' }}>هنوز کامنتی ثبت نشده</p></div>
+          ) : (
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {comments.map(c => (
+                <div key={c.id} style={{ padding: '16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600 }}>{(c.author || 'کاربر').charAt(0)}</div>
+                      <div><p style={{ fontSize: '13px', fontWeight: 600, margin: 0 }}>{c.author || 'کاربر'}</p><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>{c.date}</p></div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.7, color: 'var(--text-secondary)' }}>{c.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
