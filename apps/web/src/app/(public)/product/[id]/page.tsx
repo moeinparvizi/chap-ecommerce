@@ -124,35 +124,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 }
 
 function ProductReviewsComments({ productId, productName }: { productId: string; productName: string }) {
-  const router = typeof window !== 'undefined' ? null : null;
   const [activeTab, setActiveTab] = useState<'reviews' | 'comments'>('reviews');
   const [reviews, setReviews] = useState<any[]>([]);
   const [comments, setComments] = useState<any[]>([]);
-  const [newReview, setNewReview] = useState({ rating: 5, title: '', text: '' });
   const [newComment, setNewComment] = useState('');
-  const [showLoginMsg, setShowLoginMsg] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [hasPurchased, setHasPurchased] = useState(false);
 
   useEffect(() => {
-    const token = !!localStorage.getItem('auth_token');
-    setIsLoggedIn(token);
-    if (token) {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const purchased = orders.some((o: any) => o.userId === user.id && o.items?.some((item: any) => item.id === productId));
-      setHasPurchased(purchased);
-    }
-  }, [productId]);
-
-  const requireLogin = () => {
-    if (!localStorage.getItem('auth_token')) {
-      localStorage.setItem('redirectAfterLogin', window.location.pathname);
-      window.location.href = '/auth/login';
-      return false;
-    }
-    return true;
-  };
+    setIsLoggedIn(!!localStorage.getItem('auth_token'));
+  }, []);
 
   useEffect(() => {
     const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
@@ -161,21 +141,8 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
     setComments(allComments.filter((c: any) => c.productId === productId));
   }, [productId]);
 
-  const addReview = () => {
-    if (!requireLogin()) return;
-    if (!hasPurchased) return;
-    if (!newReview.text.trim()) return;
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const review = { id: Date.now().toString(), productId, productName, rating: newReview.rating, title: newReview.title, text: newReview.text, author: user.name || 'کاربر', userId: user.id, date: new Date().toLocaleDateString('fa-IR') };
-    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
-    const updated = [...allReviews, review];
-    localStorage.setItem('reviews', JSON.stringify(updated));
-    setReviews(updated.filter((r: any) => r.productId === productId));
-    setNewReview({ rating: 5, title: '', text: '' });
-  };
-
   const addComment = () => {
-    if (!requireLogin()) return;
+    if (!isLoggedIn) { localStorage.setItem('redirectAfterLogin', window.location.pathname); window.location.href = '/auth/login'; return; }
     if (!newComment.trim()) return;
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const comment = { id: Date.now().toString(), productId, productName, text: newComment, author: user.name || 'کاربر', userId: user.id, date: new Date().toLocaleDateString('fa-IR') };
@@ -200,10 +167,9 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
         </button>
       </div>
 
-      {/* Reviews Tab */}
+      {/* Reviews Tab — View Only */}
       {activeTab === 'reviews' && (
         <div>
-          {/* Summary */}
           {reviews.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '20px', borderRadius: '12px', background: 'var(--hover-bg)', marginBottom: '20px' }}>
               <div style={{ textAlign: 'center' }}>
@@ -214,33 +180,18 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
             </div>
           )}
 
-          {/* Add Review Form */}
           {!isLoggedIn ? (
-            <div style={{ padding: '24px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px', textAlign: 'center' }}>
-              <Icons.Users size={32} color="var(--text-muted)" />
-              <p style={{ margin: '10px 0 12px', color: 'var(--text-secondary)', fontSize: '14px' }}>برای ثبت ریویو باید وارد شوید</p>
-              <button onClick={() => { localStorage.setItem('redirectAfterLogin', window.location.pathname); window.location.href = '/auth/login'; }} className="btn btn-primary" style={{ padding: '8px 20px' }}><Icons.Users size={14} /> ورود به حساب</button>
-            </div>
-          ) : !hasPurchased ? (
-            <div style={{ padding: '24px', borderRadius: '12px', border: '1px dashed var(--border)', background: 'var(--hover-bg)', marginBottom: '16px', textAlign: 'center' }}>
-              <Icons.Package size={32} color="var(--text-muted)" />
-              <p style={{ margin: '10px 0 4px', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600 }}>فقط خریداران می‌توانند ریویو ثبت کنند</p>
-              <p style={{ margin: '0', color: 'var(--text-muted)', fontSize: '13px' }}>برای ثبت ریویو ابتدا این محصول را خریداری کنید</p>
+            <div style={{ padding: '20px', borderRadius: '12px', border: '1px dashed var(--border)', background: 'var(--hover-bg)', marginBottom: '16px', textAlign: 'center' }}>
+              <Icons.Users size={28} color="var(--text-muted)" />
+              <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>برای مشاهده ریویوها وارد شوید</p>
             </div>
           ) : (
-          <div style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px' }}>
-            <h4 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }}>ریویو بنویسید</h4>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>امتیاز:</span>
-              <div style={{ display: 'flex', gap: '2px' }}>{[1,2,3,4,5].map(s => <button key={s} onClick={() => setNewReview({ ...newReview, rating: s })} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}><Icons.Star size={22} color={s <= newReview.rating ? '#fbbf24' : '#d1d5db'} /></button>)}</div>
+            <div style={{ padding: '16px', borderRadius: '12px', border: '1px dashed var(--border)', background: 'var(--hover-bg)', marginBottom: '16px', textAlign: 'center' }}>
+              <Icons.Star size={20} color="#fbbf24" />
+              <p style={{ margin: '6px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>ثبت ریویو فقط از بخش <strong>خریدهای من</strong> در داشبورد امکان‌پذیر است (برای محصولات تحویل شده)</p>
             </div>
-            <input type="text" placeholder="عنوان ریویو (اختیاری)" value={newReview.title} onChange={e => setNewReview({ ...newReview, title: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', marginBottom: '10px' }} />
-            <textarea placeholder="تجربه خود از این محصول را بنویسید..." value={newReview.text} onChange={e => setNewReview({ ...newReview, text: e.target.value })} rows={3} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', resize: 'vertical', outline: 'none', fontFamily: 'inherit', marginBottom: '10px' }} />
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}><button onClick={addReview} disabled={!newReview.text.trim()} className="btn btn-primary" style={{ padding: '8px 20px', opacity: newReview.text.trim() ? 1 : 0.5 }}><Icons.Send size={14} /> ارسال ریویو</button></div>
-          </div>
           )}
 
-          {/* Reviews List */}
           {reviews.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)' }}><Icons.Star size={32} /><p style={{ marginTop: '8px' }}>هنوز ریویویی ثبت نشده</p></div>
           ) : (
@@ -269,7 +220,6 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
       {/* Comments Tab */}
       {activeTab === 'comments' && (
         <div>
-          {/* Add Comment Form */}
           {!isLoggedIn ? (
             <div style={{ padding: '24px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px', textAlign: 'center' }}>
               <Icons.Users size={32} color="var(--text-muted)" />
@@ -284,7 +234,6 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
           </div>
           )}
 
-          {/* Comments List */}
           {comments.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)' }}><Icons.MessageSquare size={32} /><p style={{ marginTop: '8px' }}>هنوز کامنتی ثبت نشده</p></div>
           ) : (

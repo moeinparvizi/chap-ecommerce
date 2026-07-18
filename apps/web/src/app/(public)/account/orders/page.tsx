@@ -8,10 +8,19 @@ export default function OrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<any[]>([]);
   const [filter, setFilter] = useState('all');
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviewing, setReviewing] = useState<{ orderId: string; itemId: string; itemName: string } | null>(null);
+  const [reviewData, setReviewData] = useState({ rating: 5, title: '', text: '' });
 
   useEffect(() => {
     const saved = localStorage.getItem('orders');
     if (saved) setOrders(JSON.parse(saved));
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const savedReviews = localStorage.getItem('reviews');
+    if (savedReviews) {
+      const all = JSON.parse(savedReviews);
+      setReviews(all.filter((r: any) => r.userId === user.id));
+    }
   }, []);
 
   const statusMap: Record<string, { label: string; color: string; bg: string }> = {
@@ -19,6 +28,30 @@ export default function OrdersPage() {
     shipped: { label: 'ارسال شده', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
     delivered: { label: 'تحویل شده', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
     cancelled: { label: 'لغو شده', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+  };
+
+  const hasReviewed = (itemId: string) => reviews.some((r: any) => r.productId === itemId);
+
+  const submitReview = () => {
+    if (!reviewing || !reviewData.text.trim()) return;
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const review = {
+      id: Date.now().toString(),
+      productId: reviewing.itemId,
+      productName: reviewing.itemName,
+      rating: reviewData.rating,
+      title: reviewData.title,
+      text: reviewData.text,
+      author: user.name || 'کاربر',
+      userId: user.id,
+      date: new Date().toLocaleDateString('fa-IR'),
+    };
+    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const updated = [...allReviews, review];
+    localStorage.setItem('reviews', JSON.stringify(updated));
+    setReviews(updated.filter((r: any) => r.userId === user.id));
+    setReviewing(null);
+    setReviewData({ rating: 5, title: '', text: '' });
   };
 
   const filtered = orders.filter(o => filter === 'all' || o.status === filter);
@@ -59,17 +92,23 @@ export default function OrdersPage() {
                 </div>
 
                 {order.items && order.items.length > 0 && (
-                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                    {order.items.slice(0, 3).map((item: any, j: number) => (
-                      <div key={j} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', borderRadius: '8px', background: 'var(--hover-bg)' }}>
-                        {item.image && <img src={item.image} alt="" style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover' }} />}
-                        <div>
-                          <p style={{ fontSize: '13px', fontWeight: 500, margin: 0, maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</p>
-                          <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>×{item.quantity}</p>
+                  <div style={{ display: 'grid', gap: '8px', marginBottom: '12px' }}>
+                    {order.items.map((item: any, j: number) => (
+                      <div key={j} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', borderRadius: '10px', background: 'var(--hover-bg)' }}>
+                        {item.image && <img src={item.image} alt="" style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />}
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontSize: '13px', fontWeight: 600, margin: 0 }}>{item.name}</p>
+                          <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '2px 0 0' }}>×{item.quantity} — ${(item.price * item.quantity).toLocaleString()}</p>
                         </div>
+                        {order.status === 'delivered' && (
+                          hasReviewed(item.id) ? (
+                            <span style={{ padding: '5px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 500, background: 'rgba(34,197,94,0.1)', color: '#22c55e', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Check size={12} /> ریویو ثبت شده</span>
+                          ) : (
+                            <button onClick={() => setReviewing({ orderId: order.id, itemId: item.id, itemName: item.name })} style={{ padding: '5px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, background: 'var(--primary)', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Star size={12} /> ثبت ریویو</button>
+                          )
+                        )}
                       </div>
                     ))}
-                    {order.items.length > 3 && <span style={{ fontSize: '13px', color: 'var(--text-muted)', alignSelf: 'center' }}>+{order.items.length - 3} مورد دیگر</span>}
                   </div>
                 )}
 
@@ -80,6 +119,43 @@ export default function OrdersPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {reviewing && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }} onClick={() => setReviewing(null)}>
+          <div style={{ width: '100%', maxWidth: '480px', background: 'var(--card-bg)', borderRadius: '16px', padding: '24px', border: '1px solid var(--border)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '17px', fontWeight: 700, margin: 0 }}>ثبت ریویو</h3>
+              <button onClick={() => setReviewing(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '20px' }}>×</button>
+            </div>
+
+            <div style={{ padding: '12px', borderRadius: '10px', background: 'var(--hover-bg)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Icons.Star size={20} color="#fbbf24" />
+              <span style={{ fontWeight: 600, fontSize: '14px' }}>{reviewing.itemName}</span>
+            </div>
+
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>امتیاز</label>
+              <div style={{ display: 'flex', gap: '4px' }}>{[1, 2, 3, 4, 5].map(s => <button key={s} onClick={() => setReviewData({ ...reviewData, rating: s })} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}><Icons.Star size={28} color={s <= reviewData.rating ? '#fbbf24' : '#d1d5db'} /></button>)}</div>
+            </div>
+
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>عنوان (اختیاری)</label>
+              <input type="text" placeholder="عنوان ریویو..." value={reviewData.title} onChange={e => setReviewData({ ...reviewData, title: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>متن ریویو</label>
+              <textarea placeholder="تجربه خود از این محصول را بنویسید..." value={reviewData.text} onChange={e => setReviewData({ ...reviewData, text: e.target.value })} rows={4} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setReviewing(null)} style={{ padding: '10px 20px', borderRadius: '10px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '14px' }}>انصراف</button>
+              <button onClick={submitReview} disabled={!reviewData.text.trim()} className="btn btn-primary" style={{ padding: '10px 20px', opacity: reviewData.text.trim() ? 1 : 0.5 }}><Icons.Send size={14} /> ارسال ریویو</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
