@@ -71,6 +71,16 @@ export default function LoginPage() {
         localStorage.setItem('orders_seeded', 'true');
       }
 
+      // Seed test locations if not exist
+      if (!localStorage.getItem('locations_seeded')) {
+        const testLocations = [
+          { id: 'loc-001', title: 'خانه', address: 'خیابان ولیعصر، نبش کوچه گل، پلاک ۱۲، واحد ۳', city: 'تهران', postalCode: '1234567890', phone: '09123456789', isDefault: true },
+          { id: 'loc-002', title: 'محل کار', address: 'خیابان مدرس، برج اداری طبقه ۵، واحد ۵۰۲', city: 'تهران', postalCode: '0987654321', phone: '09351234567', isDefault: false },
+        ];
+        localStorage.setItem('locations_2', JSON.stringify(testLocations));
+        localStorage.setItem('locations_seeded', 'true');
+      }
+
       window.location.href = localStorage.getItem('redirectAfterLogin') || '/account';
       localStorage.removeItem('redirectAfterLogin');
     } else {
