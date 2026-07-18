@@ -31,21 +31,44 @@ export default function OrdersPage() {
 
   const refreshOrders = async () => {
     try {
-      const data = await api.getOrders() as any[];
-      const mapped = data.map((o: any) => ({
+      // Load from API
+      let apiOrders: any[] = [];
+      try {
+        const data = await api.getOrders() as any[];
+        apiOrders = data.map((o: any) => ({
+          id: o.id,
+          orderNumber: '#' + o.id.slice(0, 8).toUpperCase(),
+          customer: o.customerName,
+          email: o.customerName + '@email.com',
+          items: o.items || 1,
+          total: o.amount,
+          status: o.status?.toLowerCase() || 'pending',
+          paymentStatus: o.status === 'DELIVERED' ? 'paid' : o.status === 'CANCELLED' ? 'refunded' : 'paid',
+          createdAt: new Date(o.createdAt).toLocaleDateString('fa-IR'),
+          updatedAt: new Date(o.updatedAt).toLocaleDateString('fa-IR'),
+        }));
+      } catch (e) { /* API not available */ }
+
+      // Load from localStorage (customer orders)
+      const localOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const mappedLocal = localOrders.map((o: any) => ({
         id: o.id,
-        orderNumber: '#' + o.id.slice(0, 8).toUpperCase(),
-        customer: o.customerName,
-        email: o.customerName + '@email.com',
-        items: o.items || 1,
-        total: o.amount,
+        orderNumber: '#' + (o.id || '').slice(0, 8).toUpperCase(),
+        customer: o.location?.title || 'کاربر',
+        email: '',
+        items: o.items?.length || 0,
+        total: o.total || 0,
         status: o.status?.toLowerCase() || 'pending',
-        paymentStatus: o.status === 'DELIVERED' ? 'paid' : o.status === 'CANCELLED' ? 'refunded' : 'paid',
-        createdAt: new Date(o.createdAt).toLocaleDateString('fa-IR'),
-        updatedAt: new Date(o.updatedAt).toLocaleDateString('fa-IR'),
+        paymentStatus: o.status === 'delivered' ? 'paid' : 'pending',
+        createdAt: o.date || '—',
+        updatedAt: o.date || '—',
+        localItems: o.items,
+        location: o.location,
       }));
-      setOrders(mapped);
-      setFilteredOrders(mapped);
+
+      const all = [...apiOrders, ...mappedLocal];
+      setOrders(all);
+      setFilteredOrders(all);
     } catch (e) { console.error(e); }
   };
 
