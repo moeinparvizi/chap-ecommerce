@@ -35,37 +35,36 @@ export default function LoginPage() {
       // Seed test orders if not exist
       if (!localStorage.getItem('orders_seeded')) {
         const testOrders = [
-          {
-            id: 'ord-001',
-            userId: '2',
-            items: [
-              { id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 },
-              { id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 2 },
-            ],
-            total: 857,
-            status: 'delivered',
-            date: '۱۴۰۴/۰۴/۱۰',
-          },
-          {
-            id: 'ord-002',
-            userId: '2',
-            items: [
-              { id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 },
-            ],
-            total: 349,
-            status: 'shipped',
-            date: '۱۴۰۴/۰۴/۱۵',
-          },
-          {
-            id: 'ord-003',
-            userId: '2',
-            items: [
-              { id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 },
-            ],
-            total: 1999,
-            status: 'pending',
-            date: '۱۴۰۴/۰۴/۱۸',
-          }
+          { id: 'ord-001', userId: '2', items: [{ id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 }, { id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 2 }], total: 857, status: 'delivered', date: '۱۴۰۴/۰۴/۱۰' },
+          { id: 'ord-002', userId: '2', items: [{ id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 }], total: 349, status: 'shipped', date: '۱۴۰۴/۰۴/۱۵' },
+          { id: 'ord-003', userId: '2', items: [{ id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }], total: 1999, status: 'pending', date: '۱۴۰۴/۰۴/۱۸' },
+          { id: 'ord-004', userId: '2', items: [{ id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 }], total: 599, status: 'delivered', date: '۱۴۰۴/۰۳/۲۰' },
+          { id: 'ord-005', userId: '2', items: [{ id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 3 }], total: 387, status: 'shipped', date: '۱۴۰۴/۰۳/۲۲' },
+          { id: 'ord-006', userId: '2', items: [{ id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 2 }], total: 698, status: 'pending', date: '۱۴۰۴/۰۳/۲۵' },
+          { id: 'ord-007', userId: '2', items: [{ id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }], total: 1999, status: 'delivered', date: '۱۴۰۴/۰۳/۲۸' },
+          { id: 'ord-008', userId: '2', items: [{ id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 }, { id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 }], total: 948, status: 'shipped', date: '۱۴۰۴/۰۳/۳۰' },
+          { id: 'ord-009', userId: '2', items: [{ id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 1 }], total: 129, status: 'cancelled', date: '۱۴۰۴/۰۲/۰۵' },
+          { id: 'ord-010', userId: '2', items: [{ id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }, { id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 2 }], total: 2257, status: 'delivered', date: '۱۴۰۴/۰۲/۱۰' },
+          { id: 'ord-011', userId: '2', items: [{ id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 2 }], total: 1198, status: 'pending', date: '۱۴۰۴/۰۲/۱۵' },
+          { id: 'ord-012', userId: '2', items: [{ id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 }], total: 349, status: 'shipped', date: '۱۴۰۴/۰۲/۱۸' },
+          { id: 'ord-013', userId: '2', items: [{ id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 1 }], total: 129, status: 'delivered', date: '۱۴۰۴/۰۲/۲۰' },
+          { id: 'ord-014', userId: '2', items: [{ id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }], total: 1999, status: 'delivered', date: '۱۴۰۴/۰۲/۲۵' },
+          { id: 'ord-015', userId: '2', items: [{ id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 }], total: 599, status: 'cancelled', date: '۱۴۰۴/۰۱/۰۵' },
+          { id: 'ord-016', userId: '2', items: [{ id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 2 }, { id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 1 }], total: 827, status: 'shipped', date: '۱۴۰۴/۰۱/۱۰' },
+          { id: 'ord-017', userId: '2', items: [{ id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }, { id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 }], total: 2598, status: 'pending', date: '۱۴۰۴/۰۱/۱۵' },
+          { id: 'ord-018', userId: '2', items: [{ id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 4 }], total: 516, status: 'delivered', date: '۱۴۰۴/۰۱/۲۰' },
+          { id: 'ord-019', userId: '2', items: [{ id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 }], total: 349, status: 'delivered', date: '۱۴۰۳/۱۲/۲۵' },
+          { id: 'ord-020', userId: '2', items: [{ id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 }, { id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 3 }], total: 986, status: 'shipped', date: '۱۴۰۳/۱۲/۲۸' },
+          { id: 'ord-021', userId: '2', items: [{ id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }], total: 1999, status: 'pending', date: '۱۴۰۳/۱۲/۱۰' },
+          { id: 'ord-022', userId: '2', items: [{ id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 }, { id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 2 }], total: 607, status: 'delivered', date: '۱۴۰۳/۱۲/۱۵' },
+          { id: 'ord-023', userId: '2', items: [{ id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 }], total: 599, status: 'shipped', date: '۱۴۰۳/۱۲/۱۸' },
+          { id: 'ord-024', userId: '2', items: [{ id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }, { id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 }], total: 2348, status: 'cancelled', date: '۱۴۰۳/۱۲/۲۰' },
+          { id: 'ord-025', userId: '2', items: [{ id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 1 }], total: 129, status: 'delivered', date: '۱۴۰۳/۱۲/۲۲' },
+          { id: 'ord-026', userId: '2', items: [{ id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 2 }, { id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }], total: 3197, status: 'pending', date: '۱۴۰۳/۱۱/۳۰' },
+          { id: 'ord-027', userId: '2', items: [{ id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 }], total: 349, status: 'shipped', date: '۱۴۰۳/۱۱/۲۵' },
+          { id: 'ord-028', userId: '2', items: [{ id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 2 }, { id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 }], total: 857, status: 'delivered', date: '۱۴۰۳/۱۱/۲۰' },
+          { id: 'ord-029', userId: '2', items: [{ id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 }], total: 1999, status: 'delivered', date: '۱۴۰۳/۱۱/۱۵' },
+          { id: 'ord-030', userId: '2', items: [{ id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 }, { id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 1 }], total: 478, status: 'pending', date: '۱۴۰۳/۱۱/۱۰' },
         ];
         localStorage.setItem('orders', JSON.stringify(testOrders));
         localStorage.setItem('orders_seeded', 'true');
