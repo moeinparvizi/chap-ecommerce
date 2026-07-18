@@ -44,17 +44,15 @@ export default function ProductsPage() {
   const editFileInputRef = useRef<HTMLInputElement>(null);
   const addFileInputRef = useRef<HTMLInputElement>(null);
   const [addModalImages, setAddModalImages] = useState<ProductImage[]>([]);
-  // Load products from API
+  const [apiCategories, setApiCategories] = useState<any[]>([]);
+
+  // Load products and categories from API
   useEffect(() => {
     api.getProducts().then((data: any[]) => {
-      const mapped = data.map((p: any) => ({
-        ...p,
-        category: p.category?.name || p.categoryId || '',
-        status: p.status?.toLowerCase() || 'active',
-      }));
-      setProducts(mapped);
-      setFilteredProducts(mapped);
+      const mapped = data.map((p: any) => ({ ...p, category: p.category?.name || p.categoryId || '', status: p.status?.toLowerCase() || 'active' }));
+      setProducts(mapped); setFilteredProducts(mapped);
     }).catch(() => {});
+    api.getCategories().then((data: any[]) => setApiCategories(data)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -255,7 +253,10 @@ export default function ProductsPage() {
         </select>
         <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
           <option value="all">همه دسته‌بندی‌ها</option>
-          {categories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
+          {apiCategories.filter(c => !c.parentId).map(p => ([
+            <option key={p.id} value={p.name}>{p.name}</option>,
+            ...apiCategories.filter(c => c.parentId === p.id).map(ch => <option key={ch.id} value={ch.name}>  └ {ch.name}</option>),
+          ]))}
         </select>
       </div>
 
@@ -345,7 +346,10 @@ export default function ProductsPage() {
                 <div><label style={labelStyle}>نام محصول *</label><input id="edit-name" defaultValue={selectedProduct.name} style={inputStyle} /></div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div><label style={labelStyle}>SKU *</label><input id="edit-sku" defaultValue={selectedProduct.sku} style={inputStyle} /></div>
-                  <div><label style={labelStyle}>دسته‌بندی</label><select id="edit-category" defaultValue={selectedProduct.category} style={inputStyle}>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+                  <div><label style={labelStyle}>دسته‌بندی</label><select id="edit-category" defaultValue={selectedProduct.category} style={inputStyle}>{apiCategories.filter(c => !c.parentId).map(p => ([
+                    <option key={p.id} value={p.name}>{p.name}</option>,
+                    ...apiCategories.filter(c => c.parentId === p.id).map(ch => <option key={ch.id} value={ch.name}>  └ {ch.name}</option>),
+                  ]))}</select></div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div><label style={labelStyle}>برند</label><input id="edit-brand" defaultValue={selectedProduct.brand} style={inputStyle} /></div>
@@ -437,7 +441,10 @@ export default function ProductsPage() {
               <div><label style={labelStyle}>نام محصول *</label><input id="add-name" style={inputStyle} placeholder="نام محصول" /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div><label style={labelStyle}>SKU *</label><input id="add-sku" style={inputStyle} placeholder="کد محصول" /></div>
-                <div><label style={labelStyle}>دسته‌بندی *</label><select id="add-category" style={inputStyle}><option value="">انتخاب</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+                <div><label style={labelStyle}>دسته‌بندی *</label><select id="add-category" style={inputStyle}><option value="">انتخاب</option>{apiCategories.filter(c => !c.parentId).map(p => ([
+                    <option key={p.id} value={p.name}>{p.name}</option>,
+                    ...apiCategories.filter(c => c.parentId === p.id).map(ch => <option key={ch.id} value={ch.name}>  └ {ch.name}</option>),
+                  ]))}</select></div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div><label style={labelStyle}>برند</label><input id="add-brand" style={inputStyle} placeholder="نام برند" /></div>
