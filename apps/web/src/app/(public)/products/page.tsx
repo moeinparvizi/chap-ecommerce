@@ -142,11 +142,26 @@ function ProductsContent() {
               {/* Search */}
               <div style={{ marginBottom: '20px' }}><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>جستجو</label><div style={{ position: 'relative' }}><input type="text" placeholder="نام محصول..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: '100%', padding: '10px 36px 10px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} /><div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><Icons.Search size={14} /></div></div></div>
 
-              {/* Category */}
+              {/* Category with Subcategories */}
               <div style={{ marginBottom: '20px' }}><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '8px' }}>دسته\u200cبندی</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <button onClick={() => setSelectedCategory('all')} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === 'all' ? 'var(--primary)' : 'transparent', color: selectedCategory === 'all' ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%' }}>همه</button>
-                  {allCategories.map(c => <button key={c} onClick={() => setSelectedCategory(c)} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === c ? 'var(--primary)' : 'transparent', color: selectedCategory === c ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%' }}>{c}</button>)}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <button onClick={() => setSelectedCategory('all')} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === 'all' ? 'var(--primary)' : 'transparent', color: selectedCategory === 'all' ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === 'all' ? 600 : 400 }}>همه محصولات</button>
+                  {allApiCategories.filter((c: any) => !c.parentId).map((parent: any) => {
+                    const children = allApiCategories.filter((c: any) => c.parentId === parent.id);
+                    return (
+                      <div key={parent.id}>
+                        <button onClick={() => setSelectedCategory(parent.name)} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === parent.name ? 'var(--primary)' : 'transparent', color: selectedCategory === parent.name ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          {parent.name}
+                          {children.length > 0 && <span style={{ fontSize: '10px', opacity: 0.7 }}>{children.length}</span>}
+                        </button>
+                        {children.map((child: any) => (
+                          <button key={child.id} onClick={() => setSelectedCategory(parent.name)} style={{ padding: '4px 10px 4px 24px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px', textAlign: 'right', width: '100%' }}>
+                            <span style={{ marginLeft: '4px', fontSize: '10px', color: 'var(--text-muted)' }}>└</span> {child.name}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
