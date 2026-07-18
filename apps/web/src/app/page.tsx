@@ -76,7 +76,7 @@ export default function Home() {
   const ProductCard = ({ p, badge }: { p: Product; badge?: string }) => {
     const discount = getDiscount(p);
     return (
-      <div onClick={() => router.push('/admin/products')} style={{ borderRadius: '16px', border: '1px solid var(--border)', background: 'var(--card-bg)', overflow: 'hidden', cursor: 'pointer', transition: 'all 0.3s' }}
+      <div onClick={() => router.push(`/product/${p.id}`)} style={{ borderRadius: '16px', border: '1px solid var(--border)', background: 'var(--card-bg)', overflow: 'hidden', cursor: 'pointer', transition: 'all 0.3s' }}
         onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(37,99,235,0.12)'; }}
         onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}>
         <div style={{ position: 'relative', height: '220px', background: `url(${getImage(p)}) center/cover` }}>
