@@ -13,7 +13,6 @@ function ProductsContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
-  const [selectedBrand, setSelectedBrand] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000000]);
   const [showFilters, setShowFilters] = useState(true);
@@ -47,7 +46,6 @@ function ProductsContent() {
   const getCat = (p: Product) => p.category?.name || '';
 
   const allCategories = [...new Set(products.map(p => getCat(p)).filter(Boolean))];
-  const allBrands = [...new Set(products.map(p => p.brand).filter(Boolean))];
   const maxPrice = Math.max(...products.map(p => p.price), 1000000);
 
   const filtered = products.filter(p => {
@@ -56,7 +54,6 @@ function ProductsContent() {
       const family = getCategoryFamily(selectedCategory);
       if (!family.includes(getCat(p))) return false;
     }
-    if (selectedBrand !== 'all' && p.brand !== selectedBrand) return false;
     if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
     if (minRating > 0 && p.rating < minRating) return false;
     return true;
@@ -137,7 +134,7 @@ function ProductsContent() {
         {showFilters && (
           <div style={{ width: '260px', flexShrink: 0 }}>
             <div className="card" style={{ padding: '20px', position: 'sticky', top: '80px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}><h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>فیلترها</h3><button onClick={() => { setSelectedCategory('all'); setSelectedBrand('all'); setMinRating(0); setPriceRange([0, maxPrice]); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}>پاک کردن</button></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}><h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>فیلترها</h3><button onClick={() => { setSelectedCategory('all'); setMinRating(0); setPriceRange([0, maxPrice]); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}>پاک کردن</button></div>
 
               {/* Search */}
               <div style={{ marginBottom: '20px' }}><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>جستجو</label><div style={{ position: 'relative' }}><input type="text" placeholder="نام محصول..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: '100%', padding: '10px 36px 10px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} /><div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><Icons.Search size={14} /></div></div></div>
@@ -162,14 +159,6 @@ function ProductsContent() {
                       </div>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Brand */}
-              <div style={{ marginBottom: '20px' }}><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '8px' }}>برند</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '120px', overflowY: 'auto' }}>
-                  <button onClick={() => setSelectedBrand('all')} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedBrand === 'all' ? 'var(--primary)' : 'transparent', color: selectedBrand === 'all' ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%' }}>همه</button>
-                  {allBrands.map(b => <button key={b} onClick={() => setSelectedBrand(b)} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedBrand === b ? 'var(--primary)' : 'transparent', color: selectedBrand === b ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%' }}>{b}</button>)}
                 </div>
               </div>
 
