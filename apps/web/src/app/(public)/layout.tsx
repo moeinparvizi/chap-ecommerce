@@ -116,7 +116,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
                   {showSubcategories && cat.children.length > 0 && (
                     <div style={{ paddingLeft: '8px', borderRight: `2px solid ${categoryColors[i % categoryColors.length]}20`, paddingRight: '8px' }}>
                       {cat.children.map((sub) => (
-                        <p key={sub.id} onClick={() => router.push(`/products?category=${encodeURIComponent(cat.name)}&sub=${encodeURIComponent(sub.name)}`)} style={{ padding: '4px 0', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s' }}
+                        <p key={sub.id} onClick={() => router.push(`/products?category=${encodeURIComponent(sub.name)}`)} style={{ padding: '4px 0', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s' }}
                           onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
                           <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: categoryColors[i % categoryColors.length], flexShrink: 0 }} />
                           {sub.name}
