@@ -135,21 +135,22 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
   }, []);
 
   useEffect(() => {
-    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
-    const allComments = JSON.parse(localStorage.getItem('comments') || '[]');
-    setReviews(allReviews.filter((r: any) => r.productId === productId));
-    setComments(allComments.filter((c: any) => c.productId === productId));
+    import('@/app/lib/api').then(({ api }) => {
+      Promise.all([
+        api.getReviews(undefined, productId).catch(() => []),
+        api.getComments(undefined, productId).catch(() => []),
+      ]).then(([r, c]) => { setReviews(r); setComments(c); });
+    });
   }, [productId]);
 
-  const addComment = () => {
+  const addComment = async () => {
     if (!isLoggedIn) { localStorage.setItem('redirectAfterLogin', window.location.pathname); window.location.href = '/auth/login'; return; }
     if (!newComment.trim()) return;
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const comment = { id: Date.now().toString(), productId, productName, text: newComment, author: user.name || 'کاربر', userId: user.id, date: new Date().toLocaleDateString('fa-IR') };
-    const allComments = JSON.parse(localStorage.getItem('comments') || '[]');
-    const updated = [...allComments, comment];
-    localStorage.setItem('comments', JSON.stringify(updated));
-    setComments(updated.filter((c: any) => c.productId === productId));
+    const { api } = await import('@/app/lib/api');
+    await api.createComment({ userId: user.id, productId, productName, text: newComment, author: user.name || 'کاربر' });
+    const all = await api.getComments(undefined, productId);
+    setComments(all);
     setNewComment('');
   };
 

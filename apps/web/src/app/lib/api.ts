@@ -86,4 +86,11 @@ export const api = {
 
   // User orders
   getUserOrders: (userId: string) => request(`/orders?userId=${userId}`),
+
+  // Profile
+  getProfile: (id: string) => request(`/profile/${id}`),
+  updateProfile: (id: string, data: any) => request(`/profile/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  // Auth
+  login: (email: string, password: string) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
 };

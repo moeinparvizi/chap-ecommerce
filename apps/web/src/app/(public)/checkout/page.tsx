@@ -33,14 +33,12 @@ export default function CheckoutPage() {
     }
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const savedLocs = localStorage.getItem(`locations_${user.id}`);
-    if (savedLocs) {
-      const locs = JSON.parse(savedLocs);
+    api.getLocations(user.id).then((locs: any) => {
       setLocations(locs);
       const def = locs.find((l: Location) => l.isDefault);
       if (def) setSelectedLocation(def.id);
       else if (locs.length > 0) setSelectedLocation(locs[0].id);
-    }
+    }).catch(() => {});
   }, [router]);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);

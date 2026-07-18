@@ -12,6 +12,8 @@ import { CustomersModule } from './customers/customers.module';
 import { CommentsModule } from './comments/comments.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { LocationsModule } from './locations/locations.module';
+import { ProfileModule } from './profile/profile.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { LocationsModule } from './locations/locations.module';
     CommentsModule,
     ReviewsModule,
     LocationsModule,
+    ProfileModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
