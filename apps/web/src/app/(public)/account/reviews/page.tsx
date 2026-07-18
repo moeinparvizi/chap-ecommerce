@@ -5,9 +5,6 @@ import { Icons } from '@/app/components/Icons';
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState('');
-  const [newReview, setNewReview] = useState({ rating: 5, title: '', text: '' });
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -16,33 +13,7 @@ export default function ReviewsPage() {
       const all = JSON.parse(saved);
       setReviews(all.filter((r: any) => r.userId === user.id));
     }
-    import('@/app/lib/api').then(({ api }) => {
-      api.getProducts().then((d: any) => setProducts(d)).catch(() => {});
-    });
   }, []);
-
-  const addReview = () => {
-    if (!selectedProduct || !newReview.text.trim()) return;
-    const product = products.find((p: any) => p.id === selectedProduct);
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const review = {
-      id: Date.now().toString(),
-      productId: selectedProduct,
-      productName: product?.name || '',
-      rating: newReview.rating,
-      title: newReview.title,
-      text: newReview.text,
-      author: user.name || 'کاربر',
-      userId: user.id,
-      date: new Date().toLocaleDateString('fa-IR'),
-    };
-    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
-    const updatedAll = [...allReviews, review];
-    localStorage.setItem('reviews', JSON.stringify(updatedAll));
-    setReviews(updatedAll.filter((r: any) => r.userId === user.id));
-    setNewReview({ rating: 5, title: '', text: '' });
-    setSelectedProduct('');
-  };
 
   const deleteReview = (id: string) => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -66,25 +37,6 @@ export default function ReviewsPage() {
         <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{reviews.length} ریویو</span>
       </div>
 
-      {/* New Review */}
-      <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
-        <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }}>ریویو جدید</h3>
-        <select value={selectedProduct} onChange={e => setSelectedProduct(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', marginBottom: '10px', outline: 'none' }}>
-          <option value="">انتخاب محصول</option>
-          {products.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-          <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>امتیاز:</span>
-          <div style={{ display: 'flex', gap: '2px' }}>{[1, 2, 3, 4, 5].map(s => <button key={s} onClick={() => setNewReview({ ...newReview, rating: s })} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}><Icons.Star size={22} color={s <= newReview.rating ? '#fbbf24' : '#d1d5db'} /></button>)}</div>
-        </div>
-        <input type="text" placeholder="عنوان ریویو (اختیاری)" value={newReview.title} onChange={e => setNewReview({ ...newReview, title: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', marginBottom: '10px' }} />
-        <textarea placeholder="متن ریویو..." value={newReview.text} onChange={e => setNewReview({ ...newReview, text: e.target.value })} rows={4} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-          <button onClick={addReview} disabled={!selectedProduct || !newReview.text.trim()} className="btn btn-primary" style={{ padding: '8px 20px', opacity: (!selectedProduct || !newReview.text.trim()) ? 0.5 : 1 }}><Icons.Send size={14} /> ارسال ریویو</button>
-        </div>
-      </div>
-
-      {/* Grouped Reviews */}
       {Object.keys(grouped).length === 0 ? (
         <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
           <Icons.Star size={48} color="var(--text-muted)" />
