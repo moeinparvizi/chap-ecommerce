@@ -124,11 +124,27 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 }
 
 function ProductReviewsComments({ productId, productName }: { productId: string; productName: string }) {
+  const router = typeof window !== 'undefined' ? null : null;
   const [activeTab, setActiveTab] = useState<'reviews' | 'comments'>('reviews');
   const [reviews, setReviews] = useState<any[]>([]);
   const [comments, setComments] = useState<any[]>([]);
   const [newReview, setNewReview] = useState({ rating: 5, title: '', text: '' });
   const [newComment, setNewComment] = useState('');
+  const [showLoginMsg, setShowLoginMsg] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('auth_token'));
+  }, []);
+
+  const requireLogin = () => {
+    if (!localStorage.getItem('auth_token')) {
+      localStorage.setItem('redirectAfterLogin', window.location.pathname);
+      window.location.href = '/auth/login';
+      return false;
+    }
+    return true;
+  };
 
   useEffect(() => {
     const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
@@ -138,6 +154,7 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
   }, [productId]);
 
   const addReview = () => {
+    if (!requireLogin()) return;
     if (!newReview.text.trim()) return;
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const review = { id: Date.now().toString(), productId, productName, rating: newReview.rating, title: newReview.title, text: newReview.text, author: user.name || 'کاربر', date: new Date().toLocaleDateString('fa-IR') };
@@ -149,6 +166,7 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
   };
 
   const addComment = () => {
+    if (!requireLogin()) return;
     if (!newComment.trim()) return;
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const comment = { id: Date.now().toString(), productId, productName, text: newComment, author: user.name || 'کاربر', date: new Date().toLocaleDateString('fa-IR') };
@@ -188,6 +206,13 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
           )}
 
           {/* Add Review Form */}
+          {!isLoggedIn ? (
+            <div style={{ padding: '24px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px', textAlign: 'center' }}>
+              <Icons.Users size={32} color="var(--text-muted)" />
+              <p style={{ margin: '10px 0 12px', color: 'var(--text-secondary)', fontSize: '14px' }}>برای ثبت ریویو باید وارد شوید</p>
+              <button onClick={() => { localStorage.setItem('redirectAfterLogin', window.location.pathname); window.location.href = '/auth/login'; }} className="btn btn-primary" style={{ padding: '8px 20px' }}><Icons.Users size={14} /> ورود به حساب</button>
+            </div>
+          ) : (
           <div style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px' }}>
             <h4 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }}>ریویو بنویسید</h4>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
@@ -198,6 +223,7 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
             <textarea placeholder="تجربه خود از این محصول را بنویسید..." value={newReview.text} onChange={e => setNewReview({ ...newReview, text: e.target.value })} rows={3} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', resize: 'vertical', outline: 'none', fontFamily: 'inherit', marginBottom: '10px' }} />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}><button onClick={addReview} disabled={!newReview.text.trim()} className="btn btn-primary" style={{ padding: '8px 20px', opacity: newReview.text.trim() ? 1 : 0.5 }}><Icons.Send size={14} /> ارسال ریویو</button></div>
           </div>
+          )}
 
           {/* Reviews List */}
           {reviews.length === 0 ? (
@@ -229,11 +255,19 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
       {activeTab === 'comments' && (
         <div>
           {/* Add Comment Form */}
+          {!isLoggedIn ? (
+            <div style={{ padding: '24px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px', textAlign: 'center' }}>
+              <Icons.Users size={32} color="var(--text-muted)" />
+              <p style={{ margin: '10px 0 12px', color: 'var(--text-secondary)', fontSize: '14px' }}>برای ثبت کامنت باید وارد شوید</p>
+              <button onClick={() => { localStorage.setItem('redirectAfterLogin', window.location.pathname); window.location.href = '/auth/login'; }} className="btn btn-primary" style={{ padding: '8px 20px' }}><Icons.Users size={14} /> ورود به حساب</button>
+            </div>
+          ) : (
           <div style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px' }}>
             <h4 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 12px' }}>کامنت بگذارید</h4>
             <textarea placeholder="نظر خود را بنویسید..." value={newComment} onChange={e => setNewComment(e.target.value)} rows={3} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', resize: 'vertical', outline: 'none', fontFamily: 'inherit', marginBottom: '10px' }} />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}><button onClick={addComment} disabled={!newComment.trim()} className="btn btn-primary" style={{ padding: '8px 20px', opacity: newComment.trim() ? 1 : 0.5 }}><Icons.Send size={14} /> ارسال کامنت</button></div>
           </div>
+          )}
 
           {/* Comments List */}
           {comments.length === 0 ? (
