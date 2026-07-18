@@ -46,6 +46,15 @@ export default function Home() {
 
   const [likedProducts, setLikedProducts] = useState<Record<string, boolean>>({});
 
+  const addToCart = (e: React.MouseEvent, p: Product) => {
+    e.stopPropagation();
+    const saved = localStorage.getItem('cart');
+    const cart: any[] = saved ? JSON.parse(saved) : [];
+    const existing = cart.find((c: any) => c.id === p.id);
+    if (existing) { existing.quantity += 1; } else { cart.push({ id: p.id, name: p.name, price: p.price, image: getImg(p), quantity: 1 }); }
+    localStorage.setItem('cart', JSON.stringify(cart));
+  };
+
   const toggleLike = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     setLikedProducts(prev => ({ ...prev, [id]: !prev[id] }));
@@ -84,7 +93,7 @@ export default function Home() {
             {p.compareAtPrice && <span style={{ fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>{fmt(p.compareAtPrice)}</span>}
           </div>
           {/* Add to Cart */}
-          <button style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #1e40af, #3b82f6)', color: 'white', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(37,99,235,0.3)', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 6px 20px rgba(37,99,235,0.4)'} onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 12px rgba(37,99,235,0.3)'}>
+          <button onClick={(e) => addToCart(e, p)} style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #1e40af, #3b82f6)', color: 'white', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(37,99,235,0.3)', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 6px 20px rgba(37,99,235,0.4)'} onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 12px rgba(37,99,235,0.3)'}>
             <Icons.ShoppingCart size={14} /> افزودن به سبد
           </button>
         </div>

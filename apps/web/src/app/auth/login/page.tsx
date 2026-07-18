@@ -21,7 +21,8 @@ export default function LoginPage() {
         name: 'Admin User',
         role: 'admin'
       }));
-      window.location.href = '/admin';
+      window.location.href = localStorage.getItem('redirectAfterLogin') || '/admin';
+      localStorage.removeItem('redirectAfterLogin');
     } else if (email === 'user@shop.com' && password === 'user123') {
       localStorage.setItem('auth_token', 'demo-token-456');
       localStorage.setItem('user', JSON.stringify({
@@ -30,7 +31,8 @@ export default function LoginPage() {
         name: 'John Doe',
         role: 'customer'
       }));
-      window.location.href = '/admin';
+      window.location.href = localStorage.getItem('redirectAfterLogin') || '/admin';
+      localStorage.removeItem('redirectAfterLogin');
     } else {
       setError('ایمیل یا رمز عبور اشتباه است');
     }
