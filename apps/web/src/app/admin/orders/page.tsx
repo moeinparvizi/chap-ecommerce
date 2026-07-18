@@ -28,6 +28,8 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   const refreshOrders = async () => {
     try {
@@ -82,6 +84,7 @@ export default function OrdersPage() {
     }
     if (statusFilter !== 'all') result = result.filter(o => o.status === statusFilter);
     setFilteredOrders(result);
+    setCurrentPage(1);
   }, [searchQuery, statusFilter, orders]);
 
   const getStatusColor = (s: string) => {
@@ -117,6 +120,9 @@ export default function OrdersPage() {
       } catch (e) { notify.error('خطا در حذف'); }
     }
   };
+
+  const totalPages = Math.ceil(filteredOrders.length / ITEMS_PER_PAGE);
+  const paginatedOrders = filteredOrders.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <div style={{ padding: '24px' }}>
@@ -156,7 +162,7 @@ export default function OrdersPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.map(order => (
+            {paginatedOrders.map(order => (
               <tr key={order.id}>
                 <td style={{ fontWeight: 600, color: 'var(--primary)' }}>{order.orderNumber}</td>
                 <td>
@@ -196,6 +202,18 @@ export default function OrdersPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', marginTop: '20px' }}>
+          <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} style={{ padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text)', cursor: currentPage === 1 ? 'default' : 'pointer', fontSize: '13px', opacity: currentPage === 1 ? 0.5 : 1 }}>قبلی</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <button key={page} onClick={() => setCurrentPage(page)} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: page === currentPage ? 'var(--primary)' : 'var(--card-bg)', color: page === currentPage ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', fontWeight: page === currentPage ? 700 : 400, minWidth: '36px' }}>{page}</button>
+          ))}
+          <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} style={{ padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text)', cursor: currentPage === totalPages ? 'default' : 'pointer', fontSize: '13px', opacity: currentPage === totalPages ? 0.5 : 1 }}>بعدی</button>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginRight: '10px' }}>صفحه {currentPage} از {totalPages}</span>
+        </div>
+      )}
 
       {/* Order Detail Modal */}
       {showOrderModal && selectedOrder && (
