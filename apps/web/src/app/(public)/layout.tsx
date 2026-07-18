@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
 import { api } from '@/app/lib/api';
@@ -189,7 +189,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
         )}
       </nav>
 
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1 }} key={pathname}>
         {/* Cart Toast */}
         {cartToast.show && (
           <div style={{ position: 'fixed', top: '80px', left: '50%', transform: 'translateX(-50%)', zIndex: 9999, padding: '12px 24px', borderRadius: '12px', background: 'linear-gradient(135deg, #1e40af, #3b82f6)', color: 'white', fontWeight: 600, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 8px 30px rgba(37,99,235,0.4)', animation: 'cartToastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)', whiteSpace: 'nowrap' }}>

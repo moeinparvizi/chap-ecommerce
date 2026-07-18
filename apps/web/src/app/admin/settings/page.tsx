@@ -170,14 +170,60 @@ export default function SettingsPage() {
 
 function BannerForm({ banner, onSave, onClose }: { banner: SiteBanner | null; onSave: (b: SiteBanner) => void; onClose: () => void }) {
   const [form, setForm] = useState<SiteBanner>(banner || { id: Date.now().toString(), title: '', subtitle: '', image: '', link: '/products', active: true, order: 0 });
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('حجم فایل باید کمتر از ۲ مگابایت باشد'); return; }
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setForm({ ...form, image: ev.target?.result as string });
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }} onClick={onClose}>
-      <div style={{ width: '100%', maxWidth: '500px', background: 'var(--card-bg)', borderRadius: '16px', padding: '24px', border: '1px solid var(--border)' }} onClick={e => e.stopPropagation()}>
+      <div style={{ width: '100%', maxWidth: '500px', background: 'var(--card-bg)', borderRadius: '16px', padding: '24px', border: '1px solid var(--border)', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <h3 style={{ fontSize: '17px', fontWeight: 700, margin: 0 }}>{banner ? 'ویرایش بنر' : 'افزودن بنر'}</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '20px' }}>×</button>
         </div>
+
+        {/* Image Upload / Preview */}
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>تصویر بنر</label>
+          {form.image ? (
+            <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
+              <img src={form.image} alt="preview" style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '10px' }} />
+              <div style={{ position: 'absolute', top: '8px', left: '8px', display: 'flex', gap: '6px' }}>
+                <label style={{ padding: '6px 10px', borderRadius: '6px', background: 'rgba(0,0,0,0.6)', color: 'white', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Icons.Edit size={12} /> تغییر
+                  <input type="file" accept="image/*" onChange={handleUpload} style={{ display: 'none' }} />
+                </label>
+                <button onClick={() => setForm({ ...form, image: '' })} style={{ padding: '6px 10px', borderRadius: '6px', background: 'rgba(239,68,68,0.8)', color: 'white', border: 'none', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Trash size={12} /> حذف</button>
+              </div>
+            </div>
+          ) : (
+            <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '30px', borderRadius: '10px', border: '2px dashed var(--border)', background: 'var(--hover-bg)', cursor: 'pointer', transition: 'border-color 0.2s' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}>
+              {uploading ? (
+                <div className="loader-spinner" style={{ width: '32px', height: '32px' }} />
+              ) : (
+                <>
+                  <Icons.Image size={32} color="var(--text-muted)" />
+                  <p style={{ margin: '8px 0 2px', fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)' }}>کلیک کنید یا تصویر را بکشید</p>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>PNG, JPG, WebP — حداکثر ۲ مگابایت</p>
+                </>
+              )}
+              <input type="file" accept="image/*" onChange={handleUpload} style={{ display: 'none' }} />
+            </label>
+          )}
+          <input type="text" value={form.image.startsWith('data:') ? '' : form.image} onChange={e => setForm({ ...form, image: e.target.value })} placeholder="یا لینک تصویر وارد کنید: https://..." style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none', marginTop: '8px' }} />
+        </div>
+
         <div style={{ display: 'grid', gap: '12px' }}>
           <div>
             <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>عنوان</label>
@@ -188,12 +234,8 @@ function BannerForm({ banner, onSave, onClose }: { banner: SiteBanner | null; on
             <input type="text" value={form.subtitle} onChange={e => setForm({ ...form, subtitle: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
           </div>
           <div>
-            <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>لینک تصویر</label>
-            <input type="text" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} placeholder="https://..." style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
-          </div>
-          <div>
             <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>لینک هدف</label>
-            <input type="text" value={form.link} onChange={e => setForm({ ...form, link: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+            <input type="text" value={form.link} onChange={e => setForm({ ...form, link: e.target.value })} placeholder="/products" style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
