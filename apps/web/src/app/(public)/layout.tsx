@@ -46,6 +46,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
 
   // Cart count
   const [cartCount, setCartCount] = useState(0);
+  const [navUser, setNavUser] = useState<any>(null);
   useEffect(() => {
     const updateCount = () => {
       const saved = localStorage.getItem('cart');
@@ -55,6 +56,18 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
     updateCount();
     window.addEventListener('cart-updated', updateCount);
     return () => window.removeEventListener('cart-updated', updateCount);
+  }, []);
+
+  // Nav user state
+  useEffect(() => {
+    const checkUser = () => {
+      const u = localStorage.getItem('user');
+      setNavUser(u ? JSON.parse(u) : null);
+    };
+    checkUser();
+    window.addEventListener('storage', checkUser);
+    window.addEventListener('user-updated', checkUser);
+    return () => { window.removeEventListener('storage', checkUser); window.removeEventListener('user-updated', checkUser); };
   }, []);
 
   useEffect(() => {
@@ -86,7 +99,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <button onClick={() => { const n = lang === 'fa' ? 'en' : 'fa'; setLang(n); localStorage.setItem('lang', n); document.documentElement.dir = n === 'fa' ? 'rtl' : 'ltr'; }} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '12px' }}>{lang === 'fa' ? 'EN' : 'FA'}</button>
             <button onClick={() => { const n = theme === 'light' ? 'dark' : 'light'; setTheme(n); localStorage.setItem('theme', n); document.documentElement.setAttribute('data-theme', n); }} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>{theme === 'light' ? <Icons.Sun size={12} /> : <Icons.Moon size={12} />}</button>
-            <a href="/auth/login" style={{ color: 'white', textDecoration: 'none' }}>ورود</a>
+            {navUser ? <button onClick={() => router.push(navUser.role === 'admin' ? '/admin' : '/account')} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '12px' }}>پروفایل</button> : <a href="/auth/login" style={{ color: 'white', textDecoration: 'none' }}>ورود</a>}
           </div>
         </div>
       </div>
@@ -104,7 +117,17 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <button style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.Bell size={20} /><span style={{ position: 'absolute', top: '4px', right: '4px', width: '16px', height: '16px', borderRadius: '50%', background: '#ef4444', color: 'white', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>3</span></button>
             <button onClick={() => router.push('/cart')} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.ShoppingCart size={20} />{cartCount > 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', minWidth: '18px', height: '18px', borderRadius: '9px', background: 'var(--primary)', color: 'white', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 4px' }}>{cartCount}</span>}</button>
-            <a href="/auth/login" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '10px', background: 'var(--primary)', color: 'white', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}><Icons.Users size={14} /> ورود</a>
+            {navUser ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button onClick={() => router.push(navUser.role === 'admin' ? '/admin' : '/account')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '10px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>{navUser.name?.charAt(0) || 'U'}</div>
+                  {navUser.name || 'پروفایل'}
+                </button>
+                <button onClick={() => { localStorage.removeItem('auth_token'); localStorage.removeItem('user'); setNavUser(null); router.push('/'); }} style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '13px' }}>خروج</button>
+              </div>
+            ) : (
+              <a href="/auth/login" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '10px', background: 'var(--primary)', color: 'white', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}><Icons.Users size={14} /> ورود</a>
+            )}
           </div>
         </div>
 
