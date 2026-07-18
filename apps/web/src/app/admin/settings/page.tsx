@@ -1,84 +1,204 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Icons } from '../../components/Icons';
 import { useNotification } from '../../lib/notifications';
+import { getSiteSettings, saveSiteSettings, SiteSettings, SiteBanner } from '../../lib/site-settings';
 
-interface Setting { id: string; key: string; value: string; type: string; group: string; }
+type Tab = 'banners' | 'footer' | 'siteInfo';
 
 export default function SettingsPage() {
   const notify = useNotification();
-  const [activeSection, setActiveSection] = useState('general');
-  const [settings, setSettings] = useState<Record<string, string>>({
-    storeName: 'ShopHub',
-    storeEmail: 'admin@shophub.com',
-    storePhone: '+98 912 123 4567',
-    storeAddress: 'Tehran, Valiasr St.',
-    currency: 'USD',
-    timezone: 'Asia/Tehran',
-    language: 'fa',
-    theme: 'light',
-    maintenanceMode: 'false',
-    minOrderAmount: '50',
-    freeShippingThreshold: '100',
-    taxRate: '10',
-    smtpHost: 'smtp.gmail.com',
-    smtpPort: '587',
-    smtpUser: '',
-    smtpPass: '',
-    seoTitle: 'ShopHub - Online Store',
-    seoDescription: 'Best online store with best prices',
-    analyticsId: '',
-  });
-  const [saving, setSaving] = useState(false);
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('siteInfo');
+  const [editingBanner, setEditingBanner] = useState<SiteBanner | null>(null);
+  const [showBannerForm, setShowBannerForm] = useState(false);
 
-  const sections = [
-    { id: 'general', label: 'عمومی', icon: <Icons.Settings size={14} /> },
-    { id: 'appearance', label: 'ظاهر', icon: <Icons.Image size={14} /> },
-    { id: 'shipping', label: 'ارسال', icon: <Icons.Truck size={14} /> },
-    { id: 'payment', label: 'پرداخت', icon: <Icons.CreditCard size={14} /> },
-    { id: 'tax', label: 'مالیات', icon: <Icons.FileText size={14} /> },
-    { id: 'email', label: 'ایمیل', icon: <Icons.Mail size={14} /> },
-    { id: 'seo', label: 'SEO', icon: <Icons.Search size={14} /> },
-    { id: 'advanced', label: 'پیشرفته', icon: <Icons.Shield size={14} /> },
+  useEffect(() => { setSettings(getSiteSettings()); }, []);
+
+  const save = (newSettings: SiteSettings) => {
+    setSettings(newSettings);
+    saveSiteSettings(newSettings);
+    notify?.success('تنظیمات ذخیره شد');
+  };
+
+  if (!settings) return null;
+
+  const tabs: { key: Tab; label: string; icon: any }[] = [
+    { key: 'siteInfo', label: 'اطلاعات سایت', icon: 'Settings' },
+    { key: 'banners', label: 'بنرها', icon: 'Image' },
+    { key: 'footer', label: 'فوتر', icon: 'Layout' },
   ];
 
-  const labelStyle = { display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: 500, color: 'var(--text)' };
+  return (
+    <div>
+      <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 24px' }}>تنظیمات سایت</h1>
 
-  const updateSetting = (key: string, value: string) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
-  };
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '24px', borderBottom: '2px solid var(--border)', paddingBottom: 0 }}>
+        {tabs.map(tab => {
+          const IconComp = Icons[tab.icon as keyof typeof Icons];
+          return (
+            <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ padding: '10px 20px', borderRadius: '0', border: 'none', borderBottom: activeTab === tab.key ? '3px solid var(--primary)' : '3px solid transparent', background: 'transparent', color: activeTab === tab.key ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px', fontWeight: activeTab === tab.key ? 700 : 500, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '-2px' }}>
+              {IconComp && <IconComp size={16} />} {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
-  const handleSave = () => {
-    setSaving(true);
-    setTimeout(() => { setSaving(false); notify.success('تنظیمات با موفقیت ذخیره شد!'); }, 500);
-  };
+      {/* Site Info Tab */}
+      {activeTab === 'siteInfo' && (
+        <div className="card" style={{ padding: '24px', maxWidth: '600px' }}>
+          <h3 style={{ fontSize: '17px', fontWeight: 700, margin: '0 0 20px' }}>اطلاعات کلی سایت</h3>
+          <div style={{ display: 'grid', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>نام سایت</label>
+              <input type="text" value={settings.siteInfo.name} onChange={e => save({ ...settings, siteInfo: { ...settings.siteInfo, name: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>شعار سایت</label>
+              <input type="text" value={settings.siteInfo.slogan} onChange={e => save({ ...settings, siteInfo: { ...settings.siteInfo, slogan: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>لگو (URL تصویر)</label>
+              <input type="text" value={settings.siteInfo.logo} onChange={e => save({ ...settings, siteInfo: { ...settings.siteInfo, logo: e.target.value } })} placeholder="https://..." style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>رنگ اصلی</label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input type="color" value={settings.siteInfo.primaryColor} onChange={e => save({ ...settings, siteInfo: { ...settings.siteInfo, primaryColor: e.target.value } })} style={{ width: '40px', height: '40px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer' }} />
+                <input type="text" value={settings.siteInfo.primaryColor} onChange={e => save({ ...settings, siteInfo: { ...settings.siteInfo, primaryColor: e.target.value } })} style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', width: '120px' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Banners Tab */}
+      {activeTab === 'banners' && (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{settings.banners.length} بنر</span>
+            <button onClick={() => { setEditingBanner(null); setShowBannerForm(true); }} style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Plus size={14} /> افزودن بنر</button>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {settings.banners.sort((a, b) => a.order - b.order).map(banner => (
+              <div key={banner.id} className="card" style={{ padding: '16px', display: 'flex', gap: '16px', alignItems: 'center', opacity: banner.active ? 1 : 0.6 }}>
+                <img src={banner.image} alt="" style={{ width: '160px', height: '80px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <h3 style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>{banner.title}</h3>
+                    <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '10px', background: banner.active ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', color: banner.active ? '#22c55e' : '#ef4444', fontWeight: 600 }}>{banner.active ? 'فعال' : 'غیرفعال'}</span>
+                  </div>
+                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 4px' }}>{banner.subtitle}</p>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>{banner.link}</p>
+                </div>
+                <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                  <button onClick={() => { setEditingBanner(banner); setShowBannerForm(true); }} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '12px' }}><Icons.Edit size={12} /></button>
+                  <button onClick={() => save({ ...settings, banners: settings.banners.map(b => b.id === banner.id ? { ...b, active: !b.active } : b) })} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: banner.active ? '#ef4444' : '#22c55e', cursor: 'pointer', fontSize: '12px' }}>{banner.active ? 'غیرفعال' : 'فعال'}</button>
+                  <button onClick={() => save({ ...settings, banners: settings.banners.filter(b => b.id !== banner.id) })} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--danger)', cursor: 'pointer', fontSize: '12px' }}><Icons.Trash size={12} /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Footer Tab */}
+      {activeTab === 'footer' && (
+        <div className="card" style={{ padding: '24px', maxWidth: '700px' }}>
+          <h3 style={{ fontSize: '17px', fontWeight: 700, margin: '0 0 20px' }}>تنظیمات فوتر</h3>
+          <div style={{ display: 'grid', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>درباره ما</label>
+              <textarea value={settings.footer.about} onChange={e => save({ ...settings, footer: { ...settings.footer, about: e.target.value } })} rows={3} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', resize: 'vertical', fontFamily: 'inherit' }} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>تلفن</label>
+                <input type="text" value={settings.footer.phone} onChange={e => save({ ...settings, footer: { ...settings.footer, phone: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>ایمیل</label>
+                <input type="text" value={settings.footer.email} onChange={e => save({ ...settings, footer: { ...settings.footer, email: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+              </div>
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>آدرس</label>
+              <input type="text" value={settings.footer.address} onChange={e => save({ ...settings, footer: { ...settings.footer, address: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>متن کپی‌رایت</label>
+              <input type="text" value={settings.footer.copyright} onChange={e => save({ ...settings, footer: { ...settings.footer, copyright: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+            </div>
+          </div>
+
+          {/* Social Links */}
+          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: 600, margin: 0 }}>لینک‌های شبکه اجتماعی</h4>
+              <button onClick={() => save({ ...settings, footer: { ...settings.footer, socialLinks: [...settings.footer.socialLinks, { name: '', url: '', icon: 'Link' }] } })} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}><Icons.Plus size={12} /> افزودن</button>
+            </div>
+            <div style={{ display: 'grid', gap: '8px' }}>
+              {settings.footer.socialLinks.map((link, i) => (
+                <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input type="text" value={link.name} onChange={e => { const sl = [...settings.footer.socialLinks]; sl[i].name = e.target.value; save({ ...settings, footer: { ...settings.footer, socialLinks: sl } }); }} placeholder="نام" style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} />
+                  <input type="text" value={link.url} onChange={e => { const sl = [...settings.footer.socialLinks]; sl[i].url = e.target.value; save({ ...settings, footer: { ...settings.footer, socialLinks: sl } }); }} placeholder="لینک" style={{ flex: 2, padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} />
+                  <button onClick={() => save({ ...settings, footer: { ...settings.footer, socialLinks: settings.footer.socialLinks.filter((_, j) => j !== i) } })} style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--danger)', cursor: 'pointer' }}><Icons.Trash size={12} /></button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Banner Form Modal */}
+      {showBannerForm && (
+        <BannerForm banner={editingBanner} onSave={(banner) => {
+          if (editingBanner) {
+            save({ ...settings, banners: settings.banners.map(b => b.id === banner.id ? banner : b) });
+          } else {
+            save({ ...settings, banners: [...settings.banners, { ...banner, order: settings.banners.length }] });
+          }
+          setShowBannerForm(false);
+          setEditingBanner(null);
+        }} onClose={() => { setShowBannerForm(false); setEditingBanner(null); }} />
+      )}
+    </div>
+  );
+}
+
+function BannerForm({ banner, onSave, onClose }: { banner: SiteBanner | null; onSave: (b: SiteBanner) => void; onClose: () => void }) {
+  const [form, setForm] = useState<SiteBanner>(banner || { id: Date.now().toString(), title: '', subtitle: '', image: '', link: '/products', active: true, order: 0 });
 
   return (
-    <div style={{ padding: '24px' }}>
-      <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 24px' }}>تنظیمات</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '24px' }}>
-        <div className="card" style={{ height: 'fit-content' }}>
-          <nav>
-            {sections.map(s => (
-              <button key={s.id} onClick={() => setActiveSection(s.id)} className="menu-item" style={activeSection === s.id ? { background: 'var(--primary)', color: 'white' } : {}}>
-                {s.icon} <span>{s.label}</span>
-              </button>
-            ))}
-          </nav>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }} onClick={onClose}>
+      <div style={{ width: '100%', maxWidth: '500px', background: 'var(--card-bg)', borderRadius: '16px', padding: '24px', border: '1px solid var(--border)' }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '17px', fontWeight: 700, margin: 0 }}>{banner ? 'ویرایش بنر' : 'افزودن بنر'}</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '20px' }}>×</button>
         </div>
-        <div className="card animate-in">
-          {activeSection === 'general' && (<div><h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات عمومی</h2><div style={{ display: 'grid', gap: '16px' }}><div><label style={labelStyle}>نام فروشگاه</label><input className="input" value={settings.storeName} onChange={e => updateSetting('storeName', e.target.value)} /></div><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}><div><label style={labelStyle}>ایمیل</label><input className="input" type="email" value={settings.storeEmail} onChange={e => updateSetting('storeEmail', e.target.value)} /></div><div><label style={labelStyle}>تلفن</label><input className="input" value={settings.storePhone} onChange={e => updateSetting('storePhone', e.target.value)} /></div></div><div><label style={labelStyle}>آدرس</label><input className="input" value={settings.storeAddress} onChange={e => updateSetting('storeAddress', e.target.value)} /></div></div></div>)}
-          {activeSection === 'appearance' && (<div><h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات ظاهر</h2><div style={{ display: 'grid', gap: '16px' }}><div><label style={labelStyle}>ارز</label><select className="input" value={settings.currency} onChange={e => updateSetting('currency', e.target.value)}><option value="USD">دلار</option><option value="EUR">یورو</option><option value="IRR">ریال</option></select></div><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}><div><label style={labelStyle}>زبان</label><select className="input" value={settings.language} onChange={e => updateSetting('language', e.target.value)}><option value="fa">فارسی</option><option value="en">English</option></select></div><div><label style={labelStyle}>منطقه زمانی</label><select className="input" value={settings.timezone} onChange={e => updateSetting('timezone', e.target.value)}><option value="Asia/Tehran">تهران</option><option value="UTC">UTC</option></select></div></div></div></div>)}
-          {activeSection === 'shipping' && (<div><h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات ارسال</h2><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}><div><label style={labelStyle}>حداقل مبلغ ($)</label><input className="input" type="number" value={settings.minOrderAmount} onChange={e => updateSetting('minOrderAmount', e.target.value)} /></div><div><label style={labelStyle}>ارسال رایگان از ($)</label><input className="input" type="number" value={settings.freeShippingThreshold} onChange={e => updateSetting('freeShippingThreshold', e.target.value)} /></div></div></div>)}
-          {activeSection === 'payment' && (<div><h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات پرداخت</h2><div style={{ display: 'grid', gap: '12px' }}><div style={{ padding: '16px', background: 'rgba(16,185,129,0.1)', borderRadius: '10px', border: '1px solid rgba(16,185,129,0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.Check size={14} /><span style={{ color: '#10b981', fontWeight: 500 }}>Stripe متصل است</span></div><div style={{ padding: '16px', background: 'rgba(245,158,11,0.1)', borderRadius: '10px', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.AlertCircle size={14} /><span style={{ color: '#f59e0b', fontWeight: 500 }}>PayPal در انتظار پیکربندی</span></div></div></div>)}
-          {activeSection === 'tax' && (<div><h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات مالیات</h2><div><label style={labelStyle}>نرخ مالیات (%)</label><input className="input" type="number" value={settings.taxRate} onChange={e => updateSetting('taxRate', e.target.value)} /></div></div>)}
-          {activeSection === 'email' && (<div><h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات ایمیل</h2><div style={{ display: 'grid', gap: '16px' }}><div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}><div><label style={labelStyle}>SMTP Host</label><input className="input" value={settings.smtpHost} onChange={e => updateSetting('smtpHost', e.target.value)} /></div><div><label style={labelStyle}>Port</label><input className="input" type="number" value={settings.smtpPort} onChange={e => updateSetting('smtpPort', e.target.value)} /></div></div><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}><div><label style={labelStyle}>نام کاربری</label><input className="input" value={settings.smtpUser} onChange={e => updateSetting('smtpUser', e.target.value)} /></div><div><label style={labelStyle}>رمز عبور</label><input className="input" type="password" value={settings.smtpPass} onChange={e => updateSetting('smtpPass', e.target.value)} /></div></div></div></div>)}
-          {activeSection === 'seo' && (<div><h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات SEO</h2><div style={{ display: 'grid', gap: '16px' }}><div><label style={labelStyle}>عنوان سایت</label><input className="input" value={settings.seoTitle} onChange={e => updateSetting('seoTitle', e.target.value)} /></div><div><label style={labelStyle}>توضیحات متا</label><textarea className="input" rows={3} value={settings.seoDescription} onChange={e => updateSetting('seoDescription', e.target.value)} style={{ resize: 'vertical' }} /></div><div><label style={labelStyle}>Google Analytics ID</label><input className="input" value={settings.analyticsId} onChange={e => updateSetting('analyticsId', e.target.value)} placeholder="G-XXXXXXXXXX" /></div></div></div>)}
-          {activeSection === 'advanced' && (<div><h2 style={{ margin: '0 0 20px', fontSize: '18px' }}>تنظیمات پیشرفته</h2><div><label style={labelStyle}>حالت تعمیرات</label><select className="input" value={settings.maintenanceMode} onChange={e => updateSetting('maintenanceMode', e.target.value)}><option value="false">غیرفعال</option><option value="true">فعال</option></select>{settings.maintenanceMode === 'true' && <p style={{ marginTop: '8px', padding: '8px', background: 'rgba(245,158,11,0.1)', borderRadius: '6px', fontSize: '13px', color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.AlertCircle size={14} /> سایت در حالت تعمیرات است</p>}</div></div>)}
-          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end' }}>
-            <button className="btn btn-success" onClick={handleSave} disabled={saving}><Icons.Save size={14} /> {saving ? 'در حال ذخیره...' : 'ذخیره تنظیمات'}</button>
+        <div style={{ display: 'grid', gap: '12px' }}>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>عنوان</label>
+            <input type="text" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
           </div>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>زیرعنوان</label>
+            <input type="text" value={form.subtitle} onChange={e => setForm({ ...form, subtitle: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+          </div>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>لینک تصویر</label>
+            <input type="text" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} placeholder="https://..." style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+          </div>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>لینک هدف</label>
+            <input type="text" value={form.link} onChange={e => setForm({ ...form, link: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+          <button onClick={onClose} style={{ padding: '10px 20px', borderRadius: '10px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer' }}>انصراف</button>
+          <button onClick={() => onSave(form)} disabled={!form.title.trim()} style={{ padding: '10px 20px', borderRadius: '10px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontWeight: 600, opacity: form.title.trim() ? 1 : 0.5 }}>ذخیره</button>
         </div>
       </div>
     </div>

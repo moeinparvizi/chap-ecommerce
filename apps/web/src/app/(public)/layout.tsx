@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
 import { api } from '@/app/lib/api';
+import { getSiteSettings, initSiteSettings, type SiteSettings } from '@/app/lib/site-settings';
 
 interface Category { id: string; name: string; slug: string; description: string; image: string | null; parentId: string | null; status: string; }
 interface CategoryTree extends Category { children: CategoryTree[]; }
@@ -19,6 +20,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const [showSubcategories, setShowSubcategories] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [cartToast, setCartToast] = useState<{ name: string; show: boolean }>({ name: '', show: false });
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
@@ -29,6 +31,8 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.documentElement.dir = savedLang === 'fa' ? 'rtl' : 'ltr';
     api.getCategories().then((d: any) => setCategories(d.filter((c: Category) => c.status === 'active'))).catch(() => {});
+    initSiteSettings();
+    setSiteSettings(getSiteSettings());
   }, []);
 
   useEffect(() => { localStorage.setItem('showSubcategories', String(showSubcategories)); }, [showSubcategories]);
@@ -107,7 +111,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
       {/* Navbar */}
       <nav style={{ background: 'var(--card-bg)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 100, transition: 'all 0.3s', padding: scrolled ? '8px 0' : '12px 0', boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.08)' : 'none' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div onClick={() => router.push('/')} style={{ fontSize: scrolled ? '20px' : '26px', fontWeight: 800, background: 'linear-gradient(135deg, #1e40af, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor: 'pointer', transition: 'font-size 0.3s', flexShrink: 0 }}>ShopHub</div>
+          <div onClick={() => router.push('/')} style={{ fontSize: scrolled ? '20px' : '26px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor: 'pointer', transition: 'font-size 0.3s', flexShrink: 0 }}>{siteSettings?.siteInfo.name || 'ShopHub'}</div>
           <div style={{ flex: 1, maxWidth: '600px', position: 'relative' }}>
             <form onSubmit={(e) => { e.preventDefault(); if (searchText.trim()) router.push(`/products?search=${encodeURIComponent(searchText.trim())}`); }} style={{ display: 'flex', width: '100%' }}>
               <input type="text" placeholder="جستجوی محصولات..." value={searchText} onChange={e => setSearchText(e.target.value)} style={{ width: '100%', padding: scrolled ? '10px 44px 10px 16px' : '12px 44px 12px 16px', borderRadius: '12px', border: '2px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', transition: 'all 0.3s' }} />
@@ -201,12 +205,19 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
       <footer style={{ background: 'var(--card-bg)', borderTop: '1px solid var(--border)', padding: '36px 20px' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '28px', marginBottom: '20px' }}>
-            <div><div style={{ fontSize: '22px', fontWeight: 800, background: 'linear-gradient(135deg, #1e40af, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '8px' }}>ShopHub</div><p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>فروشگاه آنلاین با بهترین برندها و قیمت‌ها.</p></div>
+            <div><div style={{ fontSize: '22px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '8px' }}>{siteSettings?.siteInfo.name || 'ShopHub'}</div><p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{siteSettings?.footer.about || 'فروشگاه آنلاین با بهترین برندها و قیمت‌ها.'}</p></div>
             <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>لینک‌ها</h4><p onClick={() => router.push('/about')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>درباره ما</p><p onClick={() => router.push('/contact')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>تماس با ما</p><p onClick={() => router.push('/products')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>محصولات</p></div>
             <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>خدمات</h4><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px' }}>پیگیری سفارش</p><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px' }}>گارانتی بازگشت</p></div>
-            <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>تماس</h4><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Mail size={13} /> info@shophub.com</p></div>
+            <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>تماس</h4><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Mail size={13} /> {siteSettings?.footer.email || 'info@shophub.com'}</p><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Bell size={13} /> {siteSettings?.footer.phone || '۰۲۱-۱۲۳۴۵۶۷۸'}</p><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0', lineHeight: 1.5 }}>{siteSettings?.footer.address || ''}</p></div>
           </div>
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>© ۱۴۰۳ ShopHub. تمامی حقوق محفوظ است.</div>
+          {siteSettings?.footer.socialLinks && siteSettings.footer.socialLinks.length > 0 && (
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+              {siteSettings.footer.socialLinks.map((link, i) => (
+                <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid var(--border)', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '12px', fontWeight: 500 }}>{link.name}</a>
+              ))}
+            </div>
+          )}
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>{siteSettings?.footer.copyright || '© ۱۴۰۵ ShopHub. تمامی حقوق محفوظ است.'}</div>
         </div>
       </footer>
     </div>

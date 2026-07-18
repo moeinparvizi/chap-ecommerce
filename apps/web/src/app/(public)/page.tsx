@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icons } from '../components/Icons';
 import { CardLoader, PageLoader } from '../components/Loading';
+import { getSiteSettings, initSiteSettings } from '../lib/site-settings';
 import { api } from '../lib/api';
 
 interface Product {
@@ -17,8 +18,14 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [siteBanners, setSiteBanners] = useState<any[]>([]);
 
-  useEffect(() => { api.getProducts().then((d: any) => { setProducts(d); setLoading(false); }).catch(() => setLoading(false)); }, []);
+  useEffect(() => {
+    initSiteSettings();
+    const settings = getSiteSettings();
+    setSiteBanners(settings.banners.filter(b => b.active).sort((a: any, b: any) => a.order - b.order));
+    api.getProducts().then((d: any) => { setProducts(d); setLoading(false); }).catch(() => setLoading(false));
+  }, []);
 
   const t = (fa: string, en: string) => fa;
   const fmt = (p: number) => p.toLocaleString('fa-IR') + ' تومان';
@@ -109,16 +116,26 @@ export default function Home() {
     <div>
       {/* Hero */}
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px' }}>
-        <div style={{ borderRadius: '20px', overflow: 'hidden', height: '340px', background: slides[currentSlide].bg, transition: 'background 0.5s', position: 'relative' }}>
-          <div style={{ padding: '50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', color: 'white', maxWidth: '500px' }}>
-            <h1 style={{ fontSize: '28px', fontWeight: 800, margin: '0 0 8px', lineHeight: 1.3 }}>{slides[currentSlide].title}</h1>
-            <p style={{ fontSize: '14px', margin: '0 0 20px', opacity: 0.9 }}>{slides[currentSlide].sub}</p>
-            <button onClick={() => router.push('/admin/products')} style={{ padding: '12px 28px', borderRadius: '12px', border: 'none', background: 'white', color: '#1e40af', fontWeight: 700, fontSize: '14px', cursor: 'pointer', alignSelf: 'flex-start' }}>مشاهده</button>
+        {siteBanners.length > 0 ? (
+          <div style={{ borderRadius: '20px', overflow: 'hidden', height: '340px', position: 'relative', cursor: 'pointer' }} onClick={() => siteBanners[currentSlide]?.link && router.push(siteBanners[currentSlide].link)}>
+            <img src={siteBanners[currentSlide]?.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.7), transparent)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '50px', color: 'white' }}>
+              <h1 style={{ fontSize: '28px', fontWeight: 800, margin: '0 0 8px', lineHeight: 1.3 }}>{siteBanners[currentSlide]?.title}</h1>
+              <p style={{ fontSize: '14px', margin: '0 0 20px', opacity: 0.9 }}>{siteBanners[currentSlide]?.subtitle}</p>
+              <button style={{ padding: '12px 28px', borderRadius: '12px', border: 'none', background: 'white', color: '#1e40af', fontWeight: 700, fontSize: '14px', cursor: 'pointer', alignSelf: 'flex-start' }}>مشاهده</button>
+            </div>
+            <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px' }}>
+              {siteBanners.map((_: any, i: number) => <button key={i} onClick={(e) => { e.stopPropagation(); setCurrentSlide(i); }} style={{ width: currentSlide === i ? '32px' : '10px', height: '10px', borderRadius: '5px', border: 'none', background: currentSlide === i ? 'white' : 'rgba(255,255,255,0.4)', cursor: 'pointer', transition: 'all 0.3s' }} />)}
+            </div>
           </div>
-          <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px' }}>
-            {slides.map((_, i) => <button key={i} onClick={() => setCurrentSlide(i)} style={{ width: currentSlide === i ? '32px' : '10px', height: '10px', borderRadius: '5px', border: 'none', background: currentSlide === i ? 'white' : 'rgba(255,255,255,0.4)', cursor: 'pointer', transition: 'all 0.3s' }} />)}
+        ) : (
+          <div style={{ borderRadius: '20px', overflow: 'hidden', height: '340px', background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)', position: 'relative' }}>
+            <div style={{ padding: '50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', color: 'white', maxWidth: '500px' }}>
+              <h1 style={{ fontSize: '28px', fontWeight: 800, margin: '0 0 8px', lineHeight: 1.3 }}>به ShopHub خوش آمدید</h1>
+              <p style={{ fontSize: '14px', margin: '0 0 20px', opacity: 0.9 }}>محصولات متنوع با بهترین قیمت‌ها</p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Features */}
