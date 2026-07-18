@@ -10,8 +10,12 @@ export default function ReviewsPage() {
   const [newReview, setNewReview] = useState({ rating: 5, title: '', text: '' });
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
     const saved = localStorage.getItem('reviews');
-    if (saved) setReviews(JSON.parse(saved));
+    if (saved) {
+      const all = JSON.parse(saved);
+      setReviews(all.filter((r: any) => r.userId === user.id));
+    }
     import('@/app/lib/api').then(({ api }) => {
       api.getProducts().then((d: any) => setProducts(d)).catch(() => {});
     });
@@ -29,19 +33,23 @@ export default function ReviewsPage() {
       title: newReview.title,
       text: newReview.text,
       author: user.name || 'کاربر',
+      userId: user.id,
       date: new Date().toLocaleDateString('fa-IR'),
     };
-    const updated = [...reviews, review];
-    setReviews(updated);
-    localStorage.setItem('reviews', JSON.stringify(updated));
+    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const updatedAll = [...allReviews, review];
+    localStorage.setItem('reviews', JSON.stringify(updatedAll));
+    setReviews(updatedAll.filter((r: any) => r.userId === user.id));
     setNewReview({ rating: 5, title: '', text: '' });
     setSelectedProduct('');
   };
 
   const deleteReview = (id: string) => {
-    const updated = reviews.filter(r => r.id !== id);
-    setReviews(updated);
-    localStorage.setItem('reviews', JSON.stringify(updated));
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const updatedAll = allReviews.filter((r: any) => r.id !== id);
+    localStorage.setItem('reviews', JSON.stringify(updatedAll));
+    setReviews(updatedAll.filter((r: any) => r.userId === user.id));
   };
 
   const grouped = reviews.reduce((acc: Record<string, any[]>, r: any) => {

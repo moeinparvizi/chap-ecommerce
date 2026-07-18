@@ -12,8 +12,12 @@ export default function CommentsPage() {
   const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
     const saved = localStorage.getItem('comments');
-    if (saved) setComments(JSON.parse(saved));
+    if (saved) {
+      const all = JSON.parse(saved);
+      setComments(all.filter((c: any) => c.userId === user.id));
+    }
     import('@/app/lib/api').then(({ api }) => {
       api.getProducts().then((d: any) => setProducts(d)).catch(() => {});
     });
@@ -27,20 +31,24 @@ export default function CommentsPage() {
       text: newComment,
       productId: selectedProduct || '',
       productName: selectedProduct ? products.find((p: any) => p.id === selectedProduct)?.name || '' : '',
+      userId: user.id,
       author: user.name || 'کاربر',
       date: new Date().toLocaleDateString('fa-IR'),
     };
-    const updated = [...comments, comment];
-    setComments(updated);
-    localStorage.setItem('comments', JSON.stringify(updated));
+    const allComments = JSON.parse(localStorage.getItem('comments') || '[]');
+    const updatedAll = [...allComments, comment];
+    localStorage.setItem('comments', JSON.stringify(updatedAll));
+    setComments(updatedAll.filter((c: any) => c.userId === user.id));
     setNewComment('');
     setSelectedProduct('');
   };
 
   const deleteComment = (id: string) => {
-    const updated = comments.filter(c => c.id !== id);
-    setComments(updated);
-    localStorage.setItem('comments', JSON.stringify(updated));
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const allComments = JSON.parse(localStorage.getItem('comments') || '[]');
+    const updatedAll = allComments.filter((c: any) => c.id !== id);
+    localStorage.setItem('comments', JSON.stringify(updatedAll));
+    setComments(updatedAll.filter((c: any) => c.userId === user.id));
   };
 
   const grouped = comments.reduce((acc: Record<string, any[]>, c: any) => {
