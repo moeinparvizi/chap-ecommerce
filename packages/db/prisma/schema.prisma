@@ -117,13 +117,17 @@ model BannerImage {
 }
 
 model Order {
-  id          String      @id @default(uuid())
+  id           String      @id @default(uuid())
   customerName String
-  amount      Float
-  status      OrderStatus @default(PENDING)
-  items       Int         @default(1)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  userId       String?
+  amount       Float
+  status       OrderStatus @default(PENDING)
+  items        Int         @default(1)
+  itemsJson    String?
+  locationJson String?
+  paymentMethod String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 enum OrderStatus {

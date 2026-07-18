@@ -33,44 +33,31 @@ export default function OrdersPage() {
 
   const refreshOrders = async () => {
     try {
-      // Load from API
+      // Load from API (database)
       let apiOrders: any[] = [];
       try {
         const data = await api.getOrders() as any[];
-        apiOrders = data.map((o: any) => ({
-          id: o.id,
-          orderNumber: '#' + o.id.slice(0, 8).toUpperCase(),
-          customer: o.customerName,
-          email: o.customerName + '@email.com',
-          items: o.items || 1,
-          total: o.amount,
-          status: o.status?.toLowerCase() || 'pending',
-          paymentStatus: o.status === 'DELIVERED' ? 'paid' : o.status === 'CANCELLED' ? 'refunded' : 'paid',
-          createdAt: new Date(o.createdAt).toLocaleDateString('fa-IR'),
-          updatedAt: new Date(o.updatedAt).toLocaleDateString('fa-IR'),
-        }));
+        apiOrders = data.map((o: any) => {
+          const items = o.itemsJson ? JSON.parse(o.itemsJson) : [];
+          return {
+            id: o.id,
+            orderNumber: '#' + o.id.slice(0, 8).toUpperCase(),
+            customer: o.customerName,
+            email: o.customerName + '@email.com',
+            items: items.length || o.items || 1,
+            total: o.amount,
+            status: o.status?.toLowerCase() || 'pending',
+            paymentStatus: o.status === 'DELIVERED' ? 'paid' : o.status === 'CANCELLED' ? 'refunded' : 'paid',
+            createdAt: new Date(o.createdAt).toLocaleDateString('fa-IR'),
+            updatedAt: new Date(o.updatedAt).toLocaleDateString('fa-IR'),
+            localItems: items,
+            location: o.locationJson ? JSON.parse(o.locationJson) : null,
+          };
+        });
       } catch (e) { /* API not available */ }
 
-      // Load from localStorage (customer orders)
-      const localOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const mappedLocal = localOrders.map((o: any) => ({
-        id: o.id,
-        orderNumber: '#' + (o.id || '').slice(0, 8).toUpperCase(),
-        customer: o.location?.title || 'کاربر',
-        email: '',
-        items: o.items?.length || 0,
-        total: o.total || 0,
-        status: o.status?.toLowerCase() || 'pending',
-        paymentStatus: o.status === 'delivered' ? 'paid' : 'pending',
-        createdAt: o.date || '—',
-        updatedAt: o.date || '—',
-        localItems: o.items,
-        location: o.location,
-      }));
-
-      const all = [...apiOrders, ...mappedLocal];
-      setOrders(all);
-      setFilteredOrders(all);
+      setOrders(apiOrders);
+      setFilteredOrders(apiOrders);
     } catch (e) { console.error(e); }
   };
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
+import { api } from '@/app/lib/api';
 
 interface CartItem { id: string; name: string; price: number; image: string; quantity: number; }
 interface Location { id: string; title: string; address: string; city: string; postalCode: string; phone: string; isDefault: boolean; }
@@ -48,21 +49,27 @@ export default function CheckoutPage() {
   const finalPrice = total - discount + shipping;
   const activeLocation = locations.find(l => l.id === selectedLocation);
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (!selectedLocation || cart.length === 0) return;
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    const newOrder = {
-      id: `ord-${Date.now()}`,
-      userId: user.id,
-      items: cart.map(c => ({ id: c.id, name: c.name, price: c.price, image: c.image, quantity: c.quantity })),
-      total: finalPrice,
-      status: 'pending',
-      date: new Date().toLocaleDateString('fa-IR'),
-      location: activeLocation,
-    };
-    localStorage.setItem('orders', JSON.stringify([...orders, newOrder]));
+    try {
+      await api.createOrder({
+        customerName: user.name || 'کاربر',
+        userId: user.id,
+        amount: finalPrice,
+        items: cart.length,
+        itemsJson: JSON.stringify(cart.map(c => ({ id: c.id, name: c.name, price: c.price, image: c.image, quantity: c.quantity }))),
+        locationJson: JSON.stringify(activeLocation),
+        paymentMethod: 'online',
+      });
+    } catch (e) {
+      // fallback to localStorage if API fails
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push({ id: `ord-${Date.now()}`, userId: user.id, items: cart.map(c => ({ id: c.id, name: c.name, price: c.price, image: c.image, quantity: c.quantity })), total: finalPrice, status: 'pending', date: new Date().toLocaleDateString('fa-IR'), location: activeLocation });
+      localStorage.setItem('orders', JSON.stringify(orders));
+    }
+
     localStorage.removeItem('cart');
     window.dispatchEvent(new Event('cart-updated'));
     setOrderPlaced(true);
