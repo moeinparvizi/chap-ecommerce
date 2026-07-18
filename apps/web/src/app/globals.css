@@ -298,6 +298,9 @@ tr:hover { background: var(--hover-bg); }
 @keyframes megaMenuIn { from { opacity: 0; max-height: 0; overflow: hidden; } to { opacity: 1; max-height: 500px; overflow: hidden; } }
 .mega-menu-enter { animation: megaMenuIn 0.3s ease-out forwards; }
 
+/* Cart Toast */
+@keyframes cartToastIn { 0% { opacity: 0; transform: translateX(-50%) translateY(-20px) scale(0.9); } 100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
+
 /* Like Button */
 .like-btn {
   position: absolute;

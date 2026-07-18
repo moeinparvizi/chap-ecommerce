@@ -68,6 +68,8 @@ function ProductsContent() {
     const existing = cart.find((c: any) => c.id === p.id);
     if (existing) { existing.quantity += 1; } else { cart.push({ id: p.id, name: p.name, price: p.price, image: getImg(p), quantity: 1 }); }
     localStorage.setItem('cart', JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('cart-added', { detail: { name: p.name } }));
+    window.dispatchEvent(new Event('cart-updated'));
   };
 
   const toggleLike = (e: React.MouseEvent, id: string) => {

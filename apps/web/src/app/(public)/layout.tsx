@@ -18,6 +18,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [showSubcategories, setShowSubcategories] = useState(true);
   const [searchText, setSearchText] = useState('');
+  const [cartToast, setCartToast] = useState<{ name: string; show: boolean }>({ name: '', show: false });
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
@@ -32,6 +33,29 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
 
   useEffect(() => { localStorage.setItem('showSubcategories', String(showSubcategories)); }, [showSubcategories]);
   useEffect(() => { setMegaMenuOpen(false); }, [pathname]);
+
+  // Cart toast listener
+  useEffect(() => {
+    const handleCartAdd = (e: CustomEvent) => {
+      setCartToast({ name: e.detail.name, show: true });
+      setTimeout(() => setCartToast({ name: '', show: false }), 3000);
+    };
+    window.addEventListener('cart-added', handleCartAdd as EventListener);
+    return () => window.removeEventListener('cart-added', handleCartAdd as EventListener);
+  }, []);
+
+  // Cart count
+  const [cartCount, setCartCount] = useState(0);
+  useEffect(() => {
+    const updateCount = () => {
+      const saved = localStorage.getItem('cart');
+      const cart: any[] = saved ? JSON.parse(saved) : [];
+      setCartCount(cart.reduce((sum: number, c: any) => sum + c.quantity, 0));
+    };
+    updateCount();
+    window.addEventListener('cart-updated', updateCount);
+    return () => window.removeEventListener('cart-updated', updateCount);
+  }, []);
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 50);
@@ -79,7 +103,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <button style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.Bell size={20} /><span style={{ position: 'absolute', top: '4px', right: '4px', width: '16px', height: '16px', borderRadius: '50%', background: '#ef4444', color: 'white', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>3</span></button>
-            <button onClick={() => router.push('/cart')} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.ShoppingCart size={20} /><span style={{ position: 'absolute', top: '4px', right: '4px', width: '16px', height: '16px', borderRadius: '50%', background: 'var(--primary)', color: 'white', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>2</span></button>
+            <button onClick={() => router.push('/cart')} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.ShoppingCart size={20} />{cartCount > 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', minWidth: '18px', height: '18px', borderRadius: '9px', background: 'var(--primary)', color: 'white', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 4px' }}>{cartCount}</span>}</button>
             <a href="/auth/login" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '10px', background: 'var(--primary)', color: 'white', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}><Icons.Users size={14} /> ورود</a>
           </div>
         </div>
@@ -138,7 +162,17 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
         )}
       </nav>
 
-      <main style={{ flex: 1 }}>{children}</main>
+      <main style={{ flex: 1 }}>
+        {/* Cart Toast */}
+        {cartToast.show && (
+          <div style={{ position: 'fixed', top: '80px', left: '50%', transform: 'translateX(-50%)', zIndex: 9999, padding: '12px 24px', borderRadius: '12px', background: 'linear-gradient(135deg, #1e40af, #3b82f6)', color: 'white', fontWeight: 600, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 8px 30px rgba(37,99,235,0.4)', animation: 'cartToastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)', whiteSpace: 'nowrap' }}>
+            <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Check size={16} /></div>
+            <span>«{cartToast.name}» به سبد خرید اضافه شد</span>
+            <button onClick={() => setCartToast({ name: '', show: false })} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>×</button>
+          </div>
+        )}
+        {children}
+      </main>
 
       {/* Footer */}
       <footer style={{ background: 'var(--card-bg)', borderTop: '1px solid var(--border)', padding: '36px 20px' }}>

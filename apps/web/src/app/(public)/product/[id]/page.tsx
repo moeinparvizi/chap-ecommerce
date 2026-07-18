@@ -37,6 +37,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const existing = cart.find((c: any) => c.id === product.id);
     if (existing) { existing.quantity += quantity; } else { cart.push({ id: product.id, name: product.name, price: product.price, image: mainImage, quantity }); }
     localStorage.setItem('cart', JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('cart-added', { detail: { name: product.name } }));
+    window.dispatchEvent(new Event('cart-updated'));
     setAddedMessage(true);
     setTimeout(() => setAddedMessage(false), 3000);
   };
