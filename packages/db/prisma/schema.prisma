@@ -117,17 +117,52 @@ model BannerImage {
 }
 
 model Order {
-  id           String      @id @default(uuid())
-  customerName String
-  userId       String?
-  amount       Float
-  status       OrderStatus @default(PENDING)
-  items        Int         @default(1)
-  itemsJson    String?
-  locationJson String?
+  id            String      @id @default(uuid())
+  customerName  String
+  userId        String?
+  amount        Float
+  status        OrderStatus @default(PENDING)
+  items         Int         @default(1)
+  itemsJson     String?
+  locationJson  String?
   paymentMethod String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  userId      String
+  productId   String
+  productName String
+  text        String
+  author      String
+  createdAt   DateTime @default(now())
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  userId      String
+  productId   String
+  productName String
+  rating      Int
+  title       String?
+  text        String
+  author      String
+  createdAt   DateTime @default(now())
+}
+
+model Location {
+  id         String   @id @default(uuid())
+  userId     String
+  title      String
+  address    String
+  city       String
+  postalCode String?
+  phone      String?
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 enum OrderStatus {

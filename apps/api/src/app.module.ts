@@ -9,6 +9,10 @@ import { OrdersModule } from './orders/orders.module';
 import { MarketingModule } from './marketing/marketing.module';
 import { CustomersModule } from './customers/customers.module';
 
+import { CommentsModule } from './comments/comments.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { LocationsModule } from './locations/locations.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,6 +24,9 @@ import { CustomersModule } from './customers/customers.module';
     OrdersModule,
     MarketingModule,
     CustomersModule,
+    CommentsModule,
+    ReviewsModule,
+    LocationsModule,
   ],
 })
 export class AppModule {}

@@ -1,26 +1,28 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
+import { api } from '@/app/lib/api';
+import { ListLoader } from '@/app/components/Loading';
 
 export default function ReviewsPage() {
+  const router = useRouter();
   const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const saved = localStorage.getItem('reviews');
-    if (saved) {
-      const all = JSON.parse(saved);
-      setReviews(all.filter((r: any) => r.userId === user.id));
-    }
-  }, []);
+    const token = localStorage.getItem('auth_token');
+    if (!token) { router.push('/auth/login'); return; }
+    if (user.id) {
+      api.getReviews(user.id).then((d: any) => { setReviews(d); setLoading(false); }).catch(() => setLoading(false));
+    } else { setLoading(false); }
+  }, [router]);
 
-  const deleteReview = (id: string) => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const allReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
-    const updatedAll = allReviews.filter((r: any) => r.id !== id);
-    localStorage.setItem('reviews', JSON.stringify(updatedAll));
-    setReviews(updatedAll.filter((r: any) => r.userId === user.id));
+  const deleteReview = async (id: string) => {
+    await api.deleteReview(id);
+    setReviews(reviews.filter(r => r.id !== id));
   };
 
   const grouped = reviews.reduce((acc: Record<string, any[]>, r: any) => {
@@ -30,18 +32,18 @@ export default function ReviewsPage() {
     return acc;
   }, {});
 
+  if (loading) return <div style={{ padding: '24px' }}><ListLoader count={3} /></div>;
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>ریویوهای من</h1>
         <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{reviews.length} ریویو</span>
       </div>
-
       {Object.keys(grouped).length === 0 ? (
         <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
           <Icons.Star size={48} color="var(--text-muted)" />
           <h3 style={{ marginTop: '12px', color: 'var(--text-secondary)' }}>هنوز ریویویی ندارید</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>از صفحه محصولات ریویو ثبت کنید</p>
         </div>
       ) : (
         <div style={{ display: 'grid', gap: '16px' }}>
@@ -64,7 +66,7 @@ export default function ReviewsPage() {
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{r.date}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{new Date(r.createdAt).toLocaleDateString('fa-IR')}</span>
                         <button onClick={() => deleteReview(r.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: '2px' }}><Icons.Trash size={13} /></button>
                       </div>
                     </div>

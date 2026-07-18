@@ -51,4 +51,39 @@ export const api = {
   createCustomer: (data: any) => request('/customers', { method: 'POST', body: JSON.stringify(data) }),
   updateCustomer: (id: string, data: any) => request(`/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteCustomer: (id: string) => request(`/customers/${id}`, { method: 'DELETE' }),
+
+  // Comments
+  getComments: (userId?: string, productId?: string) => {
+    const params = new URLSearchParams();
+    if (userId) params.append('userId', userId);
+    if (productId) params.append('productId', productId);
+    const q = params.toString() ? `?${params.toString()}` : '';
+    return request(`/comments${q}`);
+  },
+  createComment: (data: any) => request('/comments', { method: 'POST', body: JSON.stringify(data) }),
+  deleteComment: (id: string) => request(`/comments/${id}`, { method: 'DELETE' }),
+
+  // Reviews
+  getReviews: (userId?: string, productId?: string) => {
+    const params = new URLSearchParams();
+    if (userId) params.append('userId', userId);
+    if (productId) params.append('productId', productId);
+    const q = params.toString() ? `?${params.toString()}` : '';
+    return request(`/reviews${q}`);
+  },
+  createReview: (data: any) => request('/reviews', { method: 'POST', body: JSON.stringify(data) }),
+  deleteReview: (id: string) => request(`/reviews/${id}`, { method: 'DELETE' }),
+
+  // Locations
+  getLocations: (userId?: string) => {
+    const q = userId ? `?userId=${userId}` : '';
+    return request(`/locations${q}`);
+  },
+  createLocation: (data: any) => request('/locations', { method: 'POST', body: JSON.stringify(data) }),
+  updateLocation: (id: string, data: any) => request(`/locations/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteLocation: (id: string) => request(`/locations/${id}`, { method: 'DELETE' }),
+  setDefaultLocation: (id: string, userId: string) => request(`/locations/${id}/default`, { method: 'PUT', body: JSON.stringify({ userId }) }),
+
+  // User orders
+  getUserOrders: (userId: string) => request(`/orders?userId=${userId}`),
 };

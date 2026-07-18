@@ -9,6 +9,10 @@ export class OrdersService {
     return this.prisma.order.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
+  async findByUser(userId: string) {
+    return this.prisma.order.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } });
+  }
+
   async create(data: any) {
     return this.prisma.order.create({ data });
   }
