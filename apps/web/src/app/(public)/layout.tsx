@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
+import { api } from '@/app/lib/api';
+
+interface Category { id: string; name: string; slug: string; description: string; image: string | null; parentId: string | null; status: string; }
 
 function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -12,6 +15,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
@@ -19,6 +23,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
     setTheme(savedTheme); setLang(savedLang);
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.documentElement.dir = savedLang === 'fa' ? 'rtl' : 'ltr';
+    api.getCategories().then((d: any) => setCategories(d)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -31,20 +36,17 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
 
   const t = (fa: string, en: string) => lang === 'fa' ? fa : en;
 
-  const categories = [
-    { icon: <Icons.Package size={28} />, name: t('موبایل', 'Mobile'), color: '#3b82f6' },
-    { icon: <Icons.Tag size={28} />, name: t('لپتاپ', 'Laptop'), color: '#8b5cf6' },
-    { icon: <Icons.Users size={28} />, name: t('پوشاک', 'Fashion'), color: '#ec4899' },
-    { icon: <Icons.Image size={28} />, name: t('لوازم خانگی', 'Home'), color: '#f59e0b' },
-    { icon: <Icons.Tag size={28} />, name: t('کفش', 'Shoes'), color: '#22c55e' },
-  ];
+  // Dynamic categories from API
+  const categoryIcons: Record<string, any> = { 'موبایل': <Icons.Package size={28} />, 'لپتاپ': <Icons.Tag size={28} />, 'پوشاک': <Icons.Users size={28} />, 'لوازم خانگی': <Icons.Image size={28} />, 'کفش': <Icons.Tag size={28} />, 'هدفون': <Icons.Package size={28} />, 'تبلت': <Icons.Package size={28} />, 'دوربین': <Icons.Image size={28} />, 'خانه': <Icons.Image size={28} />, 'گیمینگ': <Icons.Settings size={28} />, default: <Icons.Package size={28} /> };
+  const categoryColors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#22c55e', '#ef4444', '#06b6d4', '#6b7280'];
+  const navCategories = categories.slice(0, 5).map((c, i) => ({ ...c, icon: categoryIcons[c.name] || categoryIcons.default, color: categoryColors[i % categoryColors.length] }));
 
-  const megaMenuCategories = [
-    { name: t('موبایل و تبلت', 'Mobile'), icon: <Icons.Package size={18} />, items: [t('گوشی هوشمند', 'Smartphone'), t('تبلت', 'Tablet'), t('لوازم جانبی', 'Accessories')] },
-    { name: t('لپتاپ و کامپیوتر', 'Laptop'), icon: <Icons.Tag size={18} />, items: [t('لپتاپ', 'Laptop'), t('مانیتور', 'Monitor'), t('کیبورد', 'Keyboard')] },
-    { name: t('پوشاک', 'Fashion'), icon: <Icons.Users size={18} />, items: [t('مردانه', 'Men'), t('زنانه', 'Women'), t('اسپرت', 'Sport')] },
-    { name: t('لوازم خانگی', 'Home'), icon: <Icons.Image size={18} />, items: [t('آشپزخانه', 'Kitchen'), t('نظافت', 'Cleaning'), t('صوتی', 'Audio')] },
-  ];
+  // Dynamic mega menu from API (group into 4 columns)
+  const megaMenuItems = categories.reduce<{ name: string; icon: any; items: string[] }[]>((acc, cat, i) => {
+    if (i < 4) acc.push({ name: cat.name, icon: categoryIcons[cat.name] || categoryIcons.default, items: [] });
+    if (acc.length > 0 && acc[acc.length - 1].items.length < 3) acc[acc.length - 1].items.push(cat.description || cat.name);
+    return acc;
+  }, []);
 
   const footerLinks = {
     quick: [t('محصولات', 'Products'), t('درباره ما', 'About Us'), t('تماس با ما', 'Contact Us')],
@@ -89,8 +91,8 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           <button onClick={() => setMegaMenuOpen(!megaMenuOpen)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', border: 'none', background: megaMenuOpen ? 'var(--primary)' : 'var(--hover-bg)', color: megaMenuOpen ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '14px', fontWeight: 600, transition: 'all 0.2s' }}>
             <Icons.Menu size={16} /> {t('دسته\u200cبندی\u200cها', 'Categories')} <Icons.ChevronDown size={14} />
           </button>
-          {categories.map((cat, i) => (
-            <button key={i} onClick={() => router.push('/admin/products')} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}>{cat.icon} {cat.name}</button>
+          {navCategories.map((cat, i) => (
+            <button key={cat.id} onClick={() => router.push('/products')} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}>{cat.icon} {cat.name}</button>
           ))}
           <div style={{ flex: 1 }} />
           <button onClick={() => router.push('/about')} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px' }}><Icons.Globe size={14} /> {t('درباره ما', 'About')}</button>
@@ -100,10 +102,10 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
         {/* Mega Menu */}
         {megaMenuOpen && (
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px', borderTop: '1px solid var(--border-light)', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
-            {megaMenuCategories.map((mc, i) => (
+            {megaMenuItems.map((mc, i) => (
               <div key={i}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', paddingBottom: '8px', borderBottom: '2px solid var(--primary)' }}><span style={{ color: 'var(--primary)' }}>{mc.icon}</span><span style={{ fontWeight: 700, fontSize: '14px' }}>{mc.name}</span></div>
-                {mc.items.map((item, j) => (<p key={j} onClick={() => router.push('/admin/products')} style={{ padding: '5px 0', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer' }}>{item}</p>))}
+                {mc.items.map((item, j) => (<p key={j} onClick={() => router.push('/products')} style={{ padding: '5px 0', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer' }}>{item}</p>))}
               </div>
             ))}
           </div>
