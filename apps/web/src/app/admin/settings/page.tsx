@@ -81,22 +81,36 @@ export default function SettingsPage() {
             <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{settings.banners.length} بنر</span>
             <button onClick={() => { setEditingBanner(null); setShowBannerForm(true); }} style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Plus size={14} /> افزودن بنر</button>
           </div>
-          <div style={{ display: 'grid', gap: '12px' }}>
+          <div style={{ display: 'grid', gap: '16px' }}>
             {settings.banners.sort((a, b) => a.order - b.order).map(banner => (
-              <div key={banner.id} className="card" style={{ padding: '16px', display: 'flex', gap: '16px', alignItems: 'center', opacity: banner.active ? 1 : 0.6 }}>
-                <img src={banner.image} alt="" style={{ width: '160px', height: '80px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <h3 style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>{banner.title}</h3>
-                    <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '10px', background: banner.active ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', color: banner.active ? '#22c55e' : '#ef4444', fontWeight: 600 }}>{banner.active ? 'فعال' : 'غیرفعال'}</span>
+              <div key={banner.id} className="card" style={{ padding: 0, overflow: 'hidden', opacity: banner.active ? 1 : 0.6 }}>
+                {/* Banner Preview — full width like actual banner */}
+                <div style={{ position: 'relative', height: '180px', borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
+                  {banner.image ? (
+                    <img src={banner.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #1e40af, #3b82f6)' }} />
+                  )}
+                  {/* Text overlay on banner */}
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.7), transparent)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '24px', color: 'white' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 4px' }}>{banner.title}</h3>
+                    <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>{banner.subtitle}</p>
                   </div>
-                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 4px' }}>{banner.subtitle}</p>
-                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>{banner.link}</p>
+                  {/* Status badge */}
+                  <div style={{ position: 'absolute', top: '12px', left: '12px' }}>
+                    <span style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, background: banner.active ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)', color: 'white' }}>{banner.active ? 'فعال' : 'غیرفعال'}</span>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                  <button onClick={() => { setEditingBanner(banner); setShowBannerForm(true); }} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '12px' }}><Icons.Edit size={12} /></button>
-                  <button onClick={() => save({ ...settings, banners: settings.banners.map(b => b.id === banner.id ? { ...b, active: !b.active } : b) })} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: banner.active ? '#ef4444' : '#22c55e', cursor: 'pointer', fontSize: '12px' }}>{banner.active ? 'غیرفعال' : 'فعال'}</button>
-                  <button onClick={() => save({ ...settings, banners: settings.banners.filter(b => b.id !== banner.id) })} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--danger)', cursor: 'pointer', fontSize: '12px' }}><Icons.Trash size={12} /></button>
+                {/* Action bar */}
+                <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--hover-bg)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                    <Icons.ExternalLink size={12} /> {banner.link}
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button onClick={() => { setEditingBanner(banner); setShowBannerForm(true); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text)', cursor: 'pointer', fontSize: '12px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Edit size={12} /> ویرایش</button>
+                    <button onClick={() => save({ ...settings, banners: settings.banners.map(b => b.id === banner.id ? { ...b, active: !b.active } : b) })} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: banner.active ? '#ef4444' : '#22c55e', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}>{banner.active ? 'غیرفعال' : 'فعال'}</button>
+                    <button onClick={() => save({ ...settings, banners: settings.banners.filter(b => b.id !== banner.id) })} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--danger)', cursor: 'pointer', fontSize: '12px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Trash size={12} /> حذف</button>
+                  </div>
                 </div>
               </div>
             ))}
