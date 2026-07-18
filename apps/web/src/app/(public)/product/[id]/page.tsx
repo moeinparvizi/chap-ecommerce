@@ -132,10 +132,18 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
   const [newComment, setNewComment] = useState('');
   const [showLoginMsg, setShowLoginMsg] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hasPurchased, setHasPurchased] = useState(false);
 
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem('auth_token'));
-  }, []);
+    const token = !!localStorage.getItem('auth_token');
+    setIsLoggedIn(token);
+    if (token) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const purchased = orders.some((o: any) => o.userId === user.id && o.items?.some((item: any) => item.id === productId));
+      setHasPurchased(purchased);
+    }
+  }, [productId]);
 
   const requireLogin = () => {
     if (!localStorage.getItem('auth_token')) {
@@ -155,6 +163,7 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
 
   const addReview = () => {
     if (!requireLogin()) return;
+    if (!hasPurchased) return;
     if (!newReview.text.trim()) return;
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const review = { id: Date.now().toString(), productId, productName, rating: newReview.rating, title: newReview.title, text: newReview.text, author: user.name || 'کاربر', userId: user.id, date: new Date().toLocaleDateString('fa-IR') };
@@ -211,6 +220,12 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
               <Icons.Users size={32} color="var(--text-muted)" />
               <p style={{ margin: '10px 0 12px', color: 'var(--text-secondary)', fontSize: '14px' }}>برای ثبت ریویو باید وارد شوید</p>
               <button onClick={() => { localStorage.setItem('redirectAfterLogin', window.location.pathname); window.location.href = '/auth/login'; }} className="btn btn-primary" style={{ padding: '8px 20px' }}><Icons.Users size={14} /> ورود به حساب</button>
+            </div>
+          ) : !hasPurchased ? (
+            <div style={{ padding: '24px', borderRadius: '12px', border: '1px dashed var(--border)', background: 'var(--hover-bg)', marginBottom: '16px', textAlign: 'center' }}>
+              <Icons.Package size={32} color="var(--text-muted)" />
+              <p style={{ margin: '10px 0 4px', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600 }}>فقط خریداران می‌توانند ریویو ثبت کنند</p>
+              <p style={{ margin: '0', color: 'var(--text-muted)', fontSize: '13px' }}>برای ثبت ریویو ابتدا این محصول را خریداری کنید</p>
             </div>
           ) : (
           <div style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', marginBottom: '16px' }}>

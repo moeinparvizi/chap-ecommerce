@@ -31,6 +31,46 @@ export default function LoginPage() {
         name: 'John Doe',
         role: 'customer'
       }));
+
+      // Seed test orders if not exist
+      if (!localStorage.getItem('orders_seeded')) {
+        const testOrders = [
+          {
+            id: 'ord-001',
+            userId: '2',
+            items: [
+              { id: '6c2b7e46-863a-43ac-a093-dad13dd0acf6', name: 'iPad Air M2', price: 599, image: 'https://picsum.photos/400/400?random=1', quantity: 1 },
+              { id: '98f7e7bc-bbbc-4e6c-a542-4b2ed93db896', name: 'Nike Air Max 90', price: 129, image: 'https://picsum.photos/400/400?random=2', quantity: 2 },
+            ],
+            total: 857,
+            status: 'delivered',
+            date: '۱۴۰۴/۰۴/۱۰',
+          },
+          {
+            id: 'ord-002',
+            userId: '2',
+            items: [
+              { id: 'e4c19cd5-5452-449e-8e76-21a61505d2b6', name: 'Sony WH-1000XM5', price: 349, image: 'https://picsum.photos/400/400?random=3', quantity: 1 },
+            ],
+            total: 349,
+            status: 'shipped',
+            date: '۱۴۰۴/۰۴/۱۵',
+          },
+          {
+            id: 'ord-003',
+            userId: '2',
+            items: [
+              { id: '9bdee628-fadf-4b2e-b68b-26cc4c07e7ca', name: 'MacBook Pro M3', price: 1999, image: 'https://picsum.photos/400/400?random=4', quantity: 1 },
+            ],
+            total: 1999,
+            status: 'pending',
+            date: '۱۴۰۴/۰۴/۱۸',
+          }
+        ];
+        localStorage.setItem('orders', JSON.stringify(testOrders));
+        localStorage.setItem('orders_seeded', 'true');
+      }
+
       window.location.href = localStorage.getItem('redirectAfterLogin') || '/account';
       localStorage.removeItem('redirectAfterLogin');
     } else {
