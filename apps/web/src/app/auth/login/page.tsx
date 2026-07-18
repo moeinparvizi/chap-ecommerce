@@ -31,7 +31,7 @@ export default function LoginPage() {
         name: 'John Doe',
         role: 'customer'
       }));
-      window.location.href = localStorage.getItem('redirectAfterLogin') || '/admin';
+      window.location.href = localStorage.getItem('redirectAfterLogin') || '/account';
       localStorage.removeItem('redirectAfterLogin');
     } else {
       setError('ایمیل یا رمز عبور اشتباه است');
@@ -56,10 +56,10 @@ export default function LoginPage() {
       }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-            ShopHub Admin
+            ShopHub
           </h1>
           <p style={{ color: '#64748b', marginTop: '8px' }}>
-            وارد حساب ادمین خود شوید
+            وارد حساب خود شوید
           </p>
         </div>
 

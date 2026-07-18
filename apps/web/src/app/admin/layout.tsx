@@ -24,8 +24,14 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
       router.push('/auth/login');
       return;
     }
-    
-    setUser(JSON.parse(userData));
+
+    const parsedUser = JSON.parse(userData);
+    if (parsedUser.role !== 'admin') {
+      router.push('/account');
+      return;
+    }
+
+    setUser(parsedUser);
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
     
