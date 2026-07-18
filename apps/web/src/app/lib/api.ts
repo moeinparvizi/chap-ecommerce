@@ -93,4 +93,10 @@ export const api = {
 
   // Auth
   login: (email: string, password: string) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+
+  // Discounts
+  getDiscounts: () => request('/discounts'),
+  createDiscount: (data: any) => request('/discounts', { method: 'POST', body: JSON.stringify(data) }),
+  updateDiscount: (id: string, data: any) => request(`/discounts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteDiscount: (id: string) => request(`/discounts/${id}`, { method: 'DELETE' }),
 };

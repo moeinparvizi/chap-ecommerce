@@ -165,6 +165,19 @@ model Location {
   updatedAt  DateTime @updatedAt
 }
 
+model Discount {
+  id           String   @id @default(uuid())
+  name         String
+  percentage   Int
+  targetType   String
+  targetId     String?
+  active       Boolean  @default(true)
+  startDate    String?
+  endDate      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 enum OrderStatus {
   PENDING
   PROCESSING
