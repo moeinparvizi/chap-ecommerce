@@ -97,7 +97,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
 
         {/* Mega Menu */}
         {megaMenuOpen && (
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px', borderTop: '1px solid var(--border-light)' }}>
+          <div className="mega-menu-enter" style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px', borderTop: '1px solid var(--border-light)' }}>
             {/* Toggle for subcategories */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
               <button onClick={() => setShowSubcategories(!showSubcategories)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--hover-bg)', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px' }}>

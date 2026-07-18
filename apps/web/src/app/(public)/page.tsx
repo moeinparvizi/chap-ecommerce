@@ -44,23 +44,49 @@ export default function Home() {
     { icon: <Icons.Package size={28} />, name: 'اسپرت', color: '#06b6d4' },
   ];
 
+  const [likedProducts, setLikedProducts] = useState<Record<string, boolean>>({});
+
+  const toggleLike = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setLikedProducts(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   const PC = ({ p, badge }: { p: Product; badge?: string }) => {
     const d = getDiscount(p);
+    const isLiked = likedProducts[p.id] || false;
     return (
-      <div onClick={() => router.push(`/product/${p.id}`)} style={{ borderRadius: '16px', border: '1px solid var(--border)', background: 'var(--card-bg)', overflow: 'hidden', cursor: 'pointer', transition: 'all 0.3s' }} onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(37,99,235,0.12)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}>
-        <div style={{ position: 'relative', height: '220px', background: `url(${getImg(p)}) center/cover` }}>
-          {badge && <span style={{ position: 'absolute', top: '10px', right: '10px', padding: '3px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: '#3b82f6', color: 'white' }}>{badge}</span>}
-          {d > 0 && <span style={{ position: 'absolute', top: '10px', left: '10px', padding: '3px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, background: '#ef4444', color: 'white' }}>-{d}%</span>}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', background: 'linear-gradient(transparent, rgba(0,0,0,0.6))', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Star size={13} color="#fbbf24" /><span style={{ color: 'white', fontSize: '12px', fontWeight: 600 }}>{p.rating}</span><span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px' }}>({p.sales})</span></div>
+      <div className="product-card" onClick={() => router.push(`/product/${p.id}`)}>
+        {/* Image */}
+        <div className="card-image" style={{ height: '240px', position: 'relative' }}>
+          <img src={getImg(p)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          {/* Like Button */}
+          <button className={`like-btn ${isLiked ? 'liked animate-like' : ''}`} onClick={(e) => toggleLike(e, p.id)}>
+            <Icons.Star size={18} color={isLiked ? 'white' : '#ef4444'} />
+          </button>
+          {/* Badge */}
+          {badge && <span style={{ position: 'absolute', top: '12px', right: '50px', padding: '4px 12px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: badge.includes('پرفروش') ? '#3b82f6' : badge.includes('ویژه') ? '#8b5cf6' : '#22c55e', color: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>{badge}</span>}
+          {/* Discount */}
+          {d > 0 && <span style={{ position: 'absolute', top: '12px', left: '12px', padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, background: 'linear-gradient(135deg, #ef4444, #dc2626)', color: 'white', boxShadow: '0 2px 8px rgba(239,68,68,0.3)' }}>-{d}%</span>}
+          {/* Rating overlay */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '12px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', gap: '1px' }}>{[1,2,3,4,5].map(s => <Icons.Star key={s} size={12} color={s <= Math.round(p.rating) ? '#fbbf24' : 'rgba(255,255,255,0.3)'} />)}</div>
+            <span style={{ color: 'white', fontSize: '12px', fontWeight: 600 }}>{p.rating}</span>
+            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px' }}>({p.sales.toLocaleString()})</span>
+          </div>
         </div>
-        <div style={{ padding: '14px' }}>
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 4px' }}>{getCat(p)}</p>
-          <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 10px', lineHeight: 1.4 }}>{p.name}</h3>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-            <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--primary)' }}>{fmt(p.price)}</span>
+        {/* Body */}
+        <div className="card-body">
+          <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 4px', fontWeight: 500 }}>{getCat(p)}</p>
+          <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</h3>
+          {/* Price */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '12px' }}>
+            <span className="card-price" style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>{fmt(p.price)}</span>
             {p.compareAtPrice && <span style={{ fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>{fmt(p.compareAtPrice)}</span>}
           </div>
-          <button style={{ width: '100%', marginTop: '10px', padding: '9px', borderRadius: '10px', border: 'none', background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Icons.ShoppingCart size={14} /> افزودن به سبد</button>
+          {/* Add to Cart */}
+          <button style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #1e40af, #3b82f6)', color: 'white', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(37,99,235,0.3)', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 6px 20px rgba(37,99,235,0.4)'} onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 12px rgba(37,99,235,0.3)'}>
+            <Icons.ShoppingCart size={14} /> افزودن به سبد
+          </button>
         </div>
       </div>
     );
