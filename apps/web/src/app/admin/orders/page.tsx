@@ -11,12 +11,17 @@ interface Order {
   orderNumber: string;
   customer: string;
   email: string;
+  phone: string;
+  address: string;
+  locationTitle: string;
   items: number;
   total: number;
   status: string;
   paymentStatus: string;
+  paymentMethod: string;
   createdAt: string;
   updatedAt: string;
+  localItems: any[];
 }
 
 export default function OrdersPage() {
@@ -33,17 +38,27 @@ export default function OrdersPage() {
 
   const refreshOrders = async () => {
     try {
-      // Load from API (database)
       let apiOrders: any[] = [];
       try {
         const data = await api.getOrders() as any[];
+        // Fetch all customers for email lookup
+        let customers: any[] = [];
+        try { customers = await api.getCustomers() as any[]; } catch (e) {}
+        const customerMap: Record<string, any> = {};
+        customers.forEach((c: any) => { customerMap[c.id] = c; });
+
         apiOrders = data.map((o: any) => {
           const items = o.itemsJson ? JSON.parse(o.itemsJson) : [];
+          const location = o.locationJson ? JSON.parse(o.locationJson) : null;
+          const customer = o.userId ? customerMap[o.userId] : null;
           return {
             id: o.id,
             orderNumber: '#' + o.id.slice(0, 8).toUpperCase(),
             customer: o.customerName,
-            email: o.customerName + '@email.com',
+            email: customer?.email || '—',
+            phone: customer?.phone || location?.phone || '—',
+            address: location ? `${location.address}, ${location.city}` : '—',
+            locationTitle: location?.title || '',
             items: items.length || o.items || 1,
             total: o.amount,
             status: o.status?.toLowerCase() || 'pending',
@@ -51,7 +66,7 @@ export default function OrdersPage() {
             createdAt: new Date(o.createdAt).toLocaleDateString('fa-IR'),
             updatedAt: new Date(o.updatedAt).toLocaleDateString('fa-IR'),
             localItems: items,
-            location: o.locationJson ? JSON.parse(o.locationJson) : null,
+            paymentMethod: o.paymentMethod || '—',
           };
         });
       } catch (e) { /* API not available */ }
@@ -205,38 +220,53 @@ export default function OrdersPage() {
       {/* Order Detail Modal */}
       {showOrderModal && selectedOrder && (
         <div className="modal-overlay" onClick={() => setShowOrderModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
+          <div className="modal" style={{ maxWidth: '600px' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>جزئیات سفارش {selectedOrder.orderNumber}</h2>
               <button onClick={() => setShowOrderModal(false)} className="btn-close"><Icons.X size={20} /></button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>مشتری</p>
-                <p style={{ fontSize: '14px', fontWeight: 600 }}>{selectedOrder.customer}</p>
+
+            {/* Customer Info */}
+            <div style={{ padding: '16px', borderRadius: '12px', background: 'var(--hover-bg)', marginBottom: '16px' }}>
+              <h4 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.User size={16} /> اطلاعات مشتری</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>نام</p><p style={{ fontSize: '13px', fontWeight: 600, margin: 0 }}>{selectedOrder.customer}</p></div>
+                <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>ایمیل</p><p style={{ fontSize: '13px', margin: 0, direction: 'ltr', textAlign: 'left' }}>{selectedOrder.email}</p></div>
+                <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>تلفن</p><p style={{ fontSize: '13px', margin: 0, direction: 'ltr', textAlign: 'left' }}>{selectedOrder.phone}</p></div>
+                <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>روش پرداخت</p><p style={{ fontSize: '13px', margin: 0 }}>{selectedOrder.paymentMethod === 'online' ? 'پرداخت آنلاین' : selectedOrder.paymentMethod || '—'}</p></div>
               </div>
-              <div>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>ایمیل</p>
-                <p style={{ fontSize: '14px' }}>{selectedOrder.email}</p>
-              </div>
-              <div>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>مبلغ</p>
-                <p style={{ fontSize: '18px', fontWeight: 700, color: '#22c55e' }}>${selectedOrder.total.toLocaleString()}</p>
-              </div>
-              <div>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>تعداد اقلام</p>
-                <p style={{ fontSize: '14px', fontWeight: 600 }}>{selectedOrder.items}</p>
-              </div>
-              <div>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>تاریخ ایجاد</p>
-                <p style={{ fontSize: '13px' }}>{selectedOrder.createdAt}</p>
-              </div>
-              <div>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>وضعیت</p>
-                <span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 500, ...getStatusColor(selectedOrder.status) }}>{getStatusText(selectedOrder.status)}</span>
-              </div>
+              {selectedOrder.address !== '—' && (
+                <div style={{ marginTop: '10px', padding: '10px', borderRadius: '8px', background: 'var(--card-bg)', border: '1px solid var(--border)' }}>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.MapPin size={12} /> آدرس ارسال {selectedOrder.locationTitle && `(${selectedOrder.locationTitle})`}</p>
+                  <p style={{ fontSize: '13px', margin: 0, lineHeight: 1.5 }}>{selectedOrder.address}</p>
+                </div>
+              )}
             </div>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+
+            {/* Order Items */}
+            {selectedOrder.localItems && selectedOrder.localItems.length > 0 && (
+              <div style={{ marginBottom: '16px' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Package size={16} /> اقلام سفارش</h4>
+                <div style={{ display: 'grid', gap: '8px' }}>
+                  {selectedOrder.localItems.map((item: any, i: number) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', borderRadius: '8px', background: 'var(--hover-bg)' }}>
+                      {item.image && <img src={item.image} alt="" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />}
+                      <div style={{ flex: 1 }}><p style={{ fontSize: '13px', fontWeight: 500, margin: 0 }}>{item.name}</p><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '2px 0 0' }}>×{item.quantity}</p></div>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)' }}>${(item.price * item.quantity).toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Order Summary */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '14px', borderRadius: '10px', background: 'var(--hover-bg)', marginBottom: '16px' }}>
+              <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>مبلغ</p><p style={{ fontSize: '16px', fontWeight: 700, color: '#22c55e', margin: 0 }}>${selectedOrder.total.toLocaleString()}</p></div>
+              <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>تاریخ</p><p style={{ fontSize: '13px', margin: 0 }}>{selectedOrder.createdAt}</p></div>
+              <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>وضعیت</p><span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 600, ...getStatusColor(selectedOrder.status) }}>{getStatusText(selectedOrder.status)}</span></div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
               <select value={selectedOrder.status} onChange={e => handleStatusChange(selectedOrder.id, e.target.value)} className="input" style={{ flex: 1 }}>
                 <option value="pending">در انتظار</option>
                 <option value="processing">پردازش</option>
