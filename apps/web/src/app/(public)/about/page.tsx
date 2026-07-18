@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Icons } from '../../components/Icons';
+import { Icons } from '@/app/components/Icons';
 
 export default function AboutPage() {
   const router = useRouter();

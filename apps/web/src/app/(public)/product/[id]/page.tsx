@@ -2,8 +2,8 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { Icons } from '../../../components/Icons';
-import { api } from '../../../lib/api';
+import { Icons } from '@/app/components/Icons';
+import { api } from '@/app/lib/api';
 
 interface Product { id: string; name: string; sku: string; price: number; compareAtPrice?: number; stock: number; brand: string; description: string; rating: number; sales: number; status: string; images: { id: string; url: string; name: string }[]; category?: { name: string; slug: string } | null; }
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Icons } from '../components/Icons';
+import { Icons } from '@/app/components/Icons';
 
 function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -94,6 +94,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           ))}
           <div style={{ flex: 1 }} />
           <button onClick={() => router.push('/about')} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px' }}><Icons.Globe size={14} /> {t('درباره ما', 'About')}</button>
+          <button onClick={() => router.push('/products')} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px' }}><Icons.Package size={14} /> {t('محصولات', 'Products')}</button>
           <button onClick={() => router.push('/contact')} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px' }}><Icons.Mail size={14} /> {t('تماس', 'Contact')}</button>
         </div>
         {/* Mega Menu */}

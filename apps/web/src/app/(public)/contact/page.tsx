@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Icons } from '../../components/Icons';
+import { Icons } from '@/app/components/Icons';
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
