@@ -28,6 +28,18 @@ function ProductsContent() {
     if (cat) setSelectedCategory(decodeURIComponent(cat));
   }, [searchParams]);
 
+  // Build category hierarchy for filtering
+  const [allApiCategories, setAllApiCategories] = useState<any[]>([]);
+  useEffect(() => { api.getCategories().then((d: any) => setAllApiCategories(d)).catch(() => {}); }, []);
+
+  // Get all category names that belong to a parent (parent + children)
+  const getCategoryFamily = (parentName: string): string[] => {
+    const parent = allApiCategories.find((c: any) => c.name === parentName && !c.parentId);
+    if (!parent) return [parentName];
+    const children = allApiCategories.filter((c: any) => c.parentId === parent.id).map((c: any) => c.name);
+    return [parentName, ...children];
+  };
+
   const t = (fa: string, en: string) => fa;
   const fmt = (p: number) => p.toLocaleString('fa-IR') + ' تومان';
   const getDiscount = (p: Product) => p.compareAtPrice ? Math.round((1 - p.price / p.compareAtPrice) * 100) : 0;
@@ -40,7 +52,10 @@ function ProductsContent() {
 
   const filtered = products.filter(p => {
     if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase()) && !p.brand.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-    if (selectedCategory !== 'all' && getCat(p) !== selectedCategory) return false;
+    if (selectedCategory !== 'all') {
+      const family = getCategoryFamily(selectedCategory);
+      if (!family.includes(getCat(p))) return false;
+    }
     if (selectedBrand !== 'all' && p.brand !== selectedBrand) return false;
     if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
     if (minRating > 0 && p.rating < minRating) return false;
