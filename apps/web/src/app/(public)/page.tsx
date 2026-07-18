@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icons } from '../components/Icons';
+import { CardLoader, PageLoader } from '../components/Loading';
 import { api } from '../lib/api';
 
 interface Product {
@@ -15,8 +16,9 @@ export default function Home() {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => { api.getProducts().then((d: any) => setProducts(d)).catch(() => {}); }, []);
+  useEffect(() => { api.getProducts().then((d: any) => { setProducts(d); setLoading(false); }).catch(() => setLoading(false)); }, []);
 
   const t = (fa: string, en: string) => fa;
   const fmt = (p: number) => p.toLocaleString('fa-IR') + ' تومان';
@@ -137,7 +139,7 @@ export default function Home() {
       </div>
 
       {/* Best Sellers */}
-      {bestSellers.length > 0 && <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px 28px' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}><h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.TrendingUp size={22} color="#3b82f6" /> پرفروش‌ترین محصولات</h2></div><div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>{bestSellers.map(p => <PC key={p.id} p={p} badge="پرفروش" />)}</div></div>}
+      {loading ? <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px 28px' }}><CardLoader count={6} /></div> : bestSellers.length > 0 && <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px 28px' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}><h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.TrendingUp size={22} color="#3b82f6" /> پرفروش‌ترین محصولات</h2></div><div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>{bestSellers.map(p => <PC key={p.id} p={p} badge="پرفروش" />)}</div></div>}
 
       {/* Featured */}
       {featured.length > 0 && <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px 28px' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}><h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.Sparkles size={22} color="#8b5cf6" /> محصولات ویژه</h2></div><div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>{featured.map(p => <PC key={p.id} p={p} badge="ویژه" />)}</div></div>}
