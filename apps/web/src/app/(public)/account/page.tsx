@@ -41,7 +41,7 @@ export default function AccountPage() {
     <div>
       <h1 style={{ fontSize: '22px', fontWeight: 700, margin: '0 0 24px' }}>داشبورد من</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+      <div className="account-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
         {stats.map((s, i) => {
           const IconComp = Icons[s.icon as keyof typeof Icons];
           return (
@@ -58,7 +58,7 @@ export default function AccountPage() {
         })}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '24px' }}>
+      <div className="account-quick-actions" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '24px' }}>
         <button onClick={() => router.push('/account/orders')} className="card" style={{ padding: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', textAlign: 'right', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(59,130,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Package size={20} color="#3b82f6" /></div>
           <div><p style={{ fontWeight: 600, margin: 0 }}>خریدهای من</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>{totalOrders} سفارش</p></div>

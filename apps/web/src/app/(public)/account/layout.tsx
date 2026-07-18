@@ -28,9 +28,9 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   if (!user) return <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>loading...</div>;
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 20px', display: 'flex', gap: '24px' }}>
+    <div className="account-layout" style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 20px', display: 'flex', gap: '24px' }}>
       {/* Sidebar */}
-      <div style={{ width: '260px', flexShrink: 0 }}>
+      <div className="account-sidebar" style={{ width: '260px', flexShrink: 0 }}>
         {/* User Card */}
         <div className="card" style={{ padding: '20px', marginBottom: '16px', textAlign: 'center' }}>
           <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(135deg, #1e40af, #3b82f6)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '24px', fontWeight: 700 }}>
@@ -41,7 +41,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </div>
 
         {/* Menu */}
-        <div className="card" style={{ padding: '8px' }}>
+        <div className="card menu-list" style={{ padding: '8px' }}>
           {menuItems.map(item => {
             const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
             const IconComp = Icons[item.icon as keyof typeof Icons];

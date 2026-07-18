@@ -97,7 +97,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', display: 'flex', flexDirection: 'column' }}>
       {/* Top Bar */}
-      <div style={{ background: 'var(--primary)', color: 'white', fontSize: '12px' }}>
+      <div className="top-bar" style={{ background: 'var(--primary)', color: 'white', fontSize: '12px' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '6px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Truck size={12} /> ارسال رایگان برای خرید بالای ۵۰۰ هزار تومان</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -109,16 +109,16 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Navbar */}
-      <nav style={{ background: 'var(--card-bg)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 100, transition: 'all 0.3s', padding: scrolled ? '8px 0' : '12px 0', boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.08)' : 'none' }}>
+      <nav className="navbar" style={{ background: 'var(--card-bg)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 100, transition: 'all 0.3s', padding: scrolled ? '8px 0' : '12px 0', boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.08)' : 'none' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div onClick={() => router.push('/')} style={{ fontSize: scrolled ? '20px' : '26px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor: 'pointer', transition: 'font-size 0.3s', flexShrink: 0 }}>{siteSettings?.siteInfo.name || 'ShopHub'}</div>
-          <div style={{ flex: 1, maxWidth: '600px', position: 'relative' }}>
+          <div className="search-form" style={{ flex: 1, maxWidth: '600px', position: 'relative' }}>
             <form onSubmit={(e) => { e.preventDefault(); if (searchText.trim()) router.push(`/products?search=${encodeURIComponent(searchText.trim())}`); }} style={{ display: 'flex', width: '100%' }}>
               <input type="text" placeholder="جستجوی محصولات..." value={searchText} onChange={e => setSearchText(e.target.value)} style={{ width: '100%', padding: scrolled ? '10px 44px 10px 16px' : '12px 44px 12px 16px', borderRadius: '12px', border: '2px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', transition: 'all 0.3s' }} />
               <button type="submit" style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Search size={16} /></button>
             </form>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <button style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.Bell size={20} /><span style={{ position: 'absolute', top: '4px', right: '4px', width: '16px', height: '16px', borderRadius: '50%', background: '#ef4444', color: 'white', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>3</span></button>
             <button onClick={() => router.push('/cart')} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.ShoppingCart size={20} />{cartCount > 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', minWidth: '18px', height: '18px', borderRadius: '9px', background: 'var(--primary)', color: 'white', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 4px' }}>{cartCount}</span>}</button>
             {navUser ? (
@@ -202,9 +202,9 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Footer */}
-      <footer style={{ background: 'var(--card-bg)', borderTop: '1px solid var(--border)', padding: '36px 20px' }}>
+      <footer className="footer" style={{ background: 'var(--card-bg)', borderTop: '1px solid var(--border)', padding: '36px 20px' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '28px', marginBottom: '20px' }}>
+          <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '28px', marginBottom: '20px' }}>
             <div><div style={{ fontSize: '22px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '8px' }}>{siteSettings?.siteInfo.name || 'ShopHub'}</div><p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{siteSettings?.footer.about || 'فروشگاه آنلاین با بهترین برندها و قیمت‌ها.'}</p></div>
             <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>لینک‌ها</h4><p onClick={() => router.push('/about')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>درباره ما</p><p onClick={() => router.push('/contact')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>تماس با ما</p><p onClick={() => router.push('/products')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>محصولات</p></div>
             <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>خدمات</h4><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px' }}>پیگیری سفارش</p><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px' }}>گارانتی بازگشت</p></div>
@@ -217,7 +217,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
               ))}
             </div>
           )}
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>{siteSettings?.footer.copyright || '© ۱۴۰۵ ShopHub. تمامی حقوق محفوظ است.'}</div>
+          <div className="footer-bottom" style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>{siteSettings?.footer.copyright || '© ۱۴۰۵ ShopHub. تمامی حقوق محفوظ است.'}</div>
         </div>
       </footer>
     </div>
