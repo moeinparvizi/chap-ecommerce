@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
 import { api } from '@/app/lib/api';
 
 interface Product { id: string; name: string; price: number; compareAtPrice?: number; stock: number; brand: string; description: string; rating: number; sales: number; status: string; images: { id: string; url: string }[]; category?: { name: string; slug: string } | null; }
 
-export default function ProductsPage() {
+function ProductsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000000]);
@@ -20,6 +21,12 @@ export default function ProductsPage() {
   const [minRating, setMinRating] = useState(0);
 
   useEffect(() => { api.getProducts().then((d: any) => setProducts(d)).catch(() => {}); }, []);
+
+  // Sync category filter from URL
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    if (cat) setSelectedCategory(decodeURIComponent(cat));
+  }, [searchParams]);
 
   const t = (fa: string, en: string) => fa;
   const fmt = (p: number) => p.toLocaleString('fa-IR') + ' تومان';
@@ -165,4 +172,8 @@ export default function ProductsPage() {
       </div>
     </div>
   );
+}
+
+export default function ProductsPage() {
+  return <Suspense fallback={<div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>loading...</div>}><ProductsContent /></Suspense>;
 }

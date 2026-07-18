@@ -87,7 +87,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
             <Icons.Menu size={16} /> دسته‌بندی‌ها <Icons.ChevronDown size={14} />
           </button>
           {navCategories.map((cat) => (
-            <button key={cat.id} onClick={() => router.push('/products')} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}>{cat.icon} {cat.name}</button>
+            <button key={cat.id} onClick={() => router.push(`/products?category=${encodeURIComponent(cat.name)}`)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}>{cat.icon} {cat.name}</button>
           ))}
           <div style={{ flex: 1 }} />
           <button onClick={() => router.push('/about')} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px' }}><Icons.Globe size={14} /> درباره ما</button>
@@ -116,7 +116,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
                   {showSubcategories && cat.children.length > 0 && (
                     <div style={{ paddingLeft: '8px', borderRight: `2px solid ${categoryColors[i % categoryColors.length]}20`, paddingRight: '8px' }}>
                       {cat.children.map((sub) => (
-                        <p key={sub.id} onClick={() => router.push('/products')} style={{ padding: '4px 0', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s' }}
+                        <p key={sub.id} onClick={() => router.push(`/products?category=${encodeURIComponent(cat.name)}&sub=${encodeURIComponent(sub.name)}`)} style={{ padding: '4px 0', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s' }}
                           onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
                           <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: categoryColors[i % categoryColors.length], flexShrink: 0 }} />
                           {sub.name}
