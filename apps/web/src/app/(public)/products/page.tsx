@@ -155,8 +155,8 @@ function ProductsContent() {
                           {children.length > 0 && <span style={{ fontSize: '10px', opacity: 0.7 }}>{children.length}</span>}
                         </button>
                         {children.map((child: any) => (
-                          <button key={child.id} onClick={() => setSelectedCategory(parent.name)} style={{ padding: '4px 10px 4px 24px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px', textAlign: 'right', width: '100%' }}>
-                            <span style={{ marginLeft: '4px', fontSize: '10px', color: 'var(--text-muted)' }}>└</span> {child.name}
+                          <button key={child.id} onClick={() => setSelectedCategory(child.name)} style={{ padding: '4px 10px 4px 24px', borderRadius: '6px', border: 'none', background: selectedCategory === child.name ? 'var(--primary)' : 'transparent', color: selectedCategory === child.name ? 'white' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === child.name ? 600 : 400 }}>
+                            <span style={{ marginLeft: '4px', fontSize: '10px', color: selectedCategory === child.name ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)' }}>└</span> {child.name}
                           </button>
                         ))}
                       </div>

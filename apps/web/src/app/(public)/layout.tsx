@@ -108,7 +108,8 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
               {categoryTree.map((cat, i) => (
                 <div key={cat.id}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: `2px solid ${categoryColors[i % categoryColors.length]}` }}>
+                  <div onClick={() => router.push(`/products?category=${encodeURIComponent(cat.name)}`)} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: `2px solid ${categoryColors[i % categoryColors.length]}`, cursor: 'pointer', transition: 'opacity 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.opacity = '0.7'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
                     <span style={{ color: categoryColors[i % categoryColors.length] }}>{categoryIcons[cat.name] || categoryIcons.default}</span>
                     <span style={{ fontWeight: 700, fontSize: '14px' }}>{cat.name}</span>
                   </div>
