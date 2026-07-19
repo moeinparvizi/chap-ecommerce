@@ -68,11 +68,9 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     { id: 'products', label: t('products'), icon: <Icons.Tag size={18} />, path: '/admin/products', children: [
       { id: 'product-list', label: t('products'), icon: <Icons.Clipboard size={18} />, path: '/admin/products' },
       { id: 'categories', label: t('categories'), icon: <Icons.Folder size={18} />, path: '/admin/categories' },
-      { id: 'brands', label: lang === 'fa' ? 'برندها' : 'Brands', icon: <Icons.Sparkles size={18} />, path: '/admin/brands' },
     ]},
     { id: 'customers', label: t('customers'), icon: <Icons.Users size={18} />, path: '/admin/customers' },
     { id: 'analytics', label: t('analytics'), icon: <Icons.TrendingUp size={18} />, path: '/admin/analytics' },
-    { id: 'marketing', label: t('marketing'), icon: <Icons.Megaphone size={18} />, path: '/admin/marketing' },
     { id: 'discounts', label: lang === 'fa' ? 'تخفیف‌ها' : 'Discounts', icon: <Icons.DollarSign size={18} />, path: '/admin/discounts' },
     { id: 'settings', label: t('settings'), icon: <Icons.Settings size={18} />, path: '/admin/settings' },
   ];
@@ -84,7 +82,6 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     if (pathname.startsWith('/admin/products')) return 'products';
     if (pathname.startsWith('/admin/customers')) return 'customers';
     if (pathname.startsWith('/admin/analytics')) return 'analytics';
-    if (pathname.startsWith('/admin/marketing')) return 'marketing';
     if (pathname.startsWith('/admin/discounts')) return 'discounts';
     if (pathname.startsWith('/admin/settings')) return 'settings';
     return 'dashboard';
