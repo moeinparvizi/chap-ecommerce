@@ -611,6 +611,17 @@ tr:hover { background: var(--hover-bg); }
   .contact-card { padding: 20px !important; }
 }
 
+/* ---------- Banner Arrows ---------- */
+.banner-arrow-left svg { transform: rotate(90deg); }
+.banner-arrow-right svg { transform: rotate(-90deg); }
+.banner-arrow:hover { background: white !important; transform: translateY(-50%) scale(1.1) !important; }
+
+@media (max-width: 768px) {
+  .banner-arrow { width: 36px !important; height: 36px !important; }
+  .banner-arrow-left { right: 8px !important; }
+  .banner-arrow-right { left: 8px !important; }
+}
+
 /* ---------- Newsletter ---------- */
 @media (max-width: 768px) {
   .newsletter { padding: 24px !important; }

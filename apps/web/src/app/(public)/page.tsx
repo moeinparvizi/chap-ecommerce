@@ -127,6 +127,13 @@ export default function Home() {
             <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px' }}>
               {siteBanners.map((_: any, i: number) => <button key={i} onClick={(e) => { e.stopPropagation(); setCurrentSlide(i); }} style={{ width: currentSlide === i ? '32px' : '10px', height: '10px', borderRadius: '5px', border: 'none', background: currentSlide === i ? 'white' : 'rgba(255,255,255,0.4)', cursor: 'pointer', transition: 'all 0.3s' }} />)}
             </div>
+            {/* Next/Prev arrows */}
+            {siteBanners.length > 1 && (
+              <>
+                <button onClick={(e) => { e.stopPropagation(); setCurrentSlide(p => (p - 1 + siteBanners.length) % siteBanners.length); }} className="banner-arrow banner-arrow-left" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '16px', width: '44px', height: '44px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', color: '#1e40af', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.2)', transition: 'all 0.3s', fontSize: '18px' }}><Icons.ChevronDown size={22} /></button>
+                <button onClick={(e) => { e.stopPropagation(); setCurrentSlide(p => (p + 1) % siteBanners.length); }} className="banner-arrow banner-arrow-right" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '16px', width: '44px', height: '44px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', color: '#1e40af', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.2)', transition: 'all 0.3s', fontSize: '18px' }}><Icons.ChevronDown size={22} /></button>
+              </>
+            )}
           </div>
         ) : (
           <div className="hero-banner" style={{ borderRadius: '20px', overflow: 'hidden', height: '340px', background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)', position: 'relative' }}>
