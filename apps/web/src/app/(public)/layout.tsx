@@ -17,7 +17,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [showSubcategories, setShowSubcategories] = useState(true);
+
   const [searchText, setSearchText] = useState('');
   const [cartToast, setCartToast] = useState<{ name: string; show: boolean }>({ name: '', show: false });
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
@@ -26,9 +26,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
     const savedLang = localStorage.getItem('lang') as 'fa' | 'en' || 'fa';
-    const savedSub = localStorage.getItem('showSubcategories');
     setTheme(savedTheme); setLang(savedLang);
-    if (savedSub !== null) setShowSubcategories(savedSub === 'true');
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.documentElement.dir = savedLang === 'fa' ? 'rtl' : 'ltr';
     api.getCategories().then((d: any) => setCategories(d.filter((c: Category) => c.status === 'active'))).catch(() => {});
@@ -36,7 +34,6 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
     setSiteSettings(getSiteSettings());
   }, []);
 
-  useEffect(() => { localStorage.setItem('showSubcategories', String(showSubcategories)); }, [showSubcategories]);
   useEffect(() => { setMegaMenuOpen(false); setMobileMenuOpen(false); }, [pathname]);
 
   useEffect(() => {
@@ -169,12 +166,6 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
         {/* Mega Menu - desktop only */}
         {megaMenuOpen && (
           <div className="desktop-only mega-menu-enter" style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px', borderTop: '1px solid var(--border-light)' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
-              <button onClick={() => setShowSubcategories(!showSubcategories)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--hover-bg)', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px' }}>
-                {showSubcategories ? <Icons.Eye size={14} /> : <Icons.Eye size={14} />}
-                {showSubcategories ? 'پنهان کردن ساب کتگوری\u200cها' : 'نمایش ساب کتگوری\u200cها'}
-              </button>
-            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
               {categoryTree.map((cat, i) => (
                 <div key={cat.id}>
@@ -182,7 +173,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
                     <span style={{ color: categoryColors[i % categoryColors.length] }}>{categoryIcons[cat.name] || categoryIcons.default}</span>
                     <span style={{ fontWeight: 700, fontSize: '14px' }}>{cat.name}</span>
                   </div>
-                  {showSubcategories && cat.children.length > 0 && (
+                  {cat.children.length > 0 && (
                     <div style={{ paddingLeft: '8px', borderRight: `2px solid ${categoryColors[i % categoryColors.length]}20`, paddingRight: '8px' }}>
                       {cat.children.map((sub) => (
                         <p key={sub.id} onClick={() => router.push(`/products?category=${encodeURIComponent(sub.name)}`)} style={{ padding: '4px 0', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
@@ -192,7 +183,6 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
                       ))}
                     </div>
                   )}
-                  {!showSubcategories && <p onClick={() => router.push('/products')} style={{ padding: '4px 0', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer' }}>مشاهده همه</p>}
                 </div>
               ))}
             </div>
@@ -238,7 +228,17 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
               <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 8px' }}>دسته\u200cبندی\u200cها</p>
               {categoryTree.map((cat, i) => (
                 <div key={cat.id}>
-                  <button onClick={() => { router.push(`/products?category=${encodeURIComponent(cat.name)}`); setMobileMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '13px', fontWeight: 500, width: '100%', textAlign: 'right' }}><span style={{ color: categoryColors[i % categoryColors.length] }}>{categoryIcons[cat.name] || categoryIcons.default}</span> {cat.name}</button>
+                  <button onClick={() => { router.push(`/products?category=${encodeURIComponent(cat.name)}`); setMobileMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '13px', fontWeight: 600, width: '100%', textAlign: 'right' }}><span style={{ color: categoryColors[i % categoryColors.length] }}>{categoryIcons[cat.name] || categoryIcons.default}</span> {cat.name}</button>
+                  {cat.children.length > 0 && (
+                    <div style={{ paddingRight: '16px' }}>
+                      {cat.children.map((sub) => (
+                        <button key={sub.id} onClick={() => { router.push(`/products?category=${encodeURIComponent(sub.name)}`); setMobileMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px', width: '100%', textAlign: 'right' }}>
+                          <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: categoryColors[i % categoryColors.length], flexShrink: 0 }} />
+                          {sub.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
