@@ -7,13 +7,13 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   return (
     <div>
-      <div style={{ background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)', padding: '50px 20px', textAlign: 'center', color: 'white' }}>
+      <div className="contact-hero" style={{ background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)', padding: '50px 20px', textAlign: 'center', color: 'white' }}>
         <Icons.Mail size={40} />
         <h1 style={{ fontSize: '28px', fontWeight: 800, margin: '12px 0 6px' }}>تماس با ما</h1>
         <p style={{ fontSize: '14px', opacity: 0.9 }}>ما آماده پاسخگویی هستیم</p>
       </div>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <div className="contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           <div className="card" style={{ padding: '32px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 20px' }}>اطلاعات تماس</h2>
             {[{ icon: <Icons.Mail size={18} />, title: 'ایمیل', value: 'info@shophub.com' }, { icon: <Icons.Mail size={18} />, title: 'تلفن', value: '۰۲۱-۱۲۳۴۵۶۷۸' }, { icon: <Icons.Globe size={18} />, title: 'آدرس', value: 'تهران، خیابان ولیعصر' }].map((c, i) => (

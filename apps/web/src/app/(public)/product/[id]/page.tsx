@@ -46,12 +46,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '24px 20px' }}>
       {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
+      <div className="product-detail-breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
         <span onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>خانه</span><span>/</span>
         <span style={{ color: 'var(--text)' }}>{product.name}</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+      <div className="product-detail-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
         {/* Images */}
         <div>
           <div style={{ borderRadius: '16px', overflow: 'hidden', background: 'var(--card-bg)', border: '1px solid var(--border)', marginBottom: '12px' }}>

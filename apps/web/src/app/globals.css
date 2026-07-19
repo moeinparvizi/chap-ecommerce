@@ -568,6 +568,48 @@ tr:hover { background: var(--hover-bg); }
   [style*="gridTemplateColumns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
 }
 
+/* ---------- Products Page ---------- */
+@media (max-width: 768px) {
+  .products-header { flex-direction: column !important; gap: 10px !important; align-items: stretch !important; }
+  .products-header > div:last-child { flex-wrap: wrap !important; }
+  .products-layout { flex-direction: column !important; gap: 12px !important; }
+  .products-sidebar { width: 100% !important; flex-shrink: 0 !important; position: static !important; }
+  .products-sidebar .card { padding: 16px !important; }
+  .products-grid-view { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .products-list-view > div { flex-direction: column !important; }
+  .products-list-view > div > div:first-child { width: 100% !important; height: 160px !important; }
+  .products-list-view > div > div:last-child { flex-direction: row !important; gap: 8px !important; }
+}
+
+@media (max-width: 480px) {
+  .products-grid-view { grid-template-columns: 1fr !important; }
+}
+
+/* ---------- Product Detail ---------- */
+@media (max-width: 768px) {
+  .product-detail-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+  .product-detail-grid > div:first-child img { height: 280px !important; }
+  .product-detail-grid > div:last-child h1 { font-size: 20px !important; }
+  .product-detail-grid > div:last-child [style*="fontSize: 28px"] { font-size: 22px !important; }
+  .product-detail-breadcrumb { flex-wrap: wrap !important; }
+}
+
+/* ---------- About Page ---------- */
+@media (max-width: 768px) {
+  .about-stats { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .about-hero { padding: 32px 16px !important; }
+  .about-hero h1 { font-size: 22px !important; }
+  .about-content .card { padding: 20px !important; }
+}
+
+/* ---------- Contact Page ---------- */
+@media (max-width: 768px) {
+  .contact-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .contact-hero { padding: 32px 16px !important; }
+  .contact-hero h1 { font-size: 22px !important; }
+  .contact-card { padding: 20px !important; }
+}
+
 /* ---------- Newsletter ---------- */
 @media (max-width: 768px) {
   .newsletter { padding: 24px !important; }

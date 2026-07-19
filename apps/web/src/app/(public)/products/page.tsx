@@ -110,7 +110,7 @@ function ProductsContent() {
   return (
     <div>
       {/* Header */}
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="products-header" style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div><h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>همه محصولات</h1><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '4px 0 0' }}>{filtered.length} محصول</p></div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <button onClick={() => setShowFilters(!showFilters)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--hover-bg)', color: 'var(--text)', cursor: 'pointer', fontSize: '13px' }}><Icons.Filter size={14} /> فیلتر</button>
@@ -119,10 +119,10 @@ function ProductsContent() {
           <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)', fontSize: '13px' }}><option value="newest">جدیدترین</option><option value="cheapest">ارزان\u200cترین</option><option value="expensive">گران\u200cترین</option><option value="popular">محبوب\u200cترین</option><option value="rating">بالاترین امتیاز</option></select>
         </div>
       </div>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px 20px', display: 'flex', gap: '24px' }}>
+      <div className="products-layout" style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px 20px', display: 'flex', gap: '24px' }}>
         {/* Filters Sidebar */}
         {showFilters && (
-          <div style={{ width: '260px', flexShrink: 0 }}>
+          <div className="products-sidebar" style={{ width: '260px', flexShrink: 0 }}>
             <div className="card" style={{ padding: '20px', position: 'sticky', top: '80px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}><h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>فیلترها</h3><button onClick={() => { setSelectedCategory('all'); setMinRating(0); setPriceRange([0, maxPrice]); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}>پاک کردن</button></div>
               <div style={{ marginBottom: '20px' }}><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>جستجو</label><div style={{ position: 'relative' }}><input type="text" placeholder="نام محصول..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: '100%', padding: '10px 36px 10px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} /><div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><Icons.Search size={14} /></div></div></div>
@@ -143,8 +143,8 @@ function ProductsContent() {
         {/* Products */}
         <div style={{ flex: 1 }}>
           {filtered.length === 0 ? <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}><Icons.Search size={48} /><h3 style={{ marginTop: '12px' }}>محصولی یافت نشد</h3><p>فیلترها را تغییر دهید</p></div>
-            : viewMode === 'grid' ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>{filtered.map(p => <ProductCard key={p.id} p={p} />)}</div>
-            : <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>{filtered.map(p => (
+            : viewMode === 'grid' ? <div className="products-grid-view" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>{filtered.map(p => <ProductCard key={p.id} p={p} />)}</div>
+            : <div className="products-list-view" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>{filtered.map(p => (
               <div key={p.id} className="product-card" style={{ display: 'flex', padding: '16px' }}>
                 <div style={{ width: '140px', height: '140px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative', cursor: 'pointer' }} onClick={() => router.push(`/product/${p.id}`)}>
                   <img src={getImg(p)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
