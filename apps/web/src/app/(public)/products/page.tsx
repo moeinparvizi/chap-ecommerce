@@ -84,12 +84,11 @@ function ProductsContent() {
       <div className="product-card">
         <div className="card-image" style={{ height: '220px', position: 'relative' }} onClick={() => router.push(`/product/${p.id}`)}>
           <img src={getImg(p)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          <button className={`like-btn ${isLiked ? 'liked animate-like' : ''}`} onClick={(e) => toggleLike(e, p.id)}><Icons.Star size={18} color={isLiked ? 'white' : '#ef4444'} /></button>
           {d > 0 && <span style={{ position: 'absolute', top: '12px', left: '12px', padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, background: 'linear-gradient(135deg, #ef4444, #dc2626)', color: 'white', boxShadow: '0 2px 8px rgba(239,68,68,0.3)' }}>-{d}%</span>}
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '12px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={{ display: 'flex', gap: '1px' }}>{[1,2,3,4,5].map(s => <Icons.Star key={s} size={12} color={s <= Math.round(p.rating) ? '#fbbf24' : 'rgba(255,255,255,0.3)'} />)}</div>
             <span style={{ color: 'white', fontSize: '12px', fontWeight: 600 }}>{p.rating}</span>
-            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px' }}>({p.sales.toLocaleString()})</span>
+            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px' }}>{p.sales.toLocaleString()} فروش</span>
           </div>
         </div>
         <div className="card-body" onClick={() => router.push(`/product/${p.id}`)}>
@@ -101,7 +100,10 @@ function ProductsContent() {
           </div>
         </div>
         <div style={{ padding: '0 16px 16px' }}>
-          <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ width: '100%', padding: '8px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', fontWeight: 600, fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', transition: 'all 0.2s' }}><Icons.ShoppingCart size={14} /></button>
+          <div style={{ padding: '0 16px 16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p.id); }} style={{ width: '36px', height: '36px', borderRadius: '10px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', flexShrink: 0 }}><Icons.Heart size={16} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
+          <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', fontWeight: 600, fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', transition: 'all 0.2s' }}><Icons.ShoppingCart size={14} /></button>
+          </div>
         </div>
       </div>
     );
@@ -156,8 +158,8 @@ function ProductsContent() {
                   <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.4 }}>{p.description?.substring(0, 80)}...</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><Icons.Star size={12} color="#fbbf24" /><span style={{ fontSize: '12px', fontWeight: 600 }}>{p.rating}</span></div><span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--primary)' }}>{fmt(p.price)}</span></div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', justifyContent: 'center' }}>
-                  <button className={`like-btn ${likedProducts[p.id] ? 'liked' : ''}`} style={{ position: 'relative' }} onClick={(e) => toggleLike(e, p.id)}><Icons.Star size={16} color={likedProducts[p.id] ? 'white' : '#ef4444'} /></button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', justifyContent: 'center', alignItems: 'center' }}>
+                  <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p.id); }} style={{ padding: '6px', borderRadius: '8px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Heart size={14} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
                   <button onClick={(e) => addToCart(e, p)} style={{ padding: '6px 10px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.ShoppingCart size={14} /></button>
                 </div>
               </div>
