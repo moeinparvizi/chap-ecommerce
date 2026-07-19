@@ -19,6 +19,9 @@ function ProductsContent() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [minRating, setMinRating] = useState(0);
   const [likedProducts, setLikedProducts] = useState<Record<string, boolean>>({});
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({ search: true, category: true, price: true, rating: true });
+
+  const toggleSection = (key: string) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
 
   useEffect(() => { api.getProducts().then((d: any) => setProducts(d)).catch(() => {}); }, []);
   useEffect(() => { const cat = searchParams.get('category'); if (cat) setSelectedCategory(decodeURIComponent(cat)); }, [searchParams]);
@@ -126,19 +129,45 @@ function ProductsContent() {
         {showFilters && (
           <div className="products-sidebar" style={{ width: '260px', flexShrink: 0 }}>
             <div className="card" style={{ padding: '20px', position: 'sticky', top: '80px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}><h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>فیلترها</h3><button onClick={() => { setSelectedCategory('all'); setMinRating(0); setPriceRange([0, maxPrice]); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}>پاک کردن</button></div>
-              <div style={{ marginBottom: '20px' }}><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>جستجو</label><div style={{ position: 'relative' }}><input type="text" placeholder="نام محصول..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: '100%', padding: '10px 36px 10px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} /><div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><Icons.Search size={14} /></div></div></div>
-              <div style={{ marginBottom: '20px' }}><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '8px' }}>دسته\u200cبندی</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <button onClick={() => setSelectedCategory('all')} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === 'all' ? 'var(--primary)' : 'transparent', color: selectedCategory === 'all' ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === 'all' ? 600 : 400 }}>همه محصولات</button>
-                  {allApiCategories.filter((c: any) => !c.parentId).map((parent: any) => {
-                    const children = allApiCategories.filter((c: any) => c.parentId === parent.id);
-                    return (<div key={parent.id}><button onClick={() => setSelectedCategory(parent.name)} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === parent.name ? 'var(--primary)' : 'transparent', color: selectedCategory === parent.name ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>{parent.name}{children.length > 0 && <span style={{ fontSize: '10px', opacity: 0.7 }}>{children.length}</span>}</button>
-                      {children.map((child: any) => (<button key={child.id} onClick={() => setSelectedCategory(child.name)} style={{ padding: '4px 10px 4px 24px', borderRadius: '6px', border: 'none', background: selectedCategory === child.name ? 'var(--primary)' : 'transparent', color: selectedCategory === child.name ? 'white' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === child.name ? 600 : 400 }}><span style={{ marginLeft: '4px', fontSize: '10px', color: selectedCategory === child.name ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)' }}>└</span> {child.name}</button>))}</div>);
-                  })}</div></div>
-              <div style={{ marginBottom: '20px' }}><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '8px' }}>محدوده قیمت</label><input type="range" min={0} max={maxPrice} value={priceRange[1]} onChange={e => setPriceRange([0, Number(e.target.value)])} style={{ width: '100%', accentColor: 'var(--primary)' }} /><div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}><span>۰</span><span>{fmt(priceRange[1])}</span></div></div>
-              <div><label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '8px' }}>حداقل امتیاز</label>
-                <div style={{ display: 'flex', gap: '4px' }}>{[0, 3, 3.5, 4, 4.5].map(r => <button key={r} onClick={() => setMinRating(r)} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: minRating === r ? 'var(--primary)' : 'var(--hover-bg)', color: minRating === r ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '2px' }}>{r === 0 ? 'همه' : <><Icons.Star size={10} color={minRating === r ? 'white' : '#fbbf24'} /> {r}</>}</button>)}</div></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}><h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>فیلترها</h3><button onClick={() => { setSelectedCategory('all'); setMinRating(0); setPriceRange([0, maxPrice]); setSearchQuery(''); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}>پاک کردن</button></div>
+
+              {/* Search */}
+              <div style={{ marginBottom: '8px' }}>
+                <button onClick={() => toggleSection('search')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer', borderBottom: '1px solid var(--border)', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}><span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Search size={14} /> جستجو</span><Icons.ChevronDown size={14} /></button>
+                {openSections.search && (
+                  <div style={{ padding: '10px 0' }}><div style={{ position: 'relative' }}><input type="text" placeholder="نام محصول..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: '100%', padding: '8px 32px 8px 10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} /><div style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><Icons.Search size={12} /></div></div></div>
+                )}
+              </div>
+
+              {/* Category */}
+              <div style={{ marginBottom: '8px' }}>
+                <button onClick={() => toggleSection('category')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer', borderBottom: '1px solid var(--border)', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}><span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Folder size={14} /> دسته‌بندی</span><Icons.ChevronDown size={14} /></button>
+                {openSections.category && (
+                  <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '2px', maxHeight: '200px', overflowY: 'auto' }}>
+                    <button onClick={() => setSelectedCategory('all')} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === 'all' ? 'var(--primary)' : 'transparent', color: selectedCategory === 'all' ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === 'all' ? 600 : 400 }}>همه محصولات</button>
+                    {allApiCategories.filter((c: any) => !c.parentId).map((parent: any) => {
+                      const children = allApiCategories.filter((c: any) => c.parentId === parent.id);
+                      return (<div key={parent.id}><button onClick={() => setSelectedCategory(parent.name)} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === parent.name ? 'var(--primary)' : 'transparent', color: selectedCategory === parent.name ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>{parent.name}{children.length > 0 && <span style={{ fontSize: '10px', opacity: 0.7 }}>{children.length}</span>}</button>
+                        {children.map((child: any) => (<button key={child.id} onClick={() => setSelectedCategory(child.name)} style={{ padding: '4px 10px 4px 24px', borderRadius: '6px', border: 'none', background: selectedCategory === child.name ? 'var(--primary)' : 'transparent', color: selectedCategory === child.name ? 'white' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === child.name ? 600 : 400 }}><span style={{ marginLeft: '4px', fontSize: '10px', color: selectedCategory === child.name ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)' }}>└</span> {child.name}</button>))}</div>);
+                    })}</div>
+                )}
+              </div>
+
+              {/* Price */}
+              <div style={{ marginBottom: '8px' }}>
+                <button onClick={() => toggleSection('price')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer', borderBottom: '1px solid var(--border)', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}><span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.DollarSign size={14} /> محدوده قیمت</span><Icons.ChevronDown size={14} /></button>
+                {openSections.price && (
+                  <div style={{ padding: '10px 0' }}><input type="range" min={0} max={maxPrice} value={priceRange[1]} onChange={e => setPriceRange([0, Number(e.target.value)])} style={{ width: '100%', accentColor: 'var(--primary)' }} /><div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}><span>۰</span><span>{fmt(priceRange[1])}</span></div></div>
+                )}
+              </div>
+
+              {/* Rating */}
+              <div>
+                <button onClick={() => toggleSection('rating')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}><span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Star size={14} /> امتیاز</span><Icons.ChevronDown size={14} /></button>
+                {openSections.rating && (
+                  <div style={{ padding: '8px 0', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>{[0, 3, 3.5, 4, 4.5].map(r => <button key={r} onClick={() => setMinRating(r)} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: minRating === r ? 'var(--primary)' : 'var(--hover-bg)', color: minRating === r ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '2px' }}>{r === 0 ? 'همه' : <><Icons.Star size={10} color={minRating === r ? 'white' : '#fbbf24'} /> {r}</>}</button>)}</div>
+                )}
+              </div>
             </div>
           </div>
         )}

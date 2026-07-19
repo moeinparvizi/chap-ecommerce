@@ -369,6 +369,7 @@ tr:hover { background: var(--hover-bg); }
 .product-card .card-body {
   padding: 16px;
   transition: background 0.3s;
+  margin-bottom: 5px;
 }
 .product-card:hover .card-body {
   background: var(--hover-bg);
