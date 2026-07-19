@@ -113,7 +113,13 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           </button>
 
           {/* Logo */}
-          <div onClick={() => router.push('/')} style={{ fontSize: scrolled ? '20px' : '26px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor: 'pointer', transition: 'font-size 0.3s', flexShrink: 0 }}>{siteSettings?.siteInfo.name || 'ShopHub'}</div>
+          <div onClick={() => router.push('/')} style={{ cursor: 'pointer', flexShrink: 0 }}>
+            {siteSettings?.siteInfo.logo ? (
+              <img src={siteSettings.siteInfo.logo} alt={siteSettings.siteInfo.name || 'ShopHub'} style={{ height: scrolled ? '28px' : '36px', objectFit: 'contain', transition: 'height 0.3s' }} />
+            ) : (
+              <span style={{ fontSize: scrolled ? '20px' : '26px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', transition: 'font-size 0.3s' }}>{siteSettings?.siteInfo.name || 'ShopHub'}</span>
+            )}
+          </div>
 
           {/* Search - desktop only */}
           <div className="desktop-only" style={{ flex: 1, maxWidth: '600px', position: 'relative' }}>
@@ -200,7 +206,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           <div onClick={e => e.stopPropagation()} className="mobile-sidebar" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '300px', maxWidth: '85vw', background: 'var(--card-bg)', boxShadow: '-4px 0 20px rgba(0,0,0,0.15)', overflowY: 'auto', padding: '20px', animation: 'slideInRight 0.3s ease-out' }}>
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <span style={{ fontSize: '22px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{siteSettings?.siteInfo.name || 'ShopHub'}</span>
+              <span style={{ fontSize: '22px', fontWeight: 800 }}>{siteSettings?.siteInfo.logo ? <img src={siteSettings.siteInfo.logo} alt={siteSettings.siteInfo.name || 'ShopHub'} style={{ height: '32px', objectFit: 'contain' }} /> : <span style={{ background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{siteSettings?.siteInfo.name || 'ShopHub'}</span>}</span>
               <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '4px' }}><Icons.X size={24} /></button>
             </div>
 
@@ -266,7 +272,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
       <footer className="footer" style={{ background: 'var(--card-bg)', borderTop: '1px solid var(--border)', padding: '36px 20px' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
           <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '28px', marginBottom: '20px' }}>
-            <div><div style={{ fontSize: '22px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '8px' }}>{siteSettings?.siteInfo.name || 'ShopHub'}</div><p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{siteSettings?.footer.about || 'فروشگاه آنلاین با بهترین برندها و قیمت\u200cها.'}</p></div>
+            <div>{siteSettings?.siteInfo.logo ? <img src={siteSettings.siteInfo.logo} alt={siteSettings.siteInfo.name || 'ShopHub'} style={{ height: '36px', objectFit: 'contain', marginBottom: '8px' }} /> : <div style={{ fontSize: '22px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '8px' }}>{siteSettings?.siteInfo.name || 'ShopHub'}</div>}<p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{siteSettings?.footer.about || 'فروشگاه آنلاین با بهترین برندها و قیمت\u200cها.'}</p></div>
             <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>لینک\u200cها</h4><p onClick={() => router.push('/about')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>درباره ما</p><p onClick={() => router.push('/contact')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>تماس با ما</p><p onClick={() => router.push('/products')} style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', cursor: 'pointer' }}>محصولات</p></div>
             <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>خدمات</h4><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px' }}>پیگیری سفارش</p><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px' }}>گارانتی بازگشت</p></div>
             <div><h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px' }}>تماس</h4><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Mail size={13} /> {siteSettings?.footer.email || 'info@shophub.com'}</p><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Bell size={13} /> {siteSettings?.footer.phone || '\u06F0\u06F2\u06F1-\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8'}</p><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0', lineHeight: 1.5 }}>{siteSettings?.footer.address || ''}</p></div>

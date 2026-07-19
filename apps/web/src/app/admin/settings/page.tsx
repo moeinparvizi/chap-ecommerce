@@ -60,8 +60,27 @@ export default function SettingsPage() {
               <input type="text" value={settings.siteInfo.slogan} onChange={e => save({ ...settings, siteInfo: { ...settings.siteInfo, slogan: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
             </div>
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>لگو (URL تصویر)</label>
-              <input type="text" value={settings.siteInfo.logo} onChange={e => save({ ...settings, siteInfo: { ...settings.siteInfo, logo: e.target.value } })} placeholder="https://..." style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>لوگوی سایت</label>
+              {settings.siteInfo.logo ? (
+                <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', marginBottom: '8px' }}>
+                  <img src={settings.siteInfo.logo} alt="logo" style={{ width: '100%', height: '80px', objectFit: 'contain', borderRadius: '10px', background: 'var(--hover-bg)', padding: '10px' }} />
+                  <button onClick={() => save({ ...settings, siteInfo: { ...settings.siteInfo, logo: '' } })} style={{ position: 'absolute', top: '6px', right: '6px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(239,68,68,0.8)', color: 'white', border: 'none', cursor: 'pointer', fontSize: '11px' }}>حذف</button>
+                </div>
+              ) : (
+                <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px', borderRadius: '10px', border: '2px dashed var(--border)', background: 'var(--hover-bg)', cursor: 'pointer', transition: 'border-color 0.2s' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}>
+                  <Icons.Image size={28} color="var(--text-muted)" />
+                  <p style={{ margin: '6px 0 0', fontSize: '13px', color: 'var(--text-secondary)' }}>کلیک کنید یا تصویر را بکشید</p>
+                  <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>PNG, SVG, WebP — حداکثر ۲ مگابایت</p>
+                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = ev => save({ ...settings, siteInfo: { ...settings.siteInfo, logo: ev.target?.result as string } });
+                    reader.readAsDataURL(file);
+                  }} />
+                </label>
+              )}
+              <input type="text" value={settings.siteInfo.logo.startsWith('data:') ? '' : settings.siteInfo.logo} onChange={e => save({ ...settings, siteInfo: { ...settings.siteInfo, logo: e.target.value } })} placeholder="یا لینک تصویر: https://..." style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none', marginTop: '8px' }} />
             </div>
             <div>
               <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>رنگ اصلی</label>
