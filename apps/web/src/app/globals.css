@@ -399,6 +399,25 @@ tr:hover { background: var(--hover-bg); }
 
 /* ========== FULL RESPONSIVE ========== */
 
+/* ---------- Mobile Navbar ---------- */
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+.mobile-hamburger { display: none !important; }
+.mobile-icons { display: none !important; }
+.desktop-search { display: block; }
+.desktop-nav { display: flex; }
+.desktop-category-bar { display: flex; }
+
+@media (max-width: 768px) {
+  .mobile-hamburger { display: flex !important; }
+  .mobile-icons { display: flex !important; }
+  .desktop-search { display: none !important; }
+  .desktop-nav { display: none !important; }
+  .desktop-category-bar { display: none !important; }
+  .navbar > div:first-child { gap: 8px !important; padding: 0 12px !important; }
+  .navbar { padding: 8px 0 !important; }
+}
+
 /* ---------- Admin Sidebar ---------- */
 @media (max-width: 768px) {
   .sidebar { width: 280px; box-shadow: -4px 0 20px rgba(0,0,0,0.15); }

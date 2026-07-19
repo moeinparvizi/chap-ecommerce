@@ -21,6 +21,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const [searchText, setSearchText] = useState('');
   const [cartToast, setCartToast] = useState<{ name: string; show: boolean }>({ name: '', show: false });
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
@@ -36,7 +37,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => { localStorage.setItem('showSubcategories', String(showSubcategories)); }, [showSubcategories]);
-  useEffect(() => { setMegaMenuOpen(false); }, [pathname]);
+  useEffect(() => { setMegaMenuOpen(false); setMobileMenuOpen(false); }, [pathname]);
 
   // Cart toast listener
   useEffect(() => {
@@ -188,6 +189,63 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           </div>
         )}
       </nav>
+
+      {/* Mobile Sidebar Drawer */}
+      {mobileMenuOpen && (
+        <div className="mobile-sidebar-overlay" onClick={() => setMobileMenuOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 200, animation: 'fadeIn 0.2s' }}>
+          <div onClick={e => e.stopPropagation()} style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '300px', maxWidth: '85vw', background: 'var(--card-bg)', boxShadow: '-4px 0 20px rgba(0,0,0,0.15)', overflowY: 'auto', padding: '20px', animation: 'slideInRight 0.3s ease-out' }}>
+            {/* Close + Logo */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <span style={{ fontSize: '22px', fontWeight: 800, background: `linear-gradient(135deg, ${siteSettings?.siteInfo.primaryColor || '#1e40af'}, ${siteSettings?.siteInfo.primaryColor || '#3b82f6'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{siteSettings?.siteInfo.name || 'ShopHub'}</span>
+              <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '4px' }}><Icons.X size={24} /></button>
+            </div>
+
+            {/* Search */}
+            <form onSubmit={(e) => { e.preventDefault(); if (searchText.trim()) { router.push(`/products?search=${encodeURIComponent(searchText.trim())}`); setMobileMenuOpen(false); } }} style={{ position: 'relative', marginBottom: '20px' }}>
+              <input type="text" placeholder="جستجوی محصولات..." value={searchText} onChange={e => setSearchText(e.target.value)} style={{ width: '100%', padding: '12px 40px 12px 14px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+              <button type="submit" style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', padding: '8px', cursor: 'pointer' }}><Icons.Search size={14} /></button>
+            </form>
+
+            {/* User */}
+            {navUser ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', borderRadius: '10px', background: 'var(--hover-bg)', marginBottom: '16px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{navUser.name?.charAt(0) || 'U'}</div>
+                <div style={{ flex: 1 }}><p style={{ fontWeight: 600, fontSize: '14px', margin: 0 }}>{navUser.name}</p><p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>{navUser.email}</p></div>
+              </div>
+            ) : (
+              <a href="/auth/login" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px', borderRadius: '10px', background: 'var(--primary)', color: 'white', textDecoration: 'none', fontWeight: 600, fontSize: '14px', marginBottom: '16px' }}><Icons.Users size={16} /> ورود / ثبت نام</a>
+            )}
+
+            {/* Nav Links */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '16px' }}>
+              {[{ icon: <Icons.Package size={18} />, label: 'محصولات', href: '/products' }, { icon: <Icons.Truck size={18} />, label: 'خانه', href: '/' }, { icon: <Icons.Users size={18} />, label: 'درباره ما', href: '/about' }, { icon: <Icons.Mail size={18} />, label: 'تماس با ما', href: '/contact' }, { icon: <Icons.ShoppingCart size={18} />, label: 'سبد خرید', href: '/cart' }, ...(navUser ? [{ icon: <Icons.User size={18} />, label: 'داشبورد من', href: navUser.role === 'admin' ? '/admin' : '/account' }] : [])].map(link => (
+                <button key={link.href} onClick={() => { router.push(link.href); setMobileMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', borderRadius: '10px', border: 'none', background: pathname === link.href ? 'var(--primary)' : 'transparent', color: pathname === link.href ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '14px', fontWeight: pathname === link.href ? 600 : 400, textAlign: 'right', width: '100%' }}>{link.icon} {link.label}</button>
+              ))}
+            </div>
+
+            {/* Categories */}
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+              <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 8px' }}>دسته‌بندی‌ها</p>
+              {categoryTree.map((cat, i) => (
+                <div key={cat.id}>
+                  <button onClick={() => { router.push(`/products?category=${encodeURIComponent(cat.name)}`); setMobileMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '13px', fontWeight: 500, width: '100%', textAlign: 'right' }}><span style={{ color: categoryColors[i % categoryColors.length] }}>{categoryIcons[cat.name] || categoryIcons.default}</span> {cat.name}</button>
+                </div>
+              ))}
+            </div>
+
+            {/* Theme/Lang */}
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', display: 'flex', gap: '8px' }}>
+              <button onClick={() => { const n = theme === 'light' ? 'dark' : 'light'; setTheme(n); localStorage.setItem('theme', n); document.documentElement.setAttribute('data-theme', n); }} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--hover-bg)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '13px', color: 'var(--text)' }}>{theme === 'light' ? <><Icons.Moon size={14} /> تاریک</> : <><Icons.Sun size={14} /> روشن</>}</button>
+              <button onClick={() => { const n = lang === 'fa' ? 'en' : 'fa'; setLang(n); localStorage.setItem('lang', n); document.documentElement.dir = n === 'fa' ? 'rtl' : 'ltr'; }} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--hover-bg)', cursor: 'pointer', fontSize: '13px', color: 'var(--text)' }}>{lang === 'fa' ? 'EN' : 'FA'}</button>
+            </div>
+
+            {/* Logout */}
+            {navUser && (
+              <button onClick={() => { localStorage.removeItem('auth_token'); localStorage.removeItem('user'); setNavUser(null); setMobileMenuOpen(false); router.push('/'); }} style={{ width: '100%', marginTop: '12px', padding: '10px', borderRadius: '8px', border: '1px solid var(--danger)', background: 'transparent', color: 'var(--danger)', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>خروج</button>
+            )}
+          </div>
+        </div>
+      )}
 
       <main style={{ flex: 1 }} key={pathname}>
         {/* Cart Toast */}
