@@ -101,7 +101,7 @@ function ProductsContent() {
           </div>
         </div>
         <div style={{ padding: '0 16px 16px' }}>
-          <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #1e40af, #3b82f6)', color: 'white', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(37,99,235,0.3)', transition: 'all 0.2s' }}><Icons.ShoppingCart size={14} /> افزودن به سبد</button>
+          <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ width: '100%', padding: '8px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', fontWeight: 600, fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', transition: 'all 0.2s' }}><Icons.ShoppingCart size={14} /></button>
         </div>
       </div>
     );
@@ -158,7 +158,7 @@ function ProductsContent() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', justifyContent: 'center' }}>
                   <button className={`like-btn ${likedProducts[p.id] ? 'liked' : ''}`} style={{ position: 'relative' }} onClick={(e) => toggleLike(e, p.id)}><Icons.Star size={16} color={likedProducts[p.id] ? 'white' : '#ef4444'} /></button>
-                  <button onClick={(e) => addToCart(e, p)} style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.ShoppingCart size={12} /> سبد</button>
+                  <button onClick={(e) => addToCart(e, p)} style={{ padding: '6px 10px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.ShoppingCart size={14} /></button>
                 </div>
               </div>
             ))}</div>

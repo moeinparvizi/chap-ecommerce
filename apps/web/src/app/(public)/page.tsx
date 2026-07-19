@@ -93,7 +93,7 @@ export default function Home() {
           </div>
         </div>
         <div style={{ padding: '0 16px 16px' }}>
-          <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #1e40af, #3b82f6)', color: 'white', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(37,99,235,0.3)', transition: 'all 0.2s' }}><Icons.ShoppingCart size={14} /> افزودن به سبد</button>
+          <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ width: '100%', padding: '8px', borderRadius: '10px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s', fontSize: '13px', fontWeight: 600 }} onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.color = 'white'; }} onMouseLeave={e => { e.currentTarget.style.background = 'var(--hover-bg)'; e.currentTarget.style.color = 'var(--primary)'; }}><Icons.ShoppingCart size={14} /></button>
         </div>
       </div>
     );

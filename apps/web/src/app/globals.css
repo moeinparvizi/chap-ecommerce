@@ -401,7 +401,7 @@ tr:hover { background: var(--hover-bg); }
 
 /* ---------- Mobile/Desktop Toggle ---------- */
 .mobile-only { display: none !important; }
-.desktop-only { display: flex !important; }
+/*.desktop-only { display: flex !important; }*/
 
 @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
