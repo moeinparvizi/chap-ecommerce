@@ -28,7 +28,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   if (!product) return <div style={{ textAlign: 'center', padding: '60px 20px' }}><Icons.Package size={48} /><h2 style={{ marginTop: '16px' }}>محصول یافت نشد</h2><button className="btn btn-primary" onClick={() => router.push('/')}>بازگشت</button></div>;
 
   const discount = product.compareAtPrice ? Math.round((1 - product.price / product.compareAtPrice) * 100) : 0;
-  const mainImage = product.images?.[selectedImage]?.url || 'https://picsum.photos/600/400';
+  const mainImage = product.images?.[selectedImage]?.url || `https://placehold.co/800x800/f0f2f5/94a3b8?text=${encodeURIComponent(product.name)}`;
 
   const addToCart = () => {
     if (!product || product.stock === 0) return;

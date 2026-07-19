@@ -39,7 +39,7 @@ function ProductsContent() {
 
   const fmt = (p: number) => p.toLocaleString('fa-IR') + ' تومان';
   const getDiscount = (p: Product) => p.compareAtPrice ? Math.round((1 - p.price / p.compareAtPrice) * 100) : 0;
-  const getImg = (p: Product) => p.images?.length > 0 ? p.images[0].url : 'https://picsum.photos/400/400?random=' + p.id;
+  const getImg = (p: Product) => p.images?.length > 0 ? p.images[0].url : `https://placehold.co/800x800/f0f2f5/94a3b8?text=${encodeURIComponent(p.name)}`;
   const getCat = (p: Product) => p.category?.name || '';
 
   const allCategories = [...new Set(products.map(p => getCat(p)).filter(Boolean))];

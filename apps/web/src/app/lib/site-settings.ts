@@ -35,9 +35,9 @@ export interface SiteSettings {
 
 const defaultSettings: SiteSettings = {
   banners: [
-    { id: 'b1', title: 'فروش ویژه تابستانه', subtitle: 'تا ۵۰٪ تخفیف روی محصولات منتخب', image: 'https://picsum.photos/1200/400?random=1', link: '/products', active: true, order: 0 },
-    { id: 'b2', title: 'جدیدترین محصولات', subtitle: 'با ما همراه باشید', image: 'https://picsum.photos/1200/400?random=2', link: '/products', active: true, order: 1 },
-    { id: 'b3', title: 'ارسال رایگان', subtitle: 'برای خریدهای بالای ۵۰۰ هزار تومان', image: 'https://picsum.photos/1200/400?random=3', link: '/products', active: true, order: 2 },
+    { id: 'b1', title: 'فروش ویژه تابستانه', subtitle: 'تا ۵۰٪ تخفیف روی محصولات منتخب', image: 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1200&h=400&fit=crop', link: '/products', active: true, order: 0 },
+    { id: 'b2', title: 'جدیدترین محصولات', subtitle: 'با ما همراه باشید', image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=400&fit=crop', link: '/products', active: true, order: 1 },
+    { id: 'b3', title: 'ارسال رایگان', subtitle: 'برای خریدهای بالای ۵۰۰ هزار تومان', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=400&fit=crop', link: '/products', active: true, order: 2 },
   ],
   footer: {
     about: 'ShopHub فروشگاه آنلاین معتبر شما برای خرید محصولات با کیفیت و قیمت مناسب.',
