@@ -94,7 +94,7 @@ export default function OrdersPage() {
                         {item.image && <img src={item.image} alt="" style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />}
                         <div style={{ flex: 1 }}>
                           <p style={{ fontSize: '13px', fontWeight: 600, margin: 0 }}>{item.name}</p>
-                          <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '2px 0 0' }}>×{item.quantity} — ${(item.price * item.quantity).toLocaleString()}</p>
+                          <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '2px 0 0' }}>×{item.quantity} — {(item.price * item.quantity * 10).toLocaleString('fa-IR')} ریال</p>
                         </div>
                         {order.status === 'DELIVERED' && (
                           hasReviewed(item.id) ? (
@@ -110,7 +110,7 @@ export default function OrdersPage() {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
                   <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{new Date(order.createdAt).toLocaleDateString('fa-IR')}</span>
-                  <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--primary)' }}>{(order.amount || 0).toLocaleString('fa-IR')} تومان</span>
+                  <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--primary)' }}>{((order.amount || 0) * 10).toLocaleString('fa-IR')} ریال</span>
                 </div>
               </div>
             );

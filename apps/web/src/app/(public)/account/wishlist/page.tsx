@@ -25,7 +25,7 @@ export default function WishlistPage() {
     setItems(items.filter(i => i.id !== id));
   };
 
-  const fmt = (p: number) => p.toLocaleString('fa-IR') + ' تومان';
+  const fmt = (p: number) => (p * 10).toLocaleString('fa-IR') + ' ریال';
 
   if (loading) return <div style={{ padding: '24px' }}><ListLoader count={3} /></div>;
 

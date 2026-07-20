@@ -77,8 +77,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           {/* Price */}
           <div style={{ padding: '16px', background: 'var(--table-header-bg)', borderRadius: '12px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
-              <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--primary)' }}>${product.price.toLocaleString()}</span>
-              {product.compareAtPrice && <span style={{ fontSize: '16px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${product.compareAtPrice.toLocaleString()}</span>}
+              <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--primary)' }}>{(product.price * 10).toLocaleString('fa-IR')} ریال</span>
+              {product.compareAtPrice && <span style={{ fontSize: '16px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>{(product.compareAtPrice * 10).toLocaleString('fa-IR')} ریال</span>}
               {discount > 0 && <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '13px', fontWeight: 700, background: '#ef4444', color: 'white' }}>-{discount}%</span>}
             </div>
           </div>

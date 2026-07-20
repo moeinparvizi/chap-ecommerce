@@ -179,7 +179,7 @@ export default function OrdersPage() {
                   </div>
                 </td>
                 <td>{order.items}</td>
-                <td style={{ fontWeight: 600 }}>${order.total.toLocaleString()}</td>
+                <td style={{ fontWeight: 600 }}>{(order.total * 10).toLocaleString('fa-IR')} ریال</td>
                 <td><span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 500, ...getStatusColor(order.status) }}>{getStatusText(order.status)}</span></td>
                 <td style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{order.createdAt}</td>
                 <td>
@@ -252,7 +252,7 @@ export default function OrdersPage() {
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', borderRadius: '8px', background: 'var(--hover-bg)' }}>
                       {item.image && <img src={item.image} alt="" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />}
                       <div style={{ flex: 1 }}><p style={{ fontSize: '13px', fontWeight: 500, margin: 0 }}>{item.name}</p><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '2px 0 0' }}>×{item.quantity}</p></div>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)' }}>${(item.price * item.quantity).toLocaleString()}</span>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)' }}>{(item.price * item.quantity * 10).toLocaleString('fa-IR')} ریال</span>
                     </div>
                   ))}
                 </div>
@@ -261,7 +261,7 @@ export default function OrdersPage() {
 
             {/* Order Summary */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '14px', borderRadius: '10px', background: 'var(--hover-bg)', marginBottom: '16px' }}>
-              <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>مبلغ</p><p style={{ fontSize: '16px', fontWeight: 700, color: '#22c55e', margin: 0 }}>${selectedOrder.total.toLocaleString()}</p></div>
+              <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>مبلغ</p><p style={{ fontSize: '16px', fontWeight: 700, color: '#22c55e', margin: 0 }}>{(selectedOrder.total * 10).toLocaleString('fa-IR')} ریال</p></div>
               <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>تاریخ</p><p style={{ fontSize: '13px', margin: 0 }}>{selectedOrder.createdAt}</p></div>
               <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>وضعیت</p><span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 600, ...getStatusColor(selectedOrder.status) }}>{getStatusText(selectedOrder.status)}</span></div>
             </div>

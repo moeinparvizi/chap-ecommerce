@@ -161,18 +161,18 @@ export default function CheckoutPage() {
                   <p style={{ fontSize: '13px', fontWeight: 500, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</p>
                   <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '2px 0 0' }}>×{item.quantity}</p>
                 </div>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', flexShrink: 0 }}>{(item.price * item.quantity).toLocaleString('fa-IR')}</span>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', flexShrink: 0 }}>{(item.price * item.quantity * 10).toLocaleString('fa-IR')} ریال</span>
               </div>
             ))}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--text-secondary)' }}>جمع کل</span><span>{total.toLocaleString('fa-IR')} تومان</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--text-secondary)' }}>تخفیف (۵٪)</span><span style={{ color: '#22c55e' }}>-{discount.toLocaleString('fa-IR')} تومان</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--text-secondary)' }}>ارسال</span><span>{shipping === 0 ? <span style={{ color: '#22c55e' }}>رایگان</span> : `${shipping.toLocaleString('fa-IR')} تومان`}</span></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--text-secondary)' }}>جمع کل</span><span>{(total * 10).toLocaleString('fa-IR')} ریال</span></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--text-secondary)' }}>تخفیف (۵٪)</span><span style={{ color: '#22c55e' }}>-{(discount * 10).toLocaleString('fa-IR')} ریال</span></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--text-secondary)' }}>ارسال</span><span>{shipping === 0 ? <span style={{ color: '#22c55e' }}>رایگان</span> : `${(shipping * 10).toLocaleString('fa-IR')} ریال`}</span></div>
             <div style={{ borderTop: '2px solid var(--border)', paddingTop: '10px', marginTop: '4px', display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ fontWeight: 700, fontSize: '15px' }}>مبلغ قابل پرداخت</span>
-              <span style={{ fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>{finalPrice.toLocaleString('fa-IR')} تومان</span>
+              <span style={{ fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>{(finalPrice * 10).toLocaleString('fa-IR')} ریال</span>
             </div>
           </div>
 

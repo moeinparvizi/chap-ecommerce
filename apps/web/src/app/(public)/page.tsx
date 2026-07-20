@@ -32,7 +32,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [siteBanners.length]);
 
-  const fmt = (p: number) => p.toLocaleString('fa-IR') + ' تومان';
+  const fmt = (p: number) => (p * 10).toLocaleString('fa-IR') + ' ریال';
   const getDiscount = (p: Product) => p.compareAtPrice ? Math.round((1 - p.price / p.compareAtPrice) * 100) : 0;
   const getImg = (p: Product) => p.images?.length > 0 ? p.images[0].url : `https://placehold.co/800x800/f0f2f5/94a3b8?text=${encodeURIComponent(p.name)}`;
   const getCat = (p: Product) => p.category?.name || '';

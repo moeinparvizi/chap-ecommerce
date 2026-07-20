@@ -70,7 +70,7 @@ export default function CartPage() {
               <img src={item.image} alt={item.name} style={{ width: '90px', height: '90px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</h3>
-                <p style={{ fontSize: '17px', fontWeight: 700, color: 'var(--primary)', margin: 0 }}>${(item.price * item.quantity).toLocaleString()}</p>
+                <p style={{ fontSize: '17px', fontWeight: 700, color: 'var(--primary)', margin: 0 }}>{(item.price * item.quantity * 10).toLocaleString('fa-IR')} ریال</p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '2px', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', flexShrink: 0 }}>
                 <button onClick={() => updateQuantity(item.id, -1)} style={{ padding: '10px 14px', background: 'var(--hover-bg)', border: 'none', cursor: 'pointer', color: 'var(--text)', fontSize: '16px', transition: 'background 0.2s' }}>-</button>
@@ -87,11 +87,11 @@ export default function CartPage() {
           <div className="card" style={{ padding: '24px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 16px' }}>خلاصه سفارش</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}><span style={{ color: 'var(--text-secondary)' }}>جمع کل ({cart.length} محصول)</span><span style={{ fontWeight: 600 }}>${total.toLocaleString()}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}><span style={{ color: 'var(--text-secondary)' }}>تخفیف (۵٪)</span><span style={{ color: '#22c55e', fontWeight: 600 }}>-${discount.toLocaleString()}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}><span style={{ color: 'var(--text-secondary)' }}>جمع کل ({cart.length} محصول)</span><span style={{ fontWeight: 600 }}>{(total * 10).toLocaleString('fa-IR')} ریال</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}><span style={{ color: 'var(--text-secondary)' }}>تخفیف (۵٪)</span><span style={{ color: '#22c55e', fontWeight: 600 }}>-{(discount * 10).toLocaleString('fa-IR')} ریال</span></div>
               <div style={{ borderTop: '2px solid var(--border)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 700, fontSize: '16px' }}>مبلغ قابل پرداخت</span>
-                <span style={{ fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>${finalPrice.toLocaleString()}</span>
+                <span style={{ fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>{(finalPrice * 10).toLocaleString('fa-IR')} ریال</span>
               </div>
             </div>
             <button onClick={handleCheckout} className="btn btn-primary" style={{ width: '100%', marginTop: '20px', padding: '14px', fontSize: '15px', borderRadius: '12px' }}>

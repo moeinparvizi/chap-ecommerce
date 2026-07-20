@@ -34,7 +34,7 @@ export default function AccountPage() {
     { label: 'کل خریدها', value: totalOrders, icon: 'Package', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
     { label: 'در انتظار ارسال', value: pendingOrders, icon: 'Clock', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
     { label: 'تحویل شده', value: deliveredOrders, icon: 'CheckCircle', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
-    { label: 'مجموع خرید', value: totalSpent.toLocaleString('fa-IR') + ' تومان', icon: 'CreditCard', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
+    { label: 'مجموع خرید', value: (totalSpent * 10).toLocaleString('fa-IR') + ' ریال', icon: 'CreditCard', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)' },
   ];
 
   return (
@@ -101,7 +101,7 @@ export default function AccountPage() {
               {orders.slice(0, 5).map((o: any, i: number) => (
                 <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
                   <td style={{ padding: '10px', fontWeight: 500 }}>#{o.id?.slice(0, 8)}</td>
-                  <td style={{ padding: '10px', fontWeight: 600, color: 'var(--primary)' }}>{(o.amount || 0).toLocaleString('fa-IR')} تومان</td>
+                  <td style={{ padding: '10px', fontWeight: 600, color: 'var(--primary)' }}>{((o.amount || 0) * 10).toLocaleString('fa-IR')} ریال</td>
                   <td style={{ padding: '10px', color: 'var(--text-secondary)' }}>{new Date(o.createdAt).toLocaleDateString('fa-IR')}</td>
                   <td style={{ padding: '10px' }}><span style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, background: o.status === 'DELIVERED' ? 'rgba(34,197,94,0.1)' : o.status === 'SHIPPED' ? 'rgba(59,130,246,0.1)' : 'rgba(245,158,11,0.1)', color: o.status === 'DELIVERED' ? '#22c55e' : o.status === 'SHIPPED' ? '#3b82f6' : '#f59e0b' }}>{o.status === 'DELIVERED' ? 'تحویل شده' : o.status === 'SHIPPED' ? 'ارسال شده' : o.status === 'PENDING' ? 'در انتظار' : o.status}</span></td>
                 </tr>
