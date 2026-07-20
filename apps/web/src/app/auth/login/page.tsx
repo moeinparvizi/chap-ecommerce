@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '@/app/lib/api';
 import { Icons } from '@/app/components/Icons';
 
@@ -11,6 +11,11 @@ export default function LoginPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const theme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
