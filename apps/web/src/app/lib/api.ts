@@ -61,6 +61,7 @@ export const api = {
     return request(`/comments${q}`);
   },
   createComment: (data: any) => request('/comments', { method: 'POST', body: JSON.stringify(data) }),
+  replyComment: (id: string, reply: string) => request(`/comments/${id}`, { method: 'PUT', body: JSON.stringify({ reply }) }),
   deleteComment: (id: string) => request(`/comments/${id}`, { method: 'DELETE' }),
 
   // Reviews

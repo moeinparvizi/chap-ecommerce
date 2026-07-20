@@ -137,6 +137,7 @@ model Comment {
   productName String
   text        String
   author      String
+  reply       String?
   createdAt   DateTime @default(now())
 }
 

@@ -71,6 +71,8 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     ]},
     { id: 'customers', label: t('customers'), icon: <Icons.Users size={18} />, path: '/admin/customers' },
     { id: 'analytics', label: t('analytics'), icon: <Icons.TrendingUp size={18} />, path: '/admin/analytics' },
+    { id: 'comments', label: lang === 'fa' ? 'کامنتها' : 'Comments', icon: <Icons.MessageSquare size={18} />, path: '/admin/comments' },
+    { id: 'reviews', label: lang === 'fa' ? 'ریویوها' : 'Reviews', icon: <Icons.Star size={18} />, path: '/admin/reviews' },
     { id: 'discounts', label: lang === 'fa' ? 'تخفیفها' : 'Discounts', icon: <Icons.DollarSign size={18} />, path: '/admin/discounts' },
     { id: 'settings', label: t('settings'), icon: <Icons.Settings size={18} />, path: '/admin/settings' },
   ];
@@ -82,6 +84,8 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     if (pathname.startsWith('/admin/products')) return 'products';
     if (pathname.startsWith('/admin/customers')) return 'customers';
     if (pathname.startsWith('/admin/analytics')) return 'analytics';
+    if (pathname.startsWith('/admin/comments')) return 'comments';
+    if (pathname.startsWith('/admin/reviews')) return 'reviews';
     if (pathname.startsWith('/admin/discounts')) return 'discounts';
     if (pathname.startsWith('/admin/settings')) return 'settings';
     return 'dashboard';
