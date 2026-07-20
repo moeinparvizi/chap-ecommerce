@@ -23,7 +23,7 @@ function ProductsContent() {
 
   const toggleSection = (key: string) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
 
-  useEffect(() => { api.getProducts().then((d: any) => setProducts(d)).catch(() => {}); }, []);
+  useEffect(() => { api.getProducts().then((d: any) => setProducts(d)).catch(() => {}); const user = JSON.parse(localStorage.getItem('user') || '{}'); if (user.id) { api.getWishlist(user.id).then((w: any) => { const map: Record<string, boolean> = {}; w.forEach((item: any) => { map[item.productId] = true; }); setLikedProducts(map); }).catch(() => {}); } }, []);
   useEffect(() => { const cat = searchParams.get('category'); if (cat) setSelectedCategory(decodeURIComponent(cat)); }, [searchParams]);
   useEffect(() => { const q = searchParams.get('search'); if (q) setSearchQuery(decodeURIComponent(q)); }, [searchParams]);
 
@@ -75,9 +75,12 @@ function ProductsContent() {
     window.dispatchEvent(new Event('cart-updated'));
   };
 
-  const toggleLike = (e: React.MouseEvent, id: string) => {
+  const toggleLike = async (e: React.MouseEvent, p: Product) => {
     e.stopPropagation();
-    setLikedProducts(prev => ({ ...prev, [id]: !prev[id] }));
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.id) { router.push('/auth/login'); return; }
+    setLikedProducts(prev => ({ ...prev, [p.id]: !prev[p.id] }));
+    try { await api.toggleWishlist({ userId: user.id, productId: p.id, productName: p.name, productPrice: p.price, productImage: getImg(p) }); } catch (err) {}
   };
 
   const ProductCard = ({ p }: { p: Product }) => {
@@ -104,7 +107,7 @@ function ProductsContent() {
         </div>
         <div style={{ padding: '0 16px 16px' }}>
           <div style={{ padding: '0 16px 16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p.id); }} style={{ width: '36px', height: '36px', borderRadius: '10px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', flexShrink: 0 }}><Icons.Heart size={16} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
+          <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p); }} style={{ width: '36px', height: '36px', borderRadius: '10px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', flexShrink: 0 }}><Icons.Heart size={16} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
           <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', fontWeight: 600, fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', transition: 'all 0.2s' }}><Icons.ShoppingCart size={14} /></button>
           </div>
         </div>
@@ -188,7 +191,7 @@ function ProductsContent() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><Icons.Star size={12} color="#fbbf24" /><span style={{ fontSize: '12px', fontWeight: 600 }}>{p.rating}</span></div><span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--primary)' }}>{fmt(p.price)}</span></div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', justifyContent: 'center', alignItems: 'center' }}>
-                  <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p.id); }} style={{ padding: '6px', borderRadius: '8px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Heart size={14} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
+                  <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p); }} style={{ padding: '6px', borderRadius: '8px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Heart size={14} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
                   <button onClick={(e) => addToCart(e, p)} style={{ padding: '6px 10px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.ShoppingCart size={14} /></button>
                 </div>
               </div>
