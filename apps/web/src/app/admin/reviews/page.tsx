@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Icons } from '../../components/Icons';
 import { api } from '../../lib/api';
 
 export default function AdminReviewsPage() {
+  const router = useRouter();
   const [reviews, setReviews] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterRating, setFilterRating] = useState(0);
@@ -57,21 +59,32 @@ export default function AdminReviewsPage() {
         <div style={{ display: 'grid', gap: '12px' }}>
           {filtered.map(r => (
             <div key={r.id} className="card" style={{ padding: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+              {/* Header: User + Rating + Product */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', paddingBottom: '10px', borderBottom: '1px solid var(--border-light)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '14px' }}>{r.rating}</div>
                   <div>
                     <p style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>{r.author || 'کاربر'}</p>
-                    <div style={{ display: 'flex', gap: '2px', marginTop: '2px' }}>{[1,2,3,4,5].map(s => <Icons.Star key={s} size={11} color={s <= r.rating ? '#fbbf24' : '#d1d5db'} />)}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                      <div style={{ display: 'flex', gap: '1px' }}>{[1,2,3,4,5].map(s => <Icons.Star key={s} size={11} color={s <= r.rating ? '#fbbf24' : '#d1d5db'} />)}</div>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{new Date(r.createdAt).toLocaleString('fa-IR')}</span>
+                    </div>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ padding: '3px 10px', borderRadius: '6px', fontSize: '11px', background: 'var(--hover-bg)', color: 'var(--text-secondary)' }}>{r.productName}</span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{new Date(r.createdAt).toLocaleDateString('fa-IR')}</span>
-                  <button onClick={() => handleDelete(r.id)} style={{ padding: '4px 8px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--danger)', cursor: 'pointer' }}><Icons.Trash size={14} /></button>
+                  <button onClick={() => router.push(`/product/${r.productId}`)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '5px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px', fontWeight: 500, transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}>
+                    <Icons.Package size={12} /> {r.productName || 'محصول'}
+                  </button>
+                  <button onClick={() => handleDelete(r.id)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--danger)', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Icons.Trash size={12} /> حذف
+                  </button>
                 </div>
               </div>
-              {r.title && <h4 style={{ fontSize: '14px', fontWeight: 600, margin: '8px 0 4px' }}>{r.title}</h4>}
+
+              {/* Review Title */}
+              {r.title && <h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 6px' }}>{r.title}</h4>}
+
+              {/* Review Text */}
               <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.7, color: 'var(--text-secondary)' }}>{r.text}</p>
             </div>
           ))}
