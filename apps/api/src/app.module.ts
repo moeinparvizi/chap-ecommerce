@@ -15,6 +15,7 @@ import { LocationsModule } from './locations/locations.module';
 import { ProfileModule } from './profile/profile.module';
 import { AuthModule } from './auth/auth.module';
 import { DiscountsModule } from './discounts/discounts.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DiscountsModule } from './discounts/discounts.module';
     ProfileModule,
     AuthModule,
     DiscountsModule,
+    WishlistModule,
   ],
 })
 export class AppModule {}

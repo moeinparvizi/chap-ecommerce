@@ -99,4 +99,9 @@ export const api = {
   createDiscount: (data: any) => request('/discounts', { method: 'POST', body: JSON.stringify(data) }),
   updateDiscount: (id: string, data: any) => request(`/discounts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteDiscount: (id: string) => request(`/discounts/${id}`, { method: 'DELETE' }),
+
+  // Wishlist
+  getWishlist: (userId: string) => request(`/wishlist?userId=${userId}`),
+  toggleWishlist: (data: any) => request('/wishlist/toggle', { method: 'POST', body: JSON.stringify(data) }),
+  deleteWishlist: (id: string) => request(`/wishlist/${id}`, { method: 'DELETE' }),
 };

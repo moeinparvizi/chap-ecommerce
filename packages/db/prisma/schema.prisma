@@ -178,6 +178,16 @@ model Discount {
   updatedAt    DateTime @updatedAt
 }
 
+model Wishlist {
+  id          String   @id @default(uuid())
+  userId      String
+  productId   String
+  productName String
+  productPrice Float
+  productImage String?
+  createdAt   DateTime @default(now())
+}
+
 enum OrderStatus {
   PENDING
   PROCESSING

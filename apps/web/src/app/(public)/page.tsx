@@ -21,6 +21,8 @@ export default function Home() {
     const settings = getSiteSettings();
     setSiteBanners(settings.banners.filter(b => b.active).sort((a: any, b: any) => a.order - b.order));
     api.getProducts().then((d: any) => { setProducts(d); setLoading(false); }).catch(() => setLoading(false));
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.id) { api.getWishlist(user.id).then((w: any) => { const map: Record<string, boolean> = {}; w.forEach((item: any) => { map[item.productId] = true; }); setLikedProducts(map); }).catch(() => {}); }
   }, []);
 
   // Auto-slide banners
@@ -63,9 +65,12 @@ export default function Home() {
     window.dispatchEvent(new Event('cart-updated'));
   };
 
-  const toggleLike = (e: React.MouseEvent, id: string) => {
+  const toggleLike = async (e: React.MouseEvent, p: Product) => {
     e.stopPropagation();
-    setLikedProducts(prev => ({ ...prev, [id]: !prev[id] }));
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.id) { router.push('/auth/login'); return; }
+    setLikedProducts(prev => ({ ...prev, [p.id]: !prev[p.id] }));
+    try { await api.toggleWishlist({ userId: user.id, productId: p.id, productName: p.name, productPrice: p.price, productImage: getImg(p) }); } catch (e) {}
   };
 
   const PC = ({ p, badge }: { p: Product; badge?: string }) => {
@@ -92,7 +97,7 @@ export default function Home() {
           </div>
         </div>
         <div style={{ padding: '0 16px 16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p.id); }} style={{ width: '36px', height: '36px', borderRadius: '10px', border: 'none', background: isLiked ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: isLiked ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', flexShrink: 0 }}><Icons.Heart size={16} color={isLiked ? '#ef4444' : 'currentColor'} /></button>
+          <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p); }} style={{ width: '36px', height: '36px', borderRadius: '10px', border: 'none', background: isLiked ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: isLiked ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', flexShrink: 0 }}><Icons.Heart size={16} color={isLiked ? '#ef4444' : 'currentColor'} /></button>
           <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ flex: 1, padding: '8px', borderRadius: '10px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s', fontSize: '13px', fontWeight: 600 }} onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.color = 'white'; }} onMouseLeave={e => { e.currentTarget.style.background = 'var(--hover-bg)'; e.currentTarget.style.color = 'var(--primary)'; }}><Icons.ShoppingCart size={14} /></button>
         </div>
       </div>
