@@ -74,6 +74,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     { id: 'comments', label: lang === 'fa' ? 'کامنتها' : 'Comments', icon: <Icons.MessageSquare size={18} />, path: '/admin/comments' },
     { id: 'reviews', label: lang === 'fa' ? 'ریویوها' : 'Reviews', icon: <Icons.Star size={18} />, path: '/admin/reviews' },
     { id: 'discounts', label: lang === 'fa' ? 'تخفیفها' : 'Discounts', icon: <Icons.DollarSign size={18} />, path: '/admin/discounts' },
+    { id: 'markups', label: lang === 'fa' ? 'درصدهای پنهان' : 'Hidden Markups', icon: <Icons.Eye size={18} />, path: '/admin/markups' },
     { id: 'settings', label: t('settings'), icon: <Icons.Settings size={18} />, path: '/admin/settings' },
   ];
 
@@ -87,6 +88,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     if (pathname.startsWith('/admin/comments')) return 'comments';
     if (pathname.startsWith('/admin/reviews')) return 'reviews';
     if (pathname.startsWith('/admin/discounts')) return 'discounts';
+    if (pathname.startsWith('/admin/markups')) return 'markups';
     if (pathname.startsWith('/admin/settings')) return 'settings';
     return 'dashboard';
   };

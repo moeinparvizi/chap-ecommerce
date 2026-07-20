@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { DiscountsService } from '../discounts/discounts.service';
+import { MarkupsService } from '../markups/markups.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService, private discountsService: DiscountsService) {}
+  constructor(private prisma: PrismaService, private discountsService: DiscountsService, private markupsService: MarkupsService) {}
 
   async findAll() {
     const products = await this.prisma.product.findMany({
       include: { images: true, category: true },
       orderBy: { createdAt: 'desc' },
     });
-    return this.discountsService.applyDiscounts(products);
+    const discounted = await this.discountsService.applyDiscounts(products);
+    return this.markupsService.applyMarkups(discounted);
   }
 
   async findOne(id: string) {
@@ -21,7 +23,8 @@ export class ProductsService {
     });
     if (!product) return null;
     const discounted = await this.discountsService.applyDiscounts([product]);
-    return discounted[0];
+    const marked = await this.markupsService.applyMarkups(discounted);
+    return marked[0];
   }
 
   async create(data: any) {

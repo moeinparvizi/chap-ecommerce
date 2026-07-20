@@ -105,4 +105,10 @@ export const api = {
   getWishlist: (userId: string) => request(`/wishlist?userId=${userId}`),
   toggleWishlist: (data: any) => request('/wishlist/toggle', { method: 'POST', body: JSON.stringify(data) }),
   deleteWishlist: (id: string) => request(`/wishlist/${id}`, { method: 'DELETE' }),
+
+  // Markups (hidden)
+  getMarkups: () => request('/markups'),
+  createMarkup: (data: any) => request('/markups', { method: 'POST', body: JSON.stringify(data) }),
+  updateMarkup: (id: string, data: any) => request(`/markups/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteMarkup: (id: string) => request(`/markups/${id}`, { method: 'DELETE' }),
 };
