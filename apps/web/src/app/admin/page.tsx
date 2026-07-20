@@ -50,7 +50,7 @@ export default function AdminDashboard() {
     { label: 'سفارشات', value: String(stats.orders), icon: <Icons.Package size={22} />, color: '#3b82f6', sparkline: [20, 28, 35, 32, 40, 38, 45, 42, 50, 48] },
     { label: 'مشتریان', value: String(stats.customers), icon: <Icons.Users size={22} />, color: '#8b5cf6', sparkline: [15, 22, 28, 32, 35, 42, 48, 52, 58, 65] },
     { label: 'محصولات', value: String(stats.products), icon: <Icons.Tag size={22} />, color: '#f59e0b', sparkline: [40, 42, 45, 48, 50, 52, 55, 58, 60, stats.products] },
-    { label: 'دسته‌بندی‌ها', value: String(stats.categories), icon: <Icons.Folder size={22} />, color: '#ec4899', sparkline: [3, 3, 4, 4, 4, 5, 5, 5, 6, stats.categories] },
+    { label: 'دستهبندیها', value: String(stats.categories), icon: <Icons.Folder size={22} />, color: '#ec4899', sparkline: [3, 3, 4, 4, 4, 5, 5, 5, 6, stats.categories] },
     { label: 'میانگین سفارش', value: stats.orders ? `$${Math.round(stats.revenue / stats.orders)}` : '$0', icon: <Icons.ShoppingCart size={22} />, color: '#06b6d4', sparkline: [82, 85, 88, 90, 93, 95, 97, 98, 100, 101] },
   ];
 
@@ -131,7 +131,7 @@ export default function AdminDashboard() {
         <div className="card">
           <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 20px' }}>فروش بر اساس دسته</h3>
           {categoryStats.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>داده‌ای موجود نیست</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>دادهای موجود نیست</p>
           ) : categoryStats.map((cat: any, i: number) => (
             <div key={i} style={{ marginBottom: '14px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
             <button onClick={() => router.push('/admin/orders')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>مشاهده همه <Icons.ExternalLink size={12} /></button>
           </div>
           {recentOrders.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)', fontSize: '13px', textAlign: 'center', padding: '20px' }}>داده‌ای موجود نیست</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13px', textAlign: 'center', padding: '20px' }}>دادهای موجود نیست</p>
           ) : recentOrders.map((order: any, i: number) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < recentOrders.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -182,7 +182,7 @@ export default function AdminDashboard() {
             <button onClick={() => router.push('/admin/products')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>مشاهده همه <Icons.ExternalLink size={12} /></button>
           </div>
           {topProducts.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)', fontSize: '13px', textAlign: 'center', padding: '20px' }}>داده‌ای موجود نیست</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13px', textAlign: 'center', padding: '20px' }}>دادهای موجود نیست</p>
           ) : topProducts.map((p: any, i: number) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < topProducts.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

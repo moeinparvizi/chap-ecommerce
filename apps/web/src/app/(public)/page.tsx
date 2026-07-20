@@ -144,7 +144,7 @@ export default function Home() {
           <div className="hero-banner" style={{ borderRadius: '20px', overflow: 'hidden', height: '340px', background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)', position: 'relative' }}>
             <div className="hero-content" style={{ padding: '50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', color: 'white', maxWidth: '500px' }}>
               <h1 style={{ fontSize: '28px', fontWeight: 800, margin: '0 0 8px', lineHeight: 1.3 }}>به ShopHub خوش آمدید</h1>
-              <p style={{ fontSize: '14px', margin: '0 0 20px', opacity: 0.9 }}>محصولات متنوع با بهترین قیمت‌ها</p>
+              <p style={{ fontSize: '14px', margin: '0 0 20px', opacity: 0.9 }}>محصولات متنوع با بهترین قیمتها</p>
             </div>
           </div>
         )}
@@ -161,27 +161,27 @@ export default function Home() {
 
       {/* Categories */}
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px 28px' }}>
-        <h2 className="section-title" style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 14px' }}>دسته‌بندی‌ها</h2>
+        <h2 className="section-title" style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 14px' }}>دستهبندیها</h2>
         <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
           {cats.map((c, i) => <div key={i} onClick={() => router.push('/products')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '18px', borderRadius: '14px', border: '1px solid var(--border)', background: 'var(--card-bg)', cursor: 'pointer', transition: 'all 0.3s' }} onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = c.color; }} onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--border)'; }}><div style={{ width: '52px', height: '52px', borderRadius: '14px', background: c.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.color }}>{c.icon}</div><span style={{ fontSize: '13px', fontWeight: 600 }}>{c.name}</span></div>)}
         </div>
       </div>
 
       {/* Best Sellers */}
-      {loading ? <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px 28px' }}><CardLoader count={6} /></div> : <ProductSection title="پرفروش‌ترین محصولات" icon={<Icons.TrendingUp size={22} color="#3b82f6" />} iconColor="#3b82f6" items={bestSellers} badge="پرفروش" />}
+      {loading ? <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px 28px' }}><CardLoader count={6} /></div> : <ProductSection title="پرفروشترین محصولات" icon={<Icons.TrendingUp size={22} color="#3b82f6" />} iconColor="#3b82f6" items={bestSellers} badge="پرفروش" />}
 
       {/* Featured */}
       <ProductSection title="محصولات ویژه" icon={<Icons.Sparkles size={22} color="#8b5cf6" />} iconColor="#8b5cf6" items={featured} badge="ویژه" />
 
       {/* Discounted */}
-      <ProductSection title="تخفیف‌ها" icon={<Icons.DollarSign size={22} color="#ef4444" />} iconColor="#ef4444" items={discounted} />
+      <ProductSection title="تخفیفها" icon={<Icons.DollarSign size={22} color="#ef4444" />} iconColor="#ef4444" items={discounted} />
 
       {/* Newsletter */}
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px 40px' }}>
         <div className="newsletter" style={{ borderRadius: '20px', padding: '40px', background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)', color: 'white', textAlign: 'center' }}>
           <Icons.Mail size={36} />
           <h2 style={{ fontSize: '22px', fontWeight: 700, margin: '12px 0 6px' }}>عضویت در خبرنامه</h2>
-          <p style={{ fontSize: '14px', margin: '0 0 20px', opacity: 0.9 }}>از تخفیف‌ها مطلع شوید</p>
+          <p style={{ fontSize: '14px', margin: '0 0 20px', opacity: 0.9 }}>از تخفیفها مطلع شوید</p>
           <div style={{ display: 'flex', gap: '8px', maxWidth: '460px', margin: '0 auto' }}>
             <input type="email" placeholder="ایمیل خود را وارد کنید" style={{ flex: 1, padding: '12px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none' }} />
             <button style={{ padding: '12px 24px', borderRadius: '12px', border: 'none', background: 'white', color: '#1e40af', fontWeight: 700, fontSize: '14px', cursor: 'pointer', whiteSpace: 'nowrap' }}>عضویت</button>

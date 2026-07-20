@@ -152,7 +152,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
         {/* Category Bar - desktop only */}
         <div className="desktop-only" style={{ maxWidth: '1280px', margin: '0 auto', padding: '8px 20px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
           <button onClick={() => setMegaMenuOpen(!megaMenuOpen)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', border: 'none', background: megaMenuOpen ? 'var(--primary)' : 'var(--hover-bg)', color: megaMenuOpen ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '14px', fontWeight: 600, transition: 'all 0.2s' }}>
-            <Icons.Menu size={16} /> دسته‌بندی‌ها <Icons.ChevronDown size={14} />
+            <Icons.Menu size={16} /> دستهبندیها <Icons.ChevronDown size={14} />
           </button>
           {navCategories.map((cat) => (
             <button key={cat.id} onClick={() => router.push(`/products?category=${encodeURIComponent(cat.name)}`)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}>{cat.icon} {cat.name}</button>

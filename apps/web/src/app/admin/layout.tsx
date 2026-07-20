@@ -71,7 +71,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     ]},
     { id: 'customers', label: t('customers'), icon: <Icons.Users size={18} />, path: '/admin/customers' },
     { id: 'analytics', label: t('analytics'), icon: <Icons.TrendingUp size={18} />, path: '/admin/analytics' },
-    { id: 'discounts', label: lang === 'fa' ? 'تخفیف‌ها' : 'Discounts', icon: <Icons.DollarSign size={18} />, path: '/admin/discounts' },
+    { id: 'discounts', label: lang === 'fa' ? 'تخفیفها' : 'Discounts', icon: <Icons.DollarSign size={18} />, path: '/admin/discounts' },
     { id: 'settings', label: t('settings'), icon: <Icons.Settings size={18} />, path: '/admin/settings' },
   ];
 

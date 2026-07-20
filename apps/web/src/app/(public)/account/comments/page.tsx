@@ -37,7 +37,7 @@ export default function CommentsPage() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>کامنت‌های من</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>کامنتهای من</h1>
         <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{comments.length} کامنت</span>
       </div>
       {Object.keys(grouped).length === 0 ? (

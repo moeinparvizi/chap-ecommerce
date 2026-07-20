@@ -32,14 +32,14 @@ export default function WishlistPage() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>علاقه‌مندی‌ها</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>علاقهمندیها</h1>
         <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{items.length} محصول</span>
       </div>
 
       {items.length === 0 ? (
         <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
           <Icons.Heart size={48} color="var(--text-muted)" />
-          <h3 style={{ marginTop: '12px', color: 'var(--text-secondary)' }}>هنوز محصولی لایک نکرده‌اید</h3>
+          <h3 style={{ marginTop: '12px', color: 'var(--text-secondary)' }}>هنوز محصولی لایک نکردهاید</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '16px' }}>روی آیکون قلب محصولات کلیک کنید</p>
           <button onClick={() => router.push('/products')} className="btn btn-primary" style={{ padding: '10px 20px' }}>مشاهده محصولات</button>
         </div>

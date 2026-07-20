@@ -57,7 +57,7 @@ export default function CategoriesPage() {
     if (!name) { notify.warning('نام ضروری است'); return; }
     try {
       await api.createCategory({ name, slug: slug || name.toLowerCase().replace(/\s+/g, '-'), description: description || '', image: addImage || null, parentId: addParentId || null, status: 'active' });
-      await refreshCategories(); setAddImage(null); setAddParentId(''); setShowAddModal(false); notify.success('دسته‌بندی اضافه شد');
+      await refreshCategories(); setAddImage(null); setAddParentId(''); setShowAddModal(false); notify.success('دستهبندی اضافه شد');
     } catch (e) { notify.error('خطا در اضافه کردن'); }
   };
 
@@ -76,7 +76,7 @@ export default function CategoriesPage() {
 
   const handleDeleteCategory = async (id: string) => {
     const children = getChildren(id);
-    if (children.length > 0) { notify.warning('ابتدا ساب کتگوری‌ها را حذف کنید'); return; }
+    if (children.length > 0) { notify.warning('ابتدا ساب کتگوریها را حذف کنید'); return; }
     const confirmed = await notify.confirm({ message: 'آیا از حذف اطمینان دارید؟', type: 'danger' });
     if (confirmed) { try { await api.deleteCategory(id); await refreshCategories(); notify.success('حذف شد'); } catch (e) { notify.error('خطا'); } }
   };
@@ -94,8 +94,8 @@ export default function CategoriesPage() {
 
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <div><h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت دسته‌بندی‌ها</h1><p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{parents.length} دسته اصلی · {filtered.length} کل</p></div>
-        <button onClick={() => { setShowAddModal(true); setAddParentId(''); setAddImage(null); }} className="btn btn-success"><Icons.Plus size={14} /> افزودن دسته‌بندی</button>
+        <div><h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت دستهبندیها</h1><p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{parents.length} دسته اصلی · {filtered.length} کل</p></div>
+        <button onClick={() => { setShowAddModal(true); setAddParentId(''); setAddImage(null); }} className="btn btn-success"><Icons.Plus size={14} /> افزودن دستهبندی</button>
       </div>
 
       {/* Search */}
@@ -103,7 +103,7 @@ export default function CategoriesPage() {
 
       {/* Category Tree */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {parents.length === 0 ? <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px' }}>دسته‌بندی‌ای وجود ندارد</p> : (
+        {parents.length === 0 ? <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px' }}>دستهبندیای وجود ندارد</p> : (
           parents.filter(c => filtered.includes(c) || getChildren(c.id).some(ch => filtered.includes(ch))).map(parent => {
             const children = getChildren(parent.id);
             const isExpanded = expandedParents[parent.id] !== false;
@@ -155,7 +155,7 @@ export default function CategoriesPage() {
         <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>{addParentId ? 'افزودن ساب کتگوری' : 'افزودن دسته‌بندی'}</h2>
+              <h2 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>{addParentId ? 'افزودن ساب کتگوری' : 'افزودن دستهبندی'}</h2>
               <button onClick={() => setShowAddModal(false)} className="btn-close"><Icons.X size={20} /></button>
             </div>
             <div style={{ display: 'grid', gap: '12px' }}>

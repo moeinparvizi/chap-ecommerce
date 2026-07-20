@@ -22,7 +22,7 @@ export default function ContactPage() {
           </div>
           <div className="card" style={{ padding: '32px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 20px' }}>ارسال پیام</h2>
-            {submitted ? <div style={{ textAlign: 'center', padding: '40px 0' }}><div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(22,197,94,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', color: '#22c55e' }}><Icons.Check size={32} /></div><h3 style={{ margin: '0 0 4px' }}>پیام شما ارسال شد!</h3><p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)' }}>به زودی با شما تماس می‌گیریم</p></div> : (
+            {submitted ? <div style={{ textAlign: 'center', padding: '40px 0' }}><div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(22,197,94,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', color: '#22c55e' }}><Icons.Check size={32} /></div><h3 style={{ margin: '0 0 4px' }}>پیام شما ارسال شد!</h3><p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)' }}>به زودی با شما تماس میگیریم</p></div> : (
               <div style={{ display: 'grid', gap: '12px' }}><input type="text" placeholder="نام" className="input" /><input type="email" placeholder="ایمیل" className="input" /><input type="text" placeholder="موضوع" className="input" /><textarea placeholder="پیام شما..." className="input" rows={4} /><button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setSubmitted(true)}>ارسال پیام</button></div>
             )}
           </div>

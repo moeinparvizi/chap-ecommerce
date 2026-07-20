@@ -43,7 +43,7 @@ export default function DiscountsPage() {
     setDiscounts(discounts.map(x => x.id === d.id ? { ...x, active: !x.active } : x));
   };
 
-  const targetTypeLabels: Record<string, string> = { all: 'همه محصولات', product: 'محصول خاص', category: 'دسته‌بندی' };
+  const targetTypeLabels: Record<string, string> = { all: 'همه محصولات', product: 'محصول خاص', category: 'دستهبندی' };
   const getTargetName = (d: any) => {
     if (d.targetType === 'all') return 'همه محصولات';
     if (d.targetType === 'product') return products.find((p: any) => p.id === d.targetId)?.name || d.targetId;
@@ -55,7 +55,7 @@ export default function DiscountsPage() {
     <div style={{ padding: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت تخفیف‌ها</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت تخفیفها</h1>
           <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{discounts.length} تخفیف فعال</p>
         </div>
         <button onClick={openNew} style={{ padding: '10px 20px', borderRadius: '10px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.Plus size={16} /> افزودن تخفیف</button>
@@ -128,7 +128,7 @@ export default function DiscountsPage() {
                 <select value={form.targetType} onChange={e => setForm({ ...form, targetType: e.target.value, targetId: '' })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }}>
                   <option value="all">همه محصولات</option>
                   <option value="product">یک محصول خاص</option>
-                  <option value="category">یک دسته‌بندی</option>
+                  <option value="category">یک دستهبندی</option>
                 </select>
               </div>
 
@@ -144,7 +144,7 @@ export default function DiscountsPage() {
 
               {form.targetType === 'category' && (
                 <div>
-                  <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>انتخاب دسته‌بندی</label>
+                  <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>انتخاب دستهبندی</label>
                   <select value={form.targetId} onChange={e => setForm({ ...form, targetId: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }}>
                     <option value="">انتخاب کنید</option>
                     {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}

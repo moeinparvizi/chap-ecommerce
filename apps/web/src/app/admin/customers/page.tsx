@@ -55,7 +55,7 @@ export default function CustomersPage() {
       {/* Header */}
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>مدیریت مشتریان</h1>
-        <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredCustomers.length} مشتری ثبت‌شده</p>
+        <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredCustomers.length} مشتری ثبتشده</p>
       </div>
 
       {/* Stats */}
@@ -82,7 +82,7 @@ export default function CustomersPage() {
       <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <input type="text" placeholder="جستجو..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="input" style={{ flex: 1, minWidth: '200px' }} />
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="input" style={{ width: '160px' }}>
-          <option value="all">همه وضعیت‌ها</option>
+          <option value="all">همه وضعیتها</option>
           <option value="active">فعال</option>
           <option value="inactive">غیرفعال</option>
         </select>
@@ -120,7 +120,7 @@ export default function CustomersPage() {
               </tr>
             ))}
             {filteredCustomers.length === 0 && (
-              <tr><td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>مشتری‌ای یافت نشد</td></tr>
+              <tr><td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>مشتریای یافت نشد</td></tr>
             )}
           </tbody>
         </table>

@@ -104,7 +104,7 @@ export default function CheckoutPage() {
             {locations.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '20px', background: 'var(--hover-bg)', borderRadius: '10px' }}>
                 <Icons.MapPin size={32} color="var(--text-muted)" />
-                <p style={{ margin: '8px 0 12px', color: 'var(--text-secondary)', fontSize: '14px' }}>هنوز آدرسی ثبت نکرده‌اید</p>
+                <p style={{ margin: '8px 0 12px', color: 'var(--text-secondary)', fontSize: '14px' }}>هنوز آدرسی ثبت نکردهاید</p>
                 <button onClick={() => { localStorage.setItem('redirectAfterLogin', '/checkout'); router.push('/account/locations'); }} className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }}>افزودن آدرس</button>
               </div>
             ) : (
@@ -117,7 +117,7 @@ export default function CheckoutPage() {
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                         <span style={{ fontWeight: 600, fontSize: '14px' }}>{loc.title}</span>
-                        {loc.isDefault && <span style={{ padding: '1px 6px', borderRadius: '4px', fontSize: '10px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', fontWeight: 600 }}>پیش‌فرض</span>}
+                        {loc.isDefault && <span style={{ padding: '1px 6px', borderRadius: '4px', fontSize: '10px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', fontWeight: 600 }}>پیشفرض</span>}
                       </div>
                       <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 2px' }}>{loc.address}</p>
                       <div style={{ display: 'flex', gap: '12px', fontSize: '12px', color: 'var(--text-muted)' }}>

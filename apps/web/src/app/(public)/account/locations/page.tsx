@@ -64,7 +64,7 @@ export default function LocationsPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>لوکیشن‌ها</h1>
+          <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>لوکیشنها</h1>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '4px 0 0' }}>{locations.length} از {MAX_LOCATIONS} لوکیشن</p>
         </div>
         {locations.length < MAX_LOCATIONS && <button onClick={openNew} className="btn btn-primary" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Plus size={16} /> افزودن</button>}
@@ -75,7 +75,7 @@ export default function LocationsPage() {
       {locations.length === 0 ? (
         <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
           <Icons.MapPin size={48} color="var(--text-muted)" />
-          <h3 style={{ marginTop: '12px', color: 'var(--text-secondary)' }}>هنوز لوکیشنی ثبت نکرده‌اید</h3>
+          <h3 style={{ marginTop: '12px', color: 'var(--text-secondary)' }}>هنوز لوکیشنی ثبت نکردهاید</h3>
           <button onClick={openNew} className="btn btn-primary" style={{ marginTop: '12px', padding: '10px 20px' }}><Icons.Plus size={16} /> افزودن لوکیشن</button>
         </div>
       ) : (
@@ -89,7 +89,7 @@ export default function LocationsPage() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                     <h3 style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>{loc.title}</h3>
-                    {loc.isDefault && <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '10px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', fontWeight: 600 }}>پیش‌فرض</span>}
+                    {loc.isDefault && <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '10px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', fontWeight: 600 }}>پیشفرض</span>}
                   </div>
                   <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 4px' }}>{loc.address}</p>
                   <div style={{ display: 'flex', gap: '12px', fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -99,7 +99,7 @@ export default function LocationsPage() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                  {!loc.isDefault && <button onClick={() => setDefault(loc.id)} style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px' }}>پیش‌فرض</button>}
+                  {!loc.isDefault && <button onClick={() => setDefault(loc.id)} style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px' }}>پیشفرض</button>}
                   <button onClick={() => openEdit(loc)} style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '12px' }}><Icons.Edit size={12} /></button>
                   <button onClick={() => deleteLocation(loc.id)} style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--danger)', cursor: 'pointer', fontSize: '12px' }}><Icons.Trash size={12} /></button>
                 </div>

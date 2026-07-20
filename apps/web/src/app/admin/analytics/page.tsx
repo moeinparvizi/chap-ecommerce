@@ -102,7 +102,7 @@ export default function AnalyticsPage() {
             <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>فروش اخیر</h3>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{recentSales.length} سفارش</span>
           </div>
-          {recentSales.length === 0 ? <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>داده‌ای موجود نیست</p> : (
+          {recentSales.length === 0 ? <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>دادهای موجود نیست</p> : (
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '180px', padding: '0 4px' }}>
               {recentSales.map((s: any, i: number) => (
                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>

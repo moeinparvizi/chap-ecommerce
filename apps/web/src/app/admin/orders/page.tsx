@@ -140,7 +140,7 @@ export default function OrdersPage() {
       <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <input type="text" placeholder="جستجو..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="input" style={{ flex: 1, minWidth: '200px' }} />
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="input" style={{ width: '160px' }}>
-          <option value="all">همه وضعیت‌ها</option>
+          <option value="all">همه وضعیتها</option>
           <option value="pending">در انتظار</option>
           <option value="processing">در حال پردازش</option>
           <option value="shipped">ارسال شده</option>

@@ -164,7 +164,7 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
           <Icons.Star size={16} /> ریویوها ({reviews.length})
         </button>
         <button onClick={() => setActiveTab('comments')} style={{ padding: '10px 20px', borderRadius: '0', border: 'none', borderBottom: activeTab === 'comments' ? '3px solid var(--primary)' : '3px solid transparent', background: 'transparent', color: activeTab === 'comments' ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px', fontWeight: activeTab === 'comments' ? 700 : 500, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '-2px' }}>
-          <Icons.MessageSquare size={16} /> کامنت‌ها ({comments.length})
+          <Icons.MessageSquare size={16} /> کامنتها ({comments.length})
         </button>
       </div>
 
@@ -189,7 +189,7 @@ function ProductReviewsComments({ productId, productName }: { productId: string;
           ) : (
             <div style={{ padding: '16px', borderRadius: '12px', border: '1px dashed var(--border)', background: 'var(--hover-bg)', marginBottom: '16px', textAlign: 'center' }}>
               <Icons.Star size={20} color="#fbbf24" />
-              <p style={{ margin: '6px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>ثبت ریویو فقط از بخش <strong>خریدهای من</strong> در داشبورد امکان‌پذیر است (برای محصولات تحویل شده)</p>
+              <p style={{ margin: '6px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>ثبت ریویو فقط از بخش <strong>خریدهای من</strong> در داشبورد امکانپذیر است (برای محصولات تحویل شده)</p>
             </div>
           )}
 

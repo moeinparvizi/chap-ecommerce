@@ -161,7 +161,7 @@ export default function SettingsPage() {
               <input type="text" value={settings.footer.address} onChange={e => save({ ...settings, footer: { ...settings.footer, address: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
             </div>
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>متن کپی‌رایت</label>
+              <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '6px' }}>متن کپیرایت</label>
               <input type="text" value={settings.footer.copyright} onChange={e => save({ ...settings, footer: { ...settings.footer, copyright: e.target.value } })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function SettingsPage() {
           {/* Social Links */}
           <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h4 style={{ fontSize: '15px', fontWeight: 600, margin: 0 }}>لینک‌های شبکه اجتماعی</h4>
+              <h4 style={{ fontSize: '15px', fontWeight: 600, margin: 0 }}>لینکهای شبکه اجتماعی</h4>
               <button onClick={() => save({ ...settings, footer: { ...settings.footer, socialLinks: [...settings.footer.socialLinks, { name: '', url: '', icon: 'Link' }] } })} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}><Icons.Plus size={12} /> افزودن</button>
             </div>
             <div style={{ display: 'grid', gap: '8px' }}>

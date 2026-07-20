@@ -10,7 +10,7 @@ export default function AboutPage() {
       <div className="about-hero" style={{ background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)', padding: '60px 20px', textAlign: 'center', color: 'white' }}>
         <Icons.Shield size={48} />
         <h1 style={{ fontSize: '30px', fontWeight: 800, margin: '16px 0 8px' }}>درباره ShopHub</h1>
-        <p style={{ fontSize: '15px', opacity: 0.9, maxWidth: '500px', margin: '0 auto' }}>ما با هدف ارائه بهترین تجربه خرید آنلاین فعالیت می‌کنیم</p>
+        <p style={{ fontSize: '15px', opacity: 0.9, maxWidth: '500px', margin: '0 auto' }}>ما با هدف ارائه بهترین تجربه خرید آنلاین فعالیت میکنیم</p>
       </div>
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 20px' }} className="about-content">
         <div className="card" style={{ marginBottom: '24px', padding: '32px' }}>
@@ -23,8 +23,8 @@ export default function AboutPage() {
           ))}
         </div>
         <div className="card" style={{ padding: '32px' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '10px' }}><Icons.Shield size={20} /> ارزش‌های ما</h2>
-          {[{ icon: <Icons.Shield size={20} />, title: 'اعتماد', desc: 'امنیت و اعتماد در اولویت ماست' }, { icon: <Icons.Truck size={20} />, title: 'کیفیت', desc: 'فقط محصولات اصل و باکیفیت' }, { icon: <Icons.Mail size={20} />, title: 'رضایت', desc: 'رضایت شما مهم‌ترین هدف ماست' }].map((v, i) => (
+          <h2 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '10px' }}><Icons.Shield size={20} /> ارزشهای ما</h2>
+          {[{ icon: <Icons.Shield size={20} />, title: 'اعتماد', desc: 'امنیت و اعتماد در اولویت ماست' }, { icon: <Icons.Truck size={20} />, title: 'کیفیت', desc: 'فقط محصولات اصل و باکیفیت' }, { icon: <Icons.Mail size={20} />, title: 'رضایت', desc: 'رضایت شما مهمترین هدف ماست' }].map((v, i) => (
             <div key={i} style={{ display: 'flex', gap: '16px', padding: '16px 0', borderBottom: i < 2 ? '1px solid var(--border-light)' : 'none' }}><div style={{ color: 'var(--primary)', flexShrink: 0 }}>{v.icon}</div><div><h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 4px' }}>{v.title}</h3><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>{v.desc}</p></div></div>
           ))}
         </div>

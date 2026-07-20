@@ -65,15 +65,15 @@ export default function AccountPage() {
         </button>
         <button onClick={() => router.push('/account/wishlist')} className="card" style={{ padding: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', textAlign: 'right', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(239,68,68,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Heart size={20} color="#ef4444" /></div>
-          <div><p style={{ fontWeight: 600, margin: 0 }}>علاقه‌مندی‌ها</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>محصولات لایک شده</p></div>
+          <div><p style={{ fontWeight: 600, margin: 0 }}>علاقهمندیها</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>محصولات لایک شده</p></div>
         </button>
         <button onClick={() => router.push('/account/locations')} className="card" style={{ padding: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', textAlign: 'right', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.MapPin size={20} color="#f59e0b" /></div>
-          <div><p style={{ fontWeight: 600, margin: 0 }}>لوکیشن‌ها</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>آدرس‌های شما</p></div>
+          <div><p style={{ fontWeight: 600, margin: 0 }}>لوکیشنها</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>آدرسهای شما</p></div>
         </button>
         <button onClick={() => router.push('/account/comments')} className="card" style={{ padding: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', textAlign: 'right', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(139,92,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.MessageSquare size={20} color="#8b5cf6" /></div>
-          <div><p style={{ fontWeight: 600, margin: 0 }}>کامنت‌ها</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>نظرات شما</p></div>
+          <div><p style={{ fontWeight: 600, margin: 0 }}>کامنتها</p><p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>نظرات شما</p></div>
         </button>
         <button onClick={() => router.push('/account/profile')} className="card" style={{ padding: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', textAlign: 'right', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(34,197,94,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.User size={20} color="#22c55e" /></div>
@@ -86,7 +86,7 @@ export default function AccountPage() {
         {orders.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)' }}>
             <Icons.Package size={40} />
-            <p style={{ marginTop: '8px' }}>هنوز خریدی انجام نداده‌اید</p>
+            <p style={{ marginTop: '8px' }}>هنوز خریدی انجام ندادهاید</p>
             <button onClick={() => router.push('/products')} className="btn btn-primary" style={{ marginTop: '8px', padding: '10px 20px' }}>مشاهده محصولات</button>
           </div>
         ) : (

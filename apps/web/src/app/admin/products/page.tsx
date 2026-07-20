@@ -88,7 +88,7 @@ export default function ProductsPage() {
     return colors[status] || { bg: '#f3f4f6', text: '#374151' };
   };
 
-  const getStatusText = (s: string) => ({ active: 'فعال', draft: 'پیش‌نویس', archived: 'بایگانی' }[s] || s);
+  const getStatusText = (s: string) => ({ active: 'فعال', draft: 'پیشنویس', archived: 'بایگانی' }[s] || s);
 
   const formatFileSize = (bytes: number) => bytes < 1024 ? bytes + ' B' : bytes < 1024 * 1024 ? (bytes / 1024).toFixed(1) + ' KB' : (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 
@@ -232,7 +232,7 @@ export default function ProductsPage() {
         {[
           { label: 'کل', value: productStats.total, color: 'var(--text)' },
           { label: 'فعال', value: productStats.active, color: '#22c55e' },
-          { label: 'پیش‌نویس', value: productStats.draft, color: '#f59e0b' },
+          { label: 'پیشنویس', value: productStats.draft, color: '#f59e0b' },
           { label: 'ناموجود', value: productStats.outOfStock, color: '#ef4444' },
           { label: 'تصاویر', value: productStats.totalImages, color: '#8b5cf6' },
         ].map((s, i) => (
@@ -247,12 +247,12 @@ export default function ProductsPage() {
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
         <input type="text" placeholder="جستجو..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ flex: 1, minWidth: '200px', padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }} />
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
-          <option value="all">همه وضعیت‌ها</option>
+          <option value="all">همه وضعیتها</option>
           <option value="active">فعال</option>
-          <option value="draft">پیش‌نویس</option>
+          <option value="draft">پیشنویس</option>
         </select>
         <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ padding: '10px 16px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '14px', outline: 'none' }}>
-          <option value="all">همه دسته‌بندی‌ها</option>
+          <option value="all">همه دستهبندیها</option>
           {apiCategories.filter(c => !c.parentId).map(p => ([
             <option key={p.id} value={p.name}>{p.name}</option>,
             ...apiCategories.filter(c => c.parentId === p.id).map(ch => <option key={ch.id} value={ch.name}>  └ {ch.name}</option>),
@@ -346,14 +346,14 @@ export default function ProductsPage() {
                 <div><label style={labelStyle}>نام محصول *</label><input id="edit-name" defaultValue={selectedProduct.name} style={inputStyle} /></div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div><label style={labelStyle}>SKU *</label><input id="edit-sku" defaultValue={selectedProduct.sku} style={inputStyle} /></div>
-                  <div><label style={labelStyle}>دسته‌بندی</label><select id="edit-category" defaultValue={selectedProduct.category} style={inputStyle}>{apiCategories.filter(c => !c.parentId).map(p => ([
+                  <div><label style={labelStyle}>دستهبندی</label><select id="edit-category" defaultValue={selectedProduct.category} style={inputStyle}>{apiCategories.filter(c => !c.parentId).map(p => ([
                     <option key={p.id} value={p.name}>{p.name}</option>,
                     ...apiCategories.filter(c => c.parentId === p.id).map(ch => <option key={ch.id} value={ch.name}>  └ {ch.name}</option>),
                   ]))}</select></div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div><label style={labelStyle}>برند</label><input id="edit-brand" defaultValue={selectedProduct.brand} style={inputStyle} /></div>
-                  <div><label style={labelStyle}>وضعیت</label><select id="edit-status" defaultValue={selectedProduct.status} style={inputStyle}><option value="active">فعال</option><option value="draft">پیش‌نویس</option><option value="archived">بایگانی</option></select></div>
+                  <div><label style={labelStyle}>وضعیت</label><select id="edit-status" defaultValue={selectedProduct.status} style={inputStyle}><option value="active">فعال</option><option value="draft">پیشنویس</option><option value="archived">بایگانی</option></select></div>
                 </div>
                 <div><label style={labelStyle}>توضیحات</label><textarea id="edit-description" defaultValue={selectedProduct.description} style={{ ...inputStyle, height: '80px', resize: 'vertical' }} /></div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
@@ -441,7 +441,7 @@ export default function ProductsPage() {
               <div><label style={labelStyle}>نام محصول *</label><input id="add-name" style={inputStyle} placeholder="نام محصول" /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div><label style={labelStyle}>SKU *</label><input id="add-sku" style={inputStyle} placeholder="کد محصول" /></div>
-                <div><label style={labelStyle}>دسته‌بندی *</label><select id="add-category" style={inputStyle}><option value="">انتخاب</option>{apiCategories.filter(c => !c.parentId).map(p => ([
+                <div><label style={labelStyle}>دستهبندی *</label><select id="add-category" style={inputStyle}><option value="">انتخاب</option>{apiCategories.filter(c => !c.parentId).map(p => ([
                     <option key={p.id} value={p.name}>{p.name}</option>,
                     ...apiCategories.filter(c => c.parentId === p.id).map(ch => <option key={ch.id} value={ch.name}>  └ {ch.name}</option>),
                   ]))}</select></div>

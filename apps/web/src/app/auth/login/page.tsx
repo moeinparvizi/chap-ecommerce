@@ -151,7 +151,7 @@ export default function LoginPage() {
 
           {/* Demo accounts */}
           <div style={{ marginTop: '32px', padding: '16px', borderRadius: '12px', background: 'var(--hover-bg)', border: '1px solid var(--border)' }}>
-            <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: '0 0 8px' }}>حساب‌های آزمایشی:</p>
+            <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: '0 0 8px' }}>حسابهای آزمایشی:</p>
             <div style={{ display: 'grid', gap: '6px' }}>
               <button onClick={() => { setEmail('user@shop.com'); setPassword('user123'); setMode('login'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', borderRadius: '8px', border: 'none', background: 'var(--card-bg)', cursor: 'pointer', fontSize: '12px', color: 'var(--text)', transition: 'background 0.2s', width: '100%', textAlign: 'right' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--border-light, var(--border))'} onMouseLeave={e => e.currentTarget.style.background = 'var(--card-bg)'}>
                 <Icons.User size={14} color="var(--primary)" />
