@@ -547,10 +547,12 @@ tr:hover { background: var(--hover-bg); }
 
 /* ---------- Login/Signup ---------- */
 @media (max-width: 768px) {
-  .auth-layout { flex-direction: column !important; }
-  .auth-visual { display: none !important; }
-  .auth-form { padding: 24px !important; }
-  .auth-form h1 { font-size: 24px !important; }
+  .login-visual { display: none !important; }
+  .login-form { padding: 20px !important; }
+  .login-form > div { padding: 0 !important; }
+  .login-form h1 { font-size: 22px !important; }
+  .login-form p { font-size: 13px !important; }
+  .login-form input { font-size: 16px !important; padding: 12px 14px !important; }
 }
 
 /* ---------- Generic Card Padding ---------- */

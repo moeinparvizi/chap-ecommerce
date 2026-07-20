@@ -46,8 +46,8 @@ export default function LoginPage() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', background: 'var(--bg)' }}>
-      {/* Left visual panel */}
-      <div style={{ flex: 1, background: 'linear-gradient(135deg, #0f172a 0%, #1e40af 50%, #3b82f6 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '60px', position: 'relative', overflow: 'hidden' }}>
+      {/* Left visual panel - hidden on mobile */}
+      <div className="login-visual" style={{ flex: 1, background: 'linear-gradient(135deg, #0f172a 0%, #1e40af 50%, #3b82f6 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '60px', position: 'relative', overflow: 'hidden' }}>
         {/* Decorative circles */}
         <div style={{ position: 'absolute', width: '400px', height: '400px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)', top: '-100px', right: '-100px' }} />
         <div style={{ position: 'absolute', width: '300px', height: '300px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)', bottom: '-80px', left: '-80px' }} />
@@ -85,7 +85,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right form panel */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
+      <div className="login-form" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
         <div style={{ width: '100%', maxWidth: '420px' }}>
           {/* Back to home */}
           <a href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', marginBottom: '32px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
