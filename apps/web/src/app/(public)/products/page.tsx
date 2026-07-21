@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
 import { api } from '@/app/lib/api';
 
-interface Product { id: string; name: string; price: number; compareAtPrice?: number; stock: number; brand: string; description: string; rating: number; sales: number; status: string; images: { id: string; url: string }[]; category?: { name: string; slug: string } | null; }
+interface Product { id: string; name: string; price: number; compareAtPrice?: number; stock: number; brand: string; description: string; rating: number; sales: number; status: string; images: { id: string; url: string }[]; category?: { name: string } | null; }
 
 function ProductsContent() {
   const router = useRouter();
@@ -15,13 +15,10 @@ function ProductsContent() {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [sortBy, setSortBy] = useState('newest');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000000]);
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [minRating, setMinRating] = useState(0);
   const [likedProducts, setLikedProducts] = useState<Record<string, boolean>>({});
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({ search: true, category: true, price: true, rating: true });
-
-  const toggleSection = (key: string) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
 
   useEffect(() => { api.getProducts().then((d: any) => setProducts(d)).catch(() => {}); const user = JSON.parse(localStorage.getItem('user') || '{}'); if (user.id) { api.getWishlist(user.id).then((w: any) => { const map: Record<string, boolean> = {}; w.forEach((item: any) => { map[item.productId] = true; }); setLikedProducts(map); }).catch(() => {}); } }, []);
   useEffect(() => { const cat = searchParams.get('category'); if (cat) setSelectedCategory(decodeURIComponent(cat)); }, [searchParams]);
@@ -64,7 +61,7 @@ function ProductsContent() {
     }
   });
 
-  const addToCart = (e: React.MouseEvent, p: Product) => {
+  const addToCart = async (e: React.MouseEvent, p: Product) => {
     e.stopPropagation();
     const saved = localStorage.getItem('cart');
     const cart: any[] = saved ? JSON.parse(saved) : [];
@@ -105,11 +102,9 @@ function ProductsContent() {
             {p.compareAtPrice && <span style={{ fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>{fmt(p.compareAtPrice)}</span>}
           </div>
         </div>
-        <div style={{ padding: '0 16px 16px' }}>
-          <div style={{ padding: '0 16px 16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p); }} style={{ width: '36px', height: '36px', borderRadius: '10px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', flexShrink: 0 }}><Icons.Heart size={16} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
-          <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', fontWeight: 600, fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', transition: 'all 0.2s' }}><Icons.ShoppingCart size={14} /></button>
-          </div>
+        <div style={{ padding: '0 16px 16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p); }} style={{ width: '36px', height: '36px', borderRadius: '10px', border: 'none', background: isLiked ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: isLiked ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', flexShrink: 0 }}><Icons.Heart size={16} color={isLiked ? '#ef4444' : 'currentColor'} /></button>
+          <button onClick={(e) => { e.stopPropagation(); addToCart(e, p); }} style={{ flex: 1, padding: '8px', borderRadius: '10px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s', fontSize: '13px', fontWeight: 600 }}><Icons.ShoppingCart size={14} /></button>
         </div>
       </div>
     );
@@ -121,84 +116,104 @@ function ProductsContent() {
       <div className="products-header" style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div><h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>همه محصولات</h1><p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '4px 0 0' }}>{filtered.length} محصول</p></div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button onClick={() => setShowFilters(!showFilters)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--hover-bg)', color: 'var(--text)', cursor: 'pointer', fontSize: '13px' }}><Icons.Filter size={14} /> فیلتر</button>
+          <button onClick={() => setShowFilters(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--hover-bg)', color: 'var(--text)', cursor: 'pointer', fontSize: '13px' }}><Icons.Filter size={14} /> فیلتر</button>
           <button onClick={() => setViewMode('grid')} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border)', background: viewMode === 'grid' ? 'var(--primary)' : 'var(--hover-bg)', color: viewMode === 'grid' ? 'white' : 'var(--text)', cursor: 'pointer' }}><Icons.Grid size={16} /></button>
           <button onClick={() => setViewMode('list')} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border)', background: viewMode === 'list' ? 'var(--primary)' : 'var(--hover-bg)', color: viewMode === 'list' ? 'white' : 'var(--text)', cursor: 'pointer' }}><Icons.List size={16} /></button>
-          <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)', fontSize: '13px' }}><option value="newest">جدیدترین</option><option value="cheapest">ارزانu200cترین</option><option value="expensive">گرانu200cترین</option><option value="popular">محبوبu200cترین</option><option value="rating">بالاترین امتیاز</option></select>
+          <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)', fontSize: '13px' }}><option value="newest">جدیدترین</option><option value="cheapest">ارزان‌ترین</option><option value="expensive">گران‌ترین</option><option value="popular">محبوب‌ترین</option><option value="rating">بالاترین امتیاز</option></select>
         </div>
       </div>
-      <div className="products-layout" style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px 20px', display: 'flex', gap: '24px' }}>
-        {/* Filters Sidebar */}
-        {showFilters && (
-          <div className="products-sidebar" style={{ width: '260px', flexShrink: 0 }}>
-            <div className="card" style={{ padding: '20px', position: 'sticky', top: '80px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}><h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>فیلترها</h3><button onClick={() => { setSelectedCategory('all'); setMinRating(0); setPriceRange([0, maxPrice]); setSearchQuery(''); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}>پاک کردن</button></div>
+
+      {/* Products Grid */}
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px 20px' }}>
+        {filtered.length === 0 ? <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}><Icons.Search size={48} /><h3 style={{ marginTop: '12px' }}>محصولی یافت نشد</h3><p>فیلترها را تغییر دهید</p></div>
+          : viewMode === 'grid' ? <div className="products-grid-view" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>{filtered.map(p => <ProductCard key={p.id} p={p} />)}</div>
+          : <div className="products-list-view" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>{filtered.map(p => (
+            <div key={p.id} className="product-card" style={{ display: 'flex', padding: '16px' }}>
+              <div style={{ width: '140px', height: '140px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, cursor: 'pointer' }} onClick={() => router.push(`/product/${p.id}`)}>
+                <img src={getImg(p)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <div style={{ flex: 1, padding: '0 16px', cursor: 'pointer' }} onClick={() => router.push(`/product/${p.id}`)}>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 4px' }}>{getCat(p)}</p>
+                <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 6px' }}>{p.name}</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><Icons.Star size={12} color="#fbbf24" /><span style={{ fontSize: '12px', fontWeight: 600 }}>{p.rating}</span></div><span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--primary)' }}>{fmt(p.price)}</span></div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', justifyContent: 'center', alignItems: 'center' }}>
+                <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p); }} style={{ padding: '6px', borderRadius: '8px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Heart size={14} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
+                <button onClick={(e) => addToCart(e, p)} style={{ padding: '6px 10px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.ShoppingCart size={14} /></button>
+              </div>
+            </div>
+          ))}</div>
+        }
+      </div>
+
+      {/* Filter Drawer */}
+      {showFilters && (
+        <div className="filter-drawer-overlay" onClick={() => setShowFilters(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 300, animation: 'fadeIn 0.2s' }}>
+          <div onClick={e => e.stopPropagation()} className="filter-drawer" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '340px', maxWidth: '90vw', background: 'var(--card-bg)', boxShadow: '-4px 0 24px rgba(0,0,0,0.15)', overflowY: 'auto', animation: 'slideInRight 0.3s ease-out' }}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 20px 16px', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, background: 'var(--card-bg)', zIndex: 1 }}>
+              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.Filter size={18} /> فیلترها</h3>
+              <button onClick={() => setShowFilters(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px' }}><Icons.X size={22} /></button>
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: '16px 20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+                <button onClick={() => { setSelectedCategory('all'); setMinRating(0); setPriceRange([0, maxPrice]); setSearchQuery(''); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}>پاک کردن همه</button>
+              </div>
 
               {/* Search */}
-              <div style={{ marginBottom: '8px' }}>
-                <button onClick={() => toggleSection('search')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer', borderBottom: '1px solid var(--border)', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}><span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Search size={14} /> جستجو</span><Icons.ChevronDown size={14} /></button>
-                {openSections.search && (
-                  <div style={{ padding: '10px 0' }}><div style={{ position: 'relative' }}><input type="text" placeholder="نام محصول..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: '100%', padding: '8px 32px 8px 10px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} /><div style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><Icons.Search size={12} /></div></div></div>
-                )}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}><Icons.Search size={14} /> جستجو</label>
+                <input type="text" placeholder="نام محصول..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--input-bg)', fontSize: '13px', color: 'var(--text)', outline: 'none' }} />
               </div>
 
               {/* Category */}
-              <div style={{ marginBottom: '8px' }}>
-                <button onClick={() => toggleSection('category')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer', borderBottom: '1px solid var(--border)', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}><span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Folder size={14} /> دستهبندی</span><Icons.ChevronDown size={14} /></button>
-                {openSections.category && (
-                  <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '2px', maxHeight: '200px', overflowY: 'auto' }}>
-                    <button onClick={() => setSelectedCategory('all')} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === 'all' ? 'var(--primary)' : 'transparent', color: selectedCategory === 'all' ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === 'all' ? 600 : 400 }}>همه محصولات</button>
-                    {allApiCategories.filter((c: any) => !c.parentId).map((parent: any) => {
-                      const children = allApiCategories.filter((c: any) => c.parentId === parent.id);
-                      return (<div key={parent.id}><button onClick={() => setSelectedCategory(parent.name)} style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: selectedCategory === parent.name ? 'var(--primary)' : 'transparent', color: selectedCategory === parent.name ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>{parent.name}{children.length > 0 && <span style={{ fontSize: '10px', opacity: 0.7 }}>{children.length}</span>}</button>
-                        {children.map((child: any) => (<button key={child.id} onClick={() => setSelectedCategory(child.name)} style={{ padding: '4px 10px 4px 24px', borderRadius: '6px', border: 'none', background: selectedCategory === child.name ? 'var(--primary)' : 'transparent', color: selectedCategory === child.name ? 'white' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === child.name ? 600 : 400 }}><span style={{ marginLeft: '4px', fontSize: '10px', color: selectedCategory === child.name ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)' }}>└</span> {child.name}</button>))}</div>);
-                    })}</div>
-                )}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}><Icons.Folder size={14} /> دسته‌بندی</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', maxHeight: '200px', overflowY: 'auto' }}>
+                  <button onClick={() => setSelectedCategory('all')} style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: selectedCategory === 'all' ? 'var(--primary)' : 'transparent', color: selectedCategory === 'all' ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === 'all' ? 600 : 400 }}>همه محصولات</button>
+                  {allApiCategories.filter((c: any) => !c.parentId).map((parent: any) => {
+                    const children = allApiCategories.filter((c: any) => c.parentId === parent.id);
+                    return (<div key={parent.id}><button onClick={() => setSelectedCategory(parent.name)} style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: selectedCategory === parent.name ? 'var(--primary)' : 'transparent', color: selectedCategory === parent.name ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', textAlign: 'right', width: '100%', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>{parent.name}{children.length > 0 && <span style={{ fontSize: '10px', opacity: 0.7 }}>{children.length}</span>}</button>
+                      {children.map((child: any) => (<button key={child.id} onClick={() => setSelectedCategory(child.name)} style={{ padding: '6px 12px 6px 28px', borderRadius: '6px', border: 'none', background: selectedCategory === child.name ? 'var(--primary)' : 'transparent', color: selectedCategory === child.name ? 'white' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px', textAlign: 'right', width: '100%', fontWeight: selectedCategory === child.name ? 600 : 400 }}><span style={{ marginLeft: '4px', fontSize: '10px' }}>└</span> {child.name}</button>))}</div>);
+                  })}
+                </div>
               </div>
 
               {/* Price */}
-              <div style={{ marginBottom: '8px' }}>
-                <button onClick={() => toggleSection('price')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer', borderBottom: '1px solid var(--border)', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}><span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.DollarSign size={14} /> محدوده قیمت</span><Icons.ChevronDown size={14} /></button>
-                {openSections.price && (
-                  <div style={{ padding: '10px 0' }}><input type="range" min={0} max={maxPrice} value={priceRange[1]} onChange={e => setPriceRange([0, Number(e.target.value)])} style={{ width: '100%', accentColor: 'var(--primary)' }} /><div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}><span>۰</span><span>{fmt(priceRange[1])}</span></div></div>
-                )}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}><Icons.DollarSign size={14} /> محدوده قیمت</label>
+                <input type="range" min={0} max={maxPrice} value={priceRange[1]} onChange={e => setPriceRange([0, Number(e.target.value)])} style={{ width: '100%', accentColor: 'var(--primary)' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}><span>۰</span><span>{fmt(priceRange[1])}</span></div>
               </div>
 
               {/* Rating */}
-              <div>
-                <button onClick={() => toggleSection('rating')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}><span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Icons.Star size={14} /> امتیاز</span><Icons.ChevronDown size={14} /></button>
-                {openSections.rating && (
-                  <div style={{ padding: '8px 0', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>{[0, 3, 3.5, 4, 4.5].map(r => <button key={r} onClick={() => setMinRating(r)} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--border)', background: minRating === r ? 'var(--primary)' : 'var(--hover-bg)', color: minRating === r ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '2px' }}>{r === 0 ? 'همه' : <><Icons.Star size={10} color={minRating === r ? 'white' : '#fbbf24'} /> {r}</>}</button>)}</div>
-                )}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}><Icons.Star size={14} /> امتیاز</label>
+                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>{[0, 3, 3.5, 4, 4.5].map(r => <button key={r} onClick={() => setMinRating(r)} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: minRating === r ? 'var(--primary)' : 'var(--hover-bg)', color: minRating === r ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px' }}>{r === 0 ? 'همه' : <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Icons.Star size={12} color={minRating === r ? 'white' : '#fbbf24'} /> {r}</span>}</button>)}</div>
               </div>
+
+              {/* Active Filters */}
+              {(selectedCategory !== 'all' || minRating > 0 || searchQuery) && (
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 600, display: 'block', marginBottom: '8px' }}>فیلترهای فعال:</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {selectedCategory !== 'all' && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(37,99,235,0.1)', color: 'var(--primary)', fontSize: '12px' }}>{selectedCategory} <button onClick={() => setSelectedCategory('all')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', padding: 0, fontSize: '14px' }}>×</button></span>}
+                    {minRating > 0 && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(37,99,235,0.1)', color: 'var(--primary)', fontSize: '12px' }}>{minRating}⭐ <button onClick={() => setMinRating(0)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', padding: 0, fontSize: '14px' }}>×</button></span>}
+                    {searchQuery && <span style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(37,99,235,0.1)', color: 'var(--primary)', fontSize: '12px' }}>{searchQuery} <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', padding: 0, fontSize: '14px' }}>×</button></span>}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border)', position: 'sticky', bottom: 0, background: 'var(--card-bg)' }}>
+              <button onClick={() => setShowFilters(false)} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>نمایش {filtered.length} محصول</button>
             </div>
           </div>
-        )}
-        {/* Products */}
-        <div style={{ flex: 1 }}>
-          {filtered.length === 0 ? <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}><Icons.Search size={48} /><h3 style={{ marginTop: '12px' }}>محصولی یافت نشد</h3><p>فیلترها را تغییر دهید</p></div>
-            : viewMode === 'grid' ? <div className="products-grid-view" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>{filtered.map(p => <ProductCard key={p.id} p={p} />)}</div>
-            : <div className="products-list-view" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>{filtered.map(p => (
-              <div key={p.id} className="product-card" style={{ display: 'flex', padding: '16px' }}>
-                <div style={{ width: '140px', height: '140px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative', cursor: 'pointer' }} onClick={() => router.push(`/product/${p.id}`)}>
-                  <img src={getImg(p)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  {getDiscount(p) > 0 && <span style={{ position: 'absolute', top: '6px', left: '6px', padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, background: '#ef4444', color: 'white' }}>-{getDiscount(p)}%</span>}
-                </div>
-                <div style={{ flex: 1, padding: '0 16px', cursor: 'pointer' }} onClick={() => router.push(`/product/${p.id}`)}>
-                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 4px' }}>{getCat(p)}</p>
-                  <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 6px' }}>{p.name}</h3>
-                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.4 }}>{p.description?.substring(0, 80)}...</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><Icons.Star size={12} color="#fbbf24" /><span style={{ fontSize: '12px', fontWeight: 600 }}>{p.rating}</span></div><span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--primary)' }}>{fmt(p.price)}</span></div>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', justifyContent: 'center', alignItems: 'center' }}>
-                  <button onClick={(e) => { e.stopPropagation(); toggleLike(e, p); }} style={{ padding: '6px', borderRadius: '8px', border: 'none', background: likedProducts[p.id] ? 'rgba(239,68,68,0.1)' : 'var(--hover-bg)', color: likedProducts[p.id] ? '#ef4444' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Heart size={14} color={likedProducts[p.id] ? '#ef4444' : 'currentColor'} /></button>
-                  <button onClick={(e) => addToCart(e, p)} style={{ padding: '6px 10px', borderRadius: '8px', border: 'none', background: 'var(--hover-bg)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.ShoppingCart size={14} /></button>
-                </div>
-              </div>
-            ))}</div>
-          }
         </div>
-      </div>
+      )}
     </div>
   );
 }
