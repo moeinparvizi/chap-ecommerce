@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
 import { api } from '@/app/lib/api';
 import { getSiteSettings, initSiteSettings, type SiteSettings } from '@/app/lib/site-settings';
+import SmartSearch from '@/app/components/SmartSearch';
 
 interface Category { id: string; name: string; slug: string; description: string; image: string | null; parentId: string | null; status: string; }
 interface CategoryTree extends Category { children: CategoryTree[]; }
@@ -119,11 +120,8 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Search - desktop only */}
-          <div className="desktop-only" style={{ flex: 1, maxWidth: '600px', position: 'relative' }}>
-            <form onSubmit={(e) => { e.preventDefault(); if (searchText.trim()) router.push(`/products?search=${encodeURIComponent(searchText.trim())}`); }} style={{ display: 'flex', width: '100%' }}>
-              <input type="text" placeholder="جستجوی محصولات..." value={searchText} onChange={e => setSearchText(e.target.value)} style={{ width: '100%', padding: scrolled ? '10px 44px 10px 16px' : '12px 44px 12px 16px', borderRadius: '12px', border: '2px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', transition: 'all 0.3s' }} />
-              <button type="submit" style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Search size={16} /></button>
-            </form>
+          <div className="desktop-only" style={{ flex: 1, maxWidth: '600px' }}>
+            <SmartSearch />
           </div>
 
           {/* Nav actions - desktop only */}
