@@ -199,10 +199,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Search */}
-            <form onSubmit={(e) => { e.preventDefault(); if (searchText.trim()) { router.push(`/products?search=${encodeURIComponent(searchText.trim())}`); setMobileMenuOpen(false); } }} style={{ position: 'relative', marginBottom: '16px' }}>
-              <input type="text" placeholder="جستجوی محصولات..." value={searchText} onChange={e => setSearchText(e.target.value)} style={{ width: '100%', padding: '12px 40px 12px 14px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
-              <button type="submit" style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', padding: '8px', cursor: 'pointer' }}><Icons.Search size={14} /></button>
-            </form>
+            <div style={{ marginBottom: '16px' }}><SmartSearch /></div>
 
             {/* User */}
             {navUser ? (

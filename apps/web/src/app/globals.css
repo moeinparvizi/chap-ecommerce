@@ -411,6 +411,9 @@ tr:hover { background: var(--hover-bg); }
   .desktop-only { display: none !important; }
   .navbar-inner { gap: 4px !important; padding: 0 12px !important; }
   .navbar { padding: 8px 0 !important; }
+  .login-page { flex-direction: column !important; }
+  .login-form { padding: 16px !important; }
+  .login-form h1 { font-size: 22px !important; }
 }
 
 /* ---------- Admin Sidebar ---------- */
