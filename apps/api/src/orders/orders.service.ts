@@ -18,6 +18,17 @@ export class OrdersService {
   }
 
   async update(id: string, data: any) {
+    const order = await this.prisma.order.findUnique({ where: { id } });
+    if (order && data.status && !['SHIPPED', 'DELIVERED'].includes(order.status) && ['SHIPPED', 'DELIVERED'].includes(data.status)) {
+      // Reduce stock when status changes to SHIPPED or DELIVERED
+      const items = order.itemsJson ? JSON.parse(order.itemsJson) : [];
+      for (const item of items) {
+        await this.prisma.product.updateMany({
+          where: { id: item.id },
+          data: { stock: { decrement: item.quantity } },
+        });
+      }
+    }
     return this.prisma.order.update({ where: { id }, data });
   }
 
