@@ -56,10 +56,16 @@ export default function Home() {
 
   const addToCart = (e: React.MouseEvent, p: Product) => {
     e.stopPropagation();
+    if (p.stock <= 0) return;
     const saved = localStorage.getItem('cart');
     const cart: any[] = saved ? JSON.parse(saved) : [];
     const existing = cart.find((c: any) => c.id === p.id);
-    if (existing) { existing.quantity += 1; } else { cart.push({ id: p.id, name: p.name, price: p.price, image: getImg(p), quantity: 1 }); }
+    if (existing) {
+      if (existing.quantity >= p.stock) return;
+      existing.quantity += 1;
+    } else {
+      cart.push({ id: p.id, name: p.name, price: p.price, image: getImg(p), quantity: 1, stock: p.stock });
+    }
     localStorage.setItem('cart', JSON.stringify(cart));
     window.dispatchEvent(new CustomEvent('cart-added', { detail: { name: p.name } }));
     window.dispatchEvent(new Event('cart-updated'));

@@ -35,7 +35,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const saved = localStorage.getItem('cart');
     const cart: any[] = saved ? JSON.parse(saved) : [];
     const existing = cart.find((c: any) => c.id === product.id);
-    if (existing) { existing.quantity += quantity; } else { cart.push({ id: product.id, name: product.name, price: product.price, image: mainImage, quantity }); }
+    if (existing) {
+      if (existing.quantity + quantity > product.stock) return;
+      existing.quantity += quantity;
+    } else {
+      cart.push({ id: product.id, name: product.name, price: product.price, image: mainImage, quantity, stock: product.stock });
+    }
     localStorage.setItem('cart', JSON.stringify(cart));
     window.dispatchEvent(new CustomEvent('cart-added', { detail: { name: product.name } }));
     window.dispatchEvent(new Event('cart-updated'));

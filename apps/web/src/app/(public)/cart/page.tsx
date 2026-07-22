@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
 
-interface CartItem { id: string; name: string; price: number; image: string; quantity: number; }
+interface CartItem { id: string; name: string; price: number; image: string; quantity: number; stock?: number; }
 
 export default function CartPage() {
   const router = useRouter();
@@ -22,7 +22,12 @@ export default function CartPage() {
   };
 
   const updateQuantity = (id: string, delta: number) => {
-    updateCart(cart.map(item => item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item));
+    updateCart(cart.map(item => {
+      if (item.id !== id) return item;
+      const newQty = item.quantity + delta;
+      const maxQty = item.stock || 99;
+      return { ...item, quantity: Math.max(1, Math.min(newQty, maxQty)) };
+    }));
   };
 
   const removeItem = (id: string) => {
@@ -65,23 +70,26 @@ export default function CartPage() {
         </div>
       ) : (
         <div style={{ display: 'grid', gap: '16px' }}>
-          {cart.map(item => (
+          {cart.map(item => {
+            const atMax = item.stock ? item.quantity >= item.stock : false;
+            return (
             <div key={item.id} style={{ display: 'flex', gap: '16px', padding: '16px', borderRadius: '16px', border: '1px solid var(--border)', background: 'var(--card-bg)', alignItems: 'center', transition: 'all 0.2s' }}>
               <img src={item.image} alt={item.name} style={{ width: '90px', height: '90px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</h3>
                 <p style={{ fontSize: '17px', fontWeight: 700, color: 'var(--primary)', margin: 0 }}>{(item.price * item.quantity * 10).toLocaleString('fa-IR')} ریال</p>
+                {item.stock && <p style={{ fontSize: '11px', color: item.stock <= 3 ? '#ef4444' : 'var(--text-muted)', margin: '2px 0 0' }}>{item.stock <= 3 ? `تنها ${item.stock} عدد موجود` : `${item.stock} عدد موجود`}</p>}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '2px', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', flexShrink: 0 }}>
-                <button onClick={() => updateQuantity(item.id, -1)} style={{ padding: '10px 14px', background: 'var(--hover-bg)', border: 'none', cursor: 'pointer', color: 'var(--text)', fontSize: '16px', transition: 'background 0.2s' }}>-</button>
+                <button onClick={() => updateQuantity(item.id, -1)} disabled={item.quantity <= 1} style={{ padding: '10px 14px', background: 'var(--hover-bg)', border: 'none', cursor: item.quantity <= 1 ? 'default' : 'pointer', color: item.quantity <= 1 ? 'var(--text-muted)' : 'var(--text)', fontSize: '16px', transition: 'background 0.2s', opacity: item.quantity <= 1 ? 0.5 : 1 }}>-</button>
                 <span style={{ padding: '10px 14px', fontWeight: 700, minWidth: '32px', textAlign: 'center' }}>{item.quantity}</span>
-                <button onClick={() => updateQuantity(item.id, 1)} style={{ padding: '10px 14px', background: 'var(--hover-bg)', border: 'none', cursor: 'pointer', color: 'var(--text)', fontSize: '16px', transition: 'background 0.2s' }}>+</button>
+                <button onClick={() => updateQuantity(item.id, 1)} disabled={atMax} style={{ padding: '10px 14px', background: 'var(--hover-bg)', border: 'none', cursor: atMax ? 'default' : 'pointer', color: atMax ? 'var(--text-muted)' : 'var(--text)', fontSize: '16px', transition: 'background 0.2s', opacity: atMax ? 0.5 : 1 }}>+</button>
               </div>
               <button onClick={() => removeItem(item.id)} style={{ padding: '10px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', borderRadius: '8px', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                 <Icons.Trash size={18} />
               </button>
             </div>
-          ))}
+          )})}
 
           {/* Summary */}
           <div className="card" style={{ padding: '24px' }}>
