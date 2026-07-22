@@ -180,6 +180,7 @@ export default function MarketingPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h2 style={{ margin: 0 }}>بنرها</h2>
+
             <button onClick={() => { setEditingItem(null); setBannerImages([]); setShowBannerModal(true); }} className={btnGreen}><Icons.Plus size={14} /> جدید</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>

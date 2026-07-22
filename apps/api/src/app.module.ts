@@ -17,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
 import { DiscountsModule } from './discounts/discounts.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { MarkupsModule } from './markups/markups.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { MarkupsModule } from './markups/markups.module';
     DiscountsModule,
     WishlistModule,
     MarkupsModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

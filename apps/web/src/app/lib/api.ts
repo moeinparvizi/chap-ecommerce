@@ -111,4 +111,10 @@ export const api = {
   createMarkup: (data: any) => request('/markups', { method: 'POST', body: JSON.stringify(data) }),
   updateMarkup: (id: string, data: any) => request(`/markups/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteMarkup: (id: string) => request(`/markups/${id}`, { method: 'DELETE' }),
+
+  // Notifications
+  getNotifications: (userId: string) => request(`/notifications?userId=${userId}`),
+  markNotificationRead: (id: string) => request(`/notifications/${id}/read`, { method: 'PUT' }),
+  markAllNotificationsRead: (userId: string) => request(`/notifications/read-all?userId=${userId}`, { method: 'PUT' }),
+  deleteNotification: (id: string) => request(`/notifications/${id}`, { method: 'DELETE' }),
 };

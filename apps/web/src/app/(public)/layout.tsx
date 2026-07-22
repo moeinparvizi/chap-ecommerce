@@ -55,6 +55,9 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
 
   // Cart count
   const [cartCount, setCartCount] = useState(0);
+  const [notifCount, setNotifCount] = useState(0);
+  const [showNotifs, setShowNotifs] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
   useEffect(() => {
     const updateCount = () => {
       const saved = localStorage.getItem('cart');
@@ -64,6 +67,17 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
     updateCount();
     window.addEventListener('cart-updated', updateCount);
     return () => window.removeEventListener('cart-updated', updateCount);
+  }, []);
+
+  // Fetch notifications
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.id) {
+      api.getNotifications(user.id).then((d: any) => {
+        setNotifications(d);
+        setNotifCount(d.filter((n: any) => !n.read).length);
+      }).catch(() => {});
+    }
   }, []);
 
   // Nav user state
@@ -129,6 +143,34 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
             <button onClick={() => router.push('/cart')} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.ShoppingCart size={20} />{cartCount > 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', minWidth: '18px', height: '18px', borderRadius: '9px', background: 'var(--primary)', color: 'white', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 4px' }}>{cartCount}</span>}</button>
             {navUser ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {/* Notifications */}
+                <div style={{ position: 'relative' }}>
+                  <button onClick={() => setShowNotifs(!showNotifs)} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.Bell size={20} />{notifCount > 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', minWidth: '16px', height: '16px', borderRadius: '8px', background: '#ef4444', color: 'white', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{notifCount}</span>}</button>
+                  {showNotifs && (
+                    <div style={{ position: 'absolute', top: 'calc(100% + 8px)', left: 0, width: '340px', background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 12px 40px rgba(0,0,0,0.15)', zIndex: 200, maxHeight: '400px', overflowY: 'auto' }}>
+                      <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 600, fontSize: '14px' }}>اعلان‌ها</span>
+                        {notifCount > 0 && <button onClick={async () => { await api.markAllNotificationsRead(navUser.id); setNotifications(notifications.map(n => ({ ...n, read: true }))); setNotifCount(0); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '12px' }}>خواندن همه</button>}
+                      </div>
+                      {notifications.length === 0 ? (
+                        <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>اعلانی وجود ندارد</div>
+                      ) : (
+                        <div>
+                          {notifications.slice(0, 10).map(n => (
+                            <div key={n.id} onClick={async () => { if (!n.read) { await api.markNotificationRead(n.id); setNotifications(notifications.map(x => x.id === n.id ? { ...x, read: true } : x)); setNotifCount(prev => Math.max(0, prev - 1)); } }} style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-light)', cursor: 'pointer', background: n.read ? 'transparent' : 'rgba(37,99,235,0.03)', transition: 'background 0.2s' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: n.read ? 'transparent' : '#ef4444', flexShrink: 0 }} />
+                                <span style={{ fontSize: '13px', fontWeight: 600 }}>{n.title}</span>
+                              </div>
+                              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{n.message}</p>
+                              <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '4px 0 0' }}>{new Date(n.createdAt).toLocaleString('fa-IR')}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <button onClick={() => router.push(navUser.role === 'admin' ? '/admin' : '/account')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '10px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>
                   <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>{navUser.name?.charAt(0) || 'U'}</div>
                   {navUser.name || 'پروفایل'}
