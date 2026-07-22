@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
+import { api } from '@/app/lib/api';
 
 interface CartItem { id: string; name: string; price: number; image: string; quantity: number; stock?: number; }
 
@@ -13,7 +14,17 @@ export default function CartPage() {
 
   useEffect(() => {
     const saved = localStorage.getItem('cart');
-    if (saved) setCart(JSON.parse(saved));
+    if (saved) {
+      const items = JSON.parse(saved);
+      // Fetch real stock from API for each item
+      api.getProducts().then((products: any[]) => {
+        const stockMap: Record<string, number> = {};
+        products.forEach((p: any) => { stockMap[p.id] = p.stock; });
+        const updated = items.map((item: any) => ({ ...item, stock: stockMap[item.id] || item.stock || 99 }));
+        setCart(updated);
+        localStorage.setItem('cart', JSON.stringify(updated));
+      }).catch(() => setCart(items));
+    }
   }, []);
 
   const updateCart = (newCart: CartItem[]) => {
@@ -24,9 +35,9 @@ export default function CartPage() {
   const updateQuantity = (id: string, delta: number) => {
     updateCart(cart.map(item => {
       if (item.id !== id) return item;
-      const newQty = item.quantity + delta;
-      const maxQty = item.stock || 99;
-      return { ...item, quantity: Math.max(1, Math.min(newQty, maxQty)) };
+      const maxQty = item.stock ?? 99;
+      const newQty = Math.min(item.quantity + delta, maxQty);
+      return { ...item, quantity: Math.max(1, newQty) };
     }));
   };
 
