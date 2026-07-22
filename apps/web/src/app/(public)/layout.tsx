@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
 import { api } from '@/app/lib/api';
@@ -57,6 +57,14 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const [cartCount, setCartCount] = useState(0);
   const [notifCount, setNotifCount] = useState(0);
   const [showNotifs, setShowNotifs] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  // Close notifications on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => { if (notifRef.current && !notifRef.current.contains(e.target as Node)) setShowNotifs(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
   const [notifications, setNotifications] = useState<any[]>([]);
   useEffect(() => {
     const updateCount = () => {
@@ -144,7 +152,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
             {navUser ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {/* Notifications */}
-                <div style={{ position: 'relative' }}>
+                <div ref={notifRef} style={{ position: 'relative' }}>
                   <button onClick={() => setShowNotifs(!showNotifs)} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px' }}><Icons.Bell size={20} />{notifCount > 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', minWidth: '16px', height: '16px', borderRadius: '8px', background: '#ef4444', color: 'white', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{notifCount}</span>}</button>
                   {showNotifs && (
                     <div style={{ position: 'absolute', top: 'calc(100% + 8px)', left: 0, width: '340px', background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 12px 40px rgba(0,0,0,0.15)', zIndex: 200, maxHeight: '400px', overflowY: 'auto' }}>
