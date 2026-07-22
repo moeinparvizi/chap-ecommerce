@@ -61,7 +61,7 @@ export class ProductsService {
       });
     }
     // Check low stock and notify wishlist users
-    if (updated.stock <= 3) {
+    if (updated.stock <= 1) {
       await this.notificationsService.checkLowStock(updated.id, updated.name, updated.stock);
     }
     return updated;

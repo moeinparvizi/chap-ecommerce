@@ -26,7 +26,7 @@ export class NotificationsService {
   }
 
   async checkLowStock(productId: string, productName: string, stock: number) {
-    if (stock > 3) return;
+    if (stock > 1) return;
     const wishlistUsers = await this.prisma.wishlist.findMany({ where: { productId }, distinct: ['userId'] });
     for (const w of wishlistUsers) {
       const existing = await this.prisma.notification.findFirst({
