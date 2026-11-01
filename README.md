@@ -28,7 +28,9 @@ The public deployment is an **interactive frontend demo**. Its 12 products, six 
 Captured from the deployed demo (fictional data and local product illustrations).
 
 ![Storefront](docs/screenshots/storefront.png)
+![Product catalog](docs/screenshots/catalog.png)
 ![Product detail](docs/screenshots/product.png)
+![Admin dashboard](docs/screenshots/admin-dashboard.png)
 
 ## Run locally
 
