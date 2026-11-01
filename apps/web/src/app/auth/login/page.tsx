@@ -83,6 +83,13 @@ export default function LoginPage() {
             <div style={{ padding: '12px 16px', borderRadius: '10px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '13px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid rgba(239,68,68,0.15)' }}><Icons.CheckCircle size={16} /> {error}</div>
           )}
 
+          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <div style={{padding:16,marginBottom:20,border:'1px solid var(--border)',borderRadius:12}}>
+            <p style={{margin:'0 0 10px',fontSize:13}}>حساب‌های نمایشی · رمز هر دو: <code dir="ltr">Demo123!</code></p>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+              <button type="button" className="btn btn-primary" onClick={()=>{setEmail('admin@example.com');setPassword('Demo123!');setMode('login');}}>حساب مدیر</button>
+              <button type="button" className="btn" onClick={()=>{setEmail('customer@example.com');setPassword('Demo123!');setMode('login');}}>حساب مشتری</button>
+            </div>
+          </div>}
           <form onSubmit={handleSubmit}>
             {mode === 'signup' && (
               <div style={{ marginBottom: '16px' }}>
@@ -121,13 +128,7 @@ export default function LoginPage() {
 
           <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); }} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>{mode === 'login' ? 'ساخت حساب جدید' : 'ورود به حساب'}</button>
 
-          <div style={{ marginTop: '32px', padding: '16px', borderRadius: '12px', background: 'var(--hover-bg)', border: '1px solid var(--border)' }}>
-            <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: '0 0 8px' }}>حساب‌های آزمایشی:</p>
-            <div style={{ display: 'grid', gap: '6px' }}>
-              <button onClick={() => { setEmail('user@shop.com'); setPassword('user123'); setMode('login'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', borderRadius: '8px', border: 'none', background: 'var(--card-bg)', cursor: 'pointer', fontSize: '12px', color: 'var(--text)', width: '100%', textAlign: 'right' }}><Icons.User size={14} color="var(--primary)" /><div style={{ flex: 1, textAlign: 'right' }}><strong>کاربر:</strong> user@shop.com / user123</div></button>
-              <button onClick={() => { setEmail('admin@shop.com'); setPassword('admin123'); setMode('login'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', borderRadius: '8px', border: 'none', background: 'var(--card-bg)', cursor: 'pointer', fontSize: '12px', color: 'var(--text)', width: '100%', textAlign: 'right' }}><Icons.Shield size={14} color="#f59e0b" /><div style={{ flex: 1, textAlign: 'right' }}><strong>ادمین:</strong> admin@shop.com / admin123</div></button>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>

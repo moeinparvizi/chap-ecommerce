@@ -66,3 +66,12 @@ backend/dist/
 *.js.map
 *.d.ts
 !*.d.ts
+
+# Vercel project metadata
+.vercel/
+.vercel
+.env*
+
+# Safe, documented configuration templates
+!.env.example
+!**/.env.example

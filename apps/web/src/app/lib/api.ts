@@ -1,6 +1,9 @@
-const API_BASE = 'http://localhost:3000/api';
+import { demoRequest } from './demo';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:3000/api';
 
 async function request(url: string, options?: RequestInit) {
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') return demoRequest(url, options);
   const res = await fetch(`${API_BASE}${url}`, {
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     ...options,
