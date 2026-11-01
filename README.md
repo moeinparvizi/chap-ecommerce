@@ -11,7 +11,7 @@ A Persian-first ecommerce storefront and admin dashboard built with **Next.js 15
 | Admin | `admin@example.com` | `Demo123!` |
 | Customer | `customer@example.com` | `Demo123!` |
 
-Use the account buttons on the login screen, then press **ورود**. Explore the catalog, add products to the cart, try checkout with the customer account, or manage products and orders with the admin account.
+Use **دموی مدیریت** or **دموی مشتری** in the top demo bar for one-click access, or use the account buttons on the login screen and press **ورود**. Explore the catalog, add products to the cart, try checkout with the customer account, or manage products and orders with the admin account.
 
 The public deployment is an **interactive frontend demo**. Its 12 products, six categories, fictional customers, 12 orders and reviews are seeded in the browser. Changes persist in that browser only; use **بازنشانی دمو** to restore the original data. There are no real payments, messages or database writes. Demo credentials are public and are not production authentication. Avoid entering real personal information.
 
@@ -25,7 +25,10 @@ The public deployment is an **interactive frontend demo**. Its 12 products, six 
 
 ## Screenshots
 
-Screenshots of the live deployment are included below after verification.
+Captured from the deployed demo (fictional data and local product illustrations).
+
+![Storefront](docs/screenshots/storefront.png)
+![Product detail](docs/screenshots/product.png)
 
 ## Run locally
 
