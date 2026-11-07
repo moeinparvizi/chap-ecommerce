@@ -90,6 +90,7 @@ export default function AccountPage() {
             <button onClick={() => router.push('/products')} className="btn btn-primary" style={{ marginTop: '8px', padding: '10px 20px' }}>مشاهده محصولات</button>
           </div>
         ) : (
+          <div className="table-scroll" role="region" aria-label="آخرین خریدها" tabIndex={0}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
             <thead><tr style={{ borderBottom: '2px solid var(--border)' }}>
               <th style={{ padding: '10px', textAlign: 'right', color: 'var(--text-secondary)', fontWeight: 600 }}>شماره سفارش</th>
@@ -108,6 +109,7 @@ export default function AccountPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

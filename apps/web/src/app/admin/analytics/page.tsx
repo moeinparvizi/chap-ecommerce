@@ -174,6 +174,7 @@ export default function AnalyticsPage() {
       {recentSales.length > 0 && (
         <div className="card">
           <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600 }}>گزارش فروش اخیر</h3>
+          <div className="table-scroll" role="region" aria-label="گزارش فروش اخیر" tabIndex={0}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
@@ -200,6 +201,7 @@ export default function AnalyticsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

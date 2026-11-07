@@ -385,7 +385,7 @@ tr:hover { background: var(--hover-bg); }
 .page-enter { animation: fadeInUp 0.4s ease-out; }
 
 /* ========== RESPONSIVE ========== */
-.main-content { transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.main-content { min-width: 0; transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
 @media (min-width: 769px) {
   .main-content { margin-right: 260px; }
@@ -435,8 +435,8 @@ tr:hover { background: var(--hover-bg); }
 
 /* ---------- Admin Tables ---------- */
 @media (max-width: 768px) {
-  .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { min-width: 600px; }
+  .table-container, .table-scroll { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-container table, .table-scroll table { min-width: 600px; }
   th { padding: 10px 12px; font-size: 12px; }
   td { padding: 10px 12px; font-size: 13px; }
 }
