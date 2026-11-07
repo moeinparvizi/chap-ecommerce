@@ -31,4 +31,12 @@ For future schema changes, review migrations against the intended target and use
 - Compiled HTTP smoke: `apps/api/scripts/verify-custom-print.mjs`, with explicit `DATABASE_URL` and `PRINT_SMOKE_API_URL`. For an authorized remote trial also require `PRINT_SMOKE_ALLOW_ONLINE=true`. The script creates uniquely identified disposable users/products/artwork/requests/orders, tests exact 10 MiB upload/download equality, privacy, admin pricing/rejection, concurrent payment, ordinary order visibility, delivery and idempotent cancellation, then removes only its fixtures. It performs no real charge. API and database must refer to the same environment.
 - Existing root lint is unavailable: API invokes ESLint without an installed ESLint dependency; web uses the removed `next lint` command. This pre-existing tool configuration was not changed as part of printing. Formatting and type/build checks were run for this feature.
 
-Live deployment and browser verification results are recorded after the feature push.
+## Verified online result
+
+Feature commit `369793f` was pushed to main. Both automatic production deployments reached Ready: API `GzhbyDVJH18CBJWHoEM2UYkiQpWM`, web `HSP2FBgfTxUdvvEWudmkoJ3FrFmE`. Public API settings returned testPaymentEnabled=true and maxUploadBytes=10485760.
+
+The same compiled HTTP smoke passed through the public storefront `/api` proxy against Neon: exact 10 MiB bytes downloaded unchanged, anonymous/cross-user access rejected, shirt/pants/mug requests, admin pricing/rejection, concurrent trial payments yielding one order, customer/admin ordinary order visibility, READY/shipment/delivery without further inventory deduction and idempotent cancellation/restoration. All disposable smoke records were removed; no money was collected.
+
+Chrome verified the live customer form and administrator configuration/review screen, including a privately retrieved artwork image. At widths 390 and 768 pixels, both pages had document widths 384 and 762 respectively, with no horizontal overflow. Temporary viewport overrides were reset. The temporary UI product, request, artwork and user were removed. Final database counts remained 11 categories, 6 products and 0 orders, matching the initial counts. No actual catalog product is automatically eligible for printing; an administrator must configure it.
+
+The Vercel CLI was authenticated but its API operations timed out. The existing Git integration performed both deployments; the nonsecret trial flag is supplied by the committed API Vercel configuration. No manual dashboard settings were changed.
