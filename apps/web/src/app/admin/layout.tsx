@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Icons } from '../components/Icons';
 import { I18nProvider, useI18n } from '../lib/i18n';
 import { NotificationProvider } from '../lib/notifications';
+import { isAdminRole } from '../lib/auth';
 
 function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -26,7 +27,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     }
 
     const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== 'admin') {
+    if (!isAdminRole(parsedUser.role)) {
       router.push('/account');
       return;
     }

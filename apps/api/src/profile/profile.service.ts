@@ -10,6 +10,6 @@ export class ProfileService {
   }
 
   async update(id: string, data: any) {
-    return this.prisma.user.update({ where: { id }, data, select: { id: true, email: true, name: true, phone: true, role: true, createdAt: true } });
+    return this.prisma.user.update({ where: { id }, data: { name: data.name, phone: data.phone }, select: { id: true, email: true, name: true, phone: true, role: true, createdAt: true } });
   }
 }

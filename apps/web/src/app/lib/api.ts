@@ -1,14 +1,22 @@
 import { demoRequest } from './demo';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:3000/api';
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || '/api').replace(/\/$/, '');
 
 async function request(url: string, options?: RequestInit) {
   if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') return demoRequest(url, options);
+  const headers = new Headers(options?.headers);
+  headers.set('Content-Type', 'application/json');
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  if (token && !url.startsWith('/auth/')) headers.set('Authorization', `Bearer ${token}`);
   const res = await fetch(`${API_BASE}${url}`, {
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
     ...options,
+    headers,
+    cache: 'no-store',
   });
-  if (!res.ok) throw new Error(`API Error: ${res.status}`);
+  if (!res.ok) {
+    const error = await res.json().catch(() => null);
+    throw new Error(error?.message || `API Error: ${res.status}`);
+  }
   return res.json();
 }
 
@@ -97,6 +105,9 @@ export const api = {
 
   // Auth
   login: (email: string, password: string) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  register: (email: string, name: string, password: string) => process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+    ? request('/customers', { method: 'POST', body: JSON.stringify({ email, name, password }) })
+    : request('/auth/register', { method: 'POST', body: JSON.stringify({ email, name, password }) }),
 
   // Discounts
   getDiscounts: () => request('/discounts'),

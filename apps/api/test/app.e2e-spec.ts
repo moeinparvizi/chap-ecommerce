@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { vi } from 'vitest';
 
 const describeWithDb = process.env.DATABASE_URL ? describe : describe.skip;
 
@@ -9,6 +10,7 @@ describeWithDb('App (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
+    vi.stubEnv('JWT_SECRET', 'integration-test-secret-at-least-thirty-two-characters');
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -19,7 +21,8 @@ describeWithDb('App (e2e)', () => {
   }, 30000);
 
   afterAll(async () => {
-    await app.close();
+    await app?.close();
+    vi.unstubAllEnvs();
   });
 
   it('/api/health (GET)', () => {

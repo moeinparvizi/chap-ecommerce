@@ -6,6 +6,7 @@ import { Icons } from '@/app/components/Icons';
 import { api } from '@/app/lib/api';
 import { getSiteSettings, initSiteSettings, type SiteSettings } from '@/app/lib/site-settings';
 import SmartSearch from '@/app/components/SmartSearch';
+import { isAdminRole } from '@/app/lib/auth';
 
 interface Category { id: string; name: string; slug: string; description: string; image: string | null; parentId: string | null; status: string; }
 interface CategoryTree extends Category { children: CategoryTree[]; }
@@ -18,6 +19,8 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState(false);
 
   const [searchText, setSearchText] = useState('');
   const [cartToast, setCartToast] = useState<{ name: string; show: boolean }>({ name: '', show: false });
@@ -39,11 +42,17 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
     let latestRequest = 0;
     const refreshCategories = () => {
       const requestId = ++latestRequest;
+      setCategoriesLoading(true);
       api.getCategories().then((data: Category[]) => {
-        if (mounted && requestId === latestRequest) setCategories(data.filter((c) =>
-          !c.status || c.status === 'active' || Boolean(c.parentId && c.status === c.parentId)
-        ));
-      }).catch(() => {});
+        if (mounted && requestId === latestRequest) {
+          setCategories(data.filter((c) => !c.status || c.status === 'active' || Boolean(c.parentId && c.status === c.parentId)));
+          setCategoriesError(false);
+        }
+      }).catch(() => {
+        if (mounted && requestId === latestRequest) setCategoriesError(true);
+      }).finally(() => {
+        if (mounted && requestId === latestRequest) setCategoriesLoading(false);
+      });
     };
     refreshCategories();
     window.addEventListener('categories-updated', refreshCategories);
@@ -55,7 +64,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
       window.removeEventListener('storage', refreshCategories);
       window.removeEventListener('focus', refreshCategories);
     };
-  }, []);
+  }, [megaMenuOpen, mobileMenuOpen]);
 
   useEffect(() => { setMegaMenuOpen(false); setMobileMenuOpen(false); }, [pathname]);
 
@@ -141,7 +150,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <button onClick={() => { const n = lang === 'fa' ? 'en' : 'fa'; setLang(n); localStorage.setItem('lang', n); document.documentElement.dir = n === 'fa' ? 'rtl' : 'ltr'; }} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '12px' }}>{lang === 'fa' ? 'EN' : 'FA'}</button>
             <button onClick={() => { const n = theme === 'light' ? 'dark' : 'light'; setTheme(n); localStorage.setItem('theme', n); document.documentElement.setAttribute('data-theme', n); }} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>{theme === 'light' ? <Icons.Sun size={12} /> : <Icons.Moon size={12} />}</button>
-            {navUser ? <button onClick={() => router.push(navUser.role === 'admin' ? '/admin' : '/account')} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '12px' }}>پروفایل</button> : <a href="/auth/login" style={{ color: 'white', textDecoration: 'none' }}>ورود</a>}
+            {navUser ? <button onClick={() => router.push(isAdminRole(navUser.role) ? '/admin' : '/account')} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '12px' }}>پروفایل</button> : <a href="/auth/login" style={{ color: 'white', textDecoration: 'none' }}>ورود</a>}
           </div>
         </div>
       </div>
@@ -150,7 +159,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
       <nav className="navbar" style={{ background: 'var(--card-bg)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 100, transition: 'all 0.3s', padding: scrolled ? '8px 0' : '12px 0', boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.08)' : 'none' }}>
         <div className="navbar-inner" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           {/* Mobile hamburger */}
-          <button className="mobile-only" onClick={() => setMobileMenuOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px', flexShrink: 0 }}>
+          <button aria-label="باز کردن منو" className="mobile-only" onClick={() => setMobileMenuOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: '8px', borderRadius: '8px', flexShrink: 0 }}>
             <Icons.Menu size={24} />
           </button>
 
@@ -201,7 +210,7 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
                     </div>
                   )}
                 </div>
-                <button onClick={() => router.push(navUser.role === 'admin' ? '/admin' : '/account')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '10px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>
+                <button onClick={() => router.push(isAdminRole(navUser.role) ? '/admin' : '/account')} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '10px', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>
                   <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>{navUser.name?.charAt(0) || 'U'}</div>
                   {navUser.name || 'پروفایل'}
                 </button>
@@ -236,6 +245,8 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
         {/* Mega Menu - desktop only */}
         {megaMenuOpen && (
           <div className="desktop-only mega-menu-enter" style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px', borderTop: '1px solid var(--border-light)' }}>
+            {categoriesLoading && <p role="status">در حال دریافت دسته‌بندی‌ها…</p>}
+            {categoriesError && <p role="alert">دریافت دسته‌بندی‌ها ناموفق بود. لطفاً دوباره تلاش کنید.</p>}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
               {categoryTree.map((cat, i) => (
                 <div key={cat.id}>
@@ -285,13 +296,15 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
 
             {/* Nav Links */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '16px' }}>
-              {[{ icon: <Icons.Truck size={18} />, label: 'خانه', href: '/' }, { icon: <Icons.Package size={18} />, label: 'محصولات', href: '/products' }, { icon: <Icons.Users size={18} />, label: 'درباره ما', href: '/about' }, { icon: <Icons.Mail size={18} />, label: 'تماس با ما', href: '/contact' }, { icon: <Icons.ShoppingCart size={18} />, label: 'سبد خرید', href: '/cart' }, ...(navUser ? [{ icon: <Icons.User size={18} />, label: 'داشبورد من', href: navUser.role === 'admin' ? '/admin' : '/account' }] : [])].map(link => (
+              {[{ icon: <Icons.Truck size={18} />, label: 'خانه', href: '/' }, { icon: <Icons.Package size={18} />, label: 'محصولات', href: '/products' }, { icon: <Icons.Users size={18} />, label: 'درباره ما', href: '/about' }, { icon: <Icons.Mail size={18} />, label: 'تماس با ما', href: '/contact' }, { icon: <Icons.ShoppingCart size={18} />, label: 'سبد خرید', href: '/cart' }, ...(navUser ? [{ icon: <Icons.User size={18} />, label: 'داشبورد من', href: isAdminRole(navUser.role) ? '/admin' : '/account' }] : [])].map(link => (
                 <button key={link.href} onClick={() => { router.push(link.href); setMobileMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', borderRadius: '10px', border: 'none', background: pathname === link.href ? 'var(--primary)' : 'transparent', color: pathname === link.href ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '14px', fontWeight: pathname === link.href ? 600 : 400, textAlign: 'right', width: '100%' }}>{link.icon} {link.label}</button>
               ))}
             </div>
 
             {/* Categories */}
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
+              {categoriesLoading && <p role="status">در حال دریافت دسته‌بندی‌ها…</p>}
+              {categoriesError && <p role="alert">دریافت دسته‌بندی‌ها ناموفق بود. لطفاً دوباره تلاش کنید.</p>}
               <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 8px' }}>دسته بندی ها</p>
               {categoryTree.map((cat, i) => (
                 <div key={cat.id}>

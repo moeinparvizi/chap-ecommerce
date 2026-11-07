@@ -17,7 +17,7 @@ async function bootstrap() {
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('APP_PORT', 3000);
+  const port = process.env.PORT || configService.get<number>('APP_PORT', 3000);
   const frontendUrl = configService.get<string>('FRONTEND_URL', 'http://localhost:4200');
 
   // Security

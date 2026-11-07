@@ -10,6 +10,9 @@ interface Category { id: string; name: string; slug: string; description: string
 export default function CategoriesPage() {
   const notify = useNotification();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [loadError, setLoadError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -22,6 +25,7 @@ export default function CategoriesPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const refreshCategories = async () => {
+    setLoading(true);
     try {
       const data = await api.getCategories() as any[];
       const mapped = data.map((c: any) => ({ id: c.id, name: c.name, slug: c.slug, description: c.description || '', productCount: c._count?.products || 0, image: c.image || '', parentId: c.parentId, status: c.status || 'active' }));
@@ -29,7 +33,9 @@ export default function CategoriesPage() {
       const expanded: Record<string, boolean> = {};
       data.forEach((c: any) => { if (!c.parentId) expanded[c.id] = true; });
       setExpandedParents(expanded);
-    } catch (e) { console.error(e); }
+      setLoadError(false);
+    } catch { setLoadError(true); }
+    finally { setLoading(false); }
   };
 
   useEffect(() => { refreshCategories(); }, []);
@@ -51,14 +57,17 @@ export default function CategoriesPage() {
   };
 
   const handleAddCategory = async () => {
+    if (saving) return;
     const name = (document.getElementById('add-name') as HTMLInputElement)?.value;
     const slug = (document.getElementById('add-slug') as HTMLInputElement)?.value;
     const description = (document.getElementById('add-description') as HTMLTextAreaElement)?.value;
     if (!name) { notify.warning('نام ضروری است'); return; }
+    setSaving(true);
     try {
       await api.createCategory({ name, slug: slug || name.toLowerCase().replace(/\s+/g, '-'), description: description || '', image: addImage || null, parentId: addParentId || null, status: 'active' });
       await refreshCategories(); setAddImage(null); setAddParentId(''); setShowAddModal(false); notify.success('دستهبندی اضافه شد');
-    } catch (e) { notify.error('خطا در اضافه کردن'); }
+    } catch (e) { notify.error(e instanceof Error ? e.message : 'خطا در اضافه کردن'); }
+    finally { setSaving(false); }
   };
 
   const handleEditCategory = async () => {
@@ -102,8 +111,10 @@ export default function CategoriesPage() {
       <div style={{ marginBottom: '20px' }}><input type="text" placeholder="جستجو..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="input" style={{ maxWidth: '400px' }} /></div>
 
       {/* Category Tree */}
+      {loading && <p role="status">در حال دریافت دسته‌بندی‌ها…</p>}
+      {loadError && <p role="alert">دریافت دسته‌بندی‌ها ناموفق بود. <button onClick={refreshCategories}>تلاش دوباره</button></p>}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {parents.length === 0 ? <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px' }}>دستهبندیای وجود ندارد</p> : (
+        {parents.length === 0 ? !loading && !loadError && <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px' }}>دستهبندیای وجود ندارد</p> : (
           parents.filter(c => filtered.includes(c) || getChildren(c.id).some(ch => filtered.includes(ch))).map(parent => {
             const children = getChildren(parent.id);
             const isExpanded = expandedParents[parent.id] !== false;
@@ -172,7 +183,7 @@ export default function CategoriesPage() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-              <button onClick={handleAddCategory} className="btn btn-success" style={{ flex: 1 }}><Icons.Save size={14} /> ذخیره</button>
+              <button disabled={saving} onClick={handleAddCategory} className="btn btn-success" style={{ flex: 1 }}><Icons.Save size={14} /> {saving ? 'در حال ذخیره…' : 'ذخیره'}</button>
               <button onClick={() => setShowAddModal(false)} className="btn btn-ghost" style={{ flex: 1 }}>انصراف</button>
             </div>
           </div>

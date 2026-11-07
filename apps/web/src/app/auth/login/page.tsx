@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '@/app/lib/api';
 import { Icons } from '@/app/components/Icons';
+import { isAdminRole } from '@/app/lib/auth';
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -24,10 +25,7 @@ export default function LoginPage() {
 
     try {
       if (mode === 'signup') {
-        const customers = await api.getCustomers().catch(() => []);
-        const exists = (customers as any[]).some((c: any) => c.email === email);
-        if (exists) { setError('این ایمیل قبلا ثبت شده'); setLoading(false); return; }
-        await api.createCustomer({ email, name, password, role: 'CUSTOMER' });
+        await api.register(email, name, password);
       }
 
       const user = await api.login(email, password);
@@ -37,12 +35,13 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem('auth_token', 'auth-' + user.id);
-      localStorage.setItem('user', JSON.stringify(user));
+      const { accessToken, ...profile } = user;
+      localStorage.setItem('auth_token', accessToken || (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' ? 'auth-' + user.id : ''));
+      localStorage.setItem('user', JSON.stringify(profile));
 
       const redirect = localStorage.getItem('redirectAfterLogin');
       localStorage.removeItem('redirectAfterLogin');
-      window.location.href = redirect || (user.role === 'admin' ? '/admin' : '/account');
+      window.location.href = redirect || (isAdminRole(user.role) ? '/admin' : '/account');
     } catch (e) {
       setError('خطا در اتصال به سرور');
       setLoading(false);
@@ -112,7 +111,7 @@ export default function LoginPage() {
             <div style={{ marginBottom: '24px' }}>
               <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>رمز عبور</label>
               <div style={{ position: 'relative' }}>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="رمز عبور" required style={{ width: '100%', padding: '12px 14px 12px 40px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+                <input type="password" minLength={mode === 'signup' ? 12 : 1} maxLength={72} value={password} onChange={e => setPassword(e.target.value)} placeholder="رمز عبور" required style={{ width: '100%', padding: '12px 14px 12px 40px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
                 <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><Icons.Lock size={16} /></span>
               </div>
             </div>
