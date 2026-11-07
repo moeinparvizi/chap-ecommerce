@@ -290,7 +290,8 @@ export async function demoRequest(path: string, options: RequestInit = {}): Prom
       row.role = 'customer';
       row.password = body.password;
     }
-    rows.push(row);
+    if (resource === 'categories') rows.unshift(row);
+    else rows.push(row);
     save(store);
     return publicRow(row);
   }

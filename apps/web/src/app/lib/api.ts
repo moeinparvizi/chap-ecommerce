@@ -21,9 +21,9 @@ export const api = {
 
   // Categories
   getCategories: () => request('/categories'),
-  createCategory: (data: any) => request('/categories', { method: 'POST', body: JSON.stringify(data) }),
-  updateCategory: (id: string, data: any) => request(`/categories/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  deleteCategory: (id: string) => request(`/categories/${id}`, { method: 'DELETE' }),
+  createCategory: async (data: any) => { const result = await request('/categories', { method: 'POST', body: JSON.stringify(data) }); window.dispatchEvent(new Event('categories-updated')); return result; },
+  updateCategory: async (id: string, data: any) => { const result = await request(`/categories/${id}`, { method: 'PUT', body: JSON.stringify(data) }); window.dispatchEvent(new Event('categories-updated')); return result; },
+  deleteCategory: async (id: string) => { const result = await request(`/categories/${id}`, { method: 'DELETE' }); window.dispatchEvent(new Event('categories-updated')); return result; },
 
   // Orders
   getOrders: () => request('/orders'),

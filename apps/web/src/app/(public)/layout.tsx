@@ -30,9 +30,29 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
     setTheme(savedTheme); setLang(savedLang);
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.documentElement.dir = savedLang === 'fa' ? 'rtl' : 'ltr';
-    api.getCategories().then((d: any) => setCategories(d.filter((c: Category) => c.status === 'active'))).catch(() => {});
     initSiteSettings();
     setSiteSettings(getSiteSettings());
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    let latestRequest = 0;
+    const refreshCategories = () => {
+      const requestId = ++latestRequest;
+      api.getCategories().then((data: Category[]) => {
+        if (mounted && requestId === latestRequest) setCategories(data.filter((c) => !c.status || c.status === 'active'));
+      }).catch(() => {});
+    };
+    refreshCategories();
+    window.addEventListener('categories-updated', refreshCategories);
+    window.addEventListener('storage', refreshCategories);
+    window.addEventListener('focus', refreshCategories);
+    return () => {
+      mounted = false;
+      window.removeEventListener('categories-updated', refreshCategories);
+      window.removeEventListener('storage', refreshCategories);
+      window.removeEventListener('focus', refreshCategories);
+    };
   }, []);
 
   useEffect(() => { setMegaMenuOpen(false); setMobileMenuOpen(false); }, [pathname]);
