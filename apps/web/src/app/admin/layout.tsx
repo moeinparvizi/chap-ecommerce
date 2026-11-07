@@ -17,26 +17,43 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const [openSubmenus, setOpenSubmenus] = useState<string[]>(['products']);
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user');
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
-    
-    if (!token || !userData) {
-      router.push('/auth/login');
-      return;
-    }
-
-    const parsedUser = JSON.parse(userData);
-    if (!isAdminRole(parsedUser.role)) {
-      router.push('/account');
-      return;
-    }
-
-    setUser(parsedUser);
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
-    
-    // Auto-collapse on mobile
+
+    // Tokens are shared across tabs; never keep showing a previous admin session.
+    const syncSession = () => {
+      const token = localStorage.getItem('auth_token');
+      const userData = localStorage.getItem('user');
+      let profile;
+      try {
+        profile = userData ? JSON.parse(userData) : null;
+      } catch {
+        profile = null;
+      }
+      if (!token || !profile || typeof profile.name !== 'string') {
+        setUser(null);
+        router.push('/auth/login');
+      } else if (!isAdminRole(profile.role)) {
+        setUser(null);
+        router.push('/account');
+      } else {
+        setUser(profile);
+      }
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.storageArea === localStorage &&
+          (event.key === null || event.key === 'auth_token' || event.key === 'user')) {
+        syncSession();
+      }
+    };
+    syncSession();
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('focus', syncSession);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('focus', syncSession);
+    };
   }, [router]);
 
   const toggleTheme = () => {
