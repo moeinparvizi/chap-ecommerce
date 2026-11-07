@@ -29,3 +29,11 @@ The dedicated free Neon database has the Prisma schema and a copy of 11 categori
 For a new empty target, set private `DATABASE_URL` and run `pnpm db:push` from the root. Then run `node apps/api/scripts/provision-online.mjs` with optional `SOURCE_DATABASE_URL` for catalog-only copying and `ONLINE_ADMIN_EMAIL` for a new administrator. Check source and target before execution. Keep connection strings in private environment variables; never pass secrets through public frontend variables. The script refuses to overwrite an existing local credential file.
 
 Validation before cutover: 11 API tests and 19 web tests passed; all package typechecks and the root production build passed. The compiled NestJS API connected to Neon, rejected anonymous category writes, authenticated the new administrator, created a temporary root and child, and returned both to a separate anonymous client. The temporary records were deleted afterward.
+
+## Online cutover result
+
+The API project `chap-ecommerce-api` deployed successfully on Vercel. The web project's production configuration now uses `NEXT_PUBLIC_DEMO_MODE=false` and server-only `API_URL=https://chap-ecommerce-api.vercel.app/api`; it was rebuilt without reusing the build cache and reached Ready.
+
+Live HTTP checks passed on both the API domain and the storefront's same-origin `/api` proxy: database health, 11 categories including 5 children, anonymous write rejection, signed superadministrator login, root/child creation and persistence, and anonymous retrieval in an independent request. Temporary verification categories were removed. Customer access checks against Neon also confirmed category-write denial, private-profile protection, no role escalation through profile updates, and password-free customer responses.
+
+The former browser demo account does not authenticate against the online database. Use the new private administrator credentials; existing customers and passwords were not migrated. Both Vercel projects use the same GitHub repository and production branch `main`, so future pushes trigger deployments for both projects.

@@ -12,5 +12,5 @@
 - [x] Implement same-origin API proxy configuration, signed-token login, both administrator roles, and menu loading/error/refresh behavior.
 - [x] Add backend Vercel build settings and private provisioning scripts for schema/catalog/admin setup with no secrets in Git.
 - [x] Run relevant API/web tests, typechecks, production builds, and real HTTP persistence checks against an isolated database.
-- [ ] Review diffs, commit, push, verify Vercel deploy; provision approved free database and backend; configure frontend cutover only after health and permissions checks pass.
+- [x] Review diffs, commit, push, verify Vercel deploy; provision approved free database and backend; configure frontend cutover only after health and permissions checks pass.
 - [ ] Verify category creation and anonymous retrieval using independent HTTP clients and the storefront mega menu; record any remaining external approval/setup requirements.
