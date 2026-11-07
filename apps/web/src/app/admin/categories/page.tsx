@@ -191,8 +191,9 @@ export default function CategoriesPage() {
               <div><label style={labelStyle}>نام *</label><input id="edit-name" defaultValue={selectedCategory.name} style={inputStyle} /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div><label style={labelStyle}>اسلاگ</label><input id="edit-slug" defaultValue={selectedCategory.slug} style={inputStyle} /></div>
-                <div><label style={labelStyle}>ساب کتگوری</label><select id="edit-status" value={editParentId} onChange={e => setEditParentId(e.target.value)} style={inputStyle}><option value="">ندارد</option>{parents.filter(p => p.id !== selectedCategory.id).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
+                <div><label style={labelStyle}>ساب کتگوری</label><select id="edit-parent" value={editParentId} onChange={e => setEditParentId(e.target.value)} style={inputStyle}><option value="">ندارد</option>{parents.filter(p => p.id !== selectedCategory.id).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
               </div>
+              <div><label htmlFor="edit-status" style={labelStyle}>وضعیت نمایش</label><select id="edit-status" defaultValue={selectedCategory.status === 'inactive' ? 'inactive' : 'active'} style={inputStyle}><option value="active">فعال</option><option value="inactive">غیرفعال</option></select></div>
               <div><label style={labelStyle}>توضیحات</label><textarea id="edit-description" defaultValue={selectedCategory.description} rows={2} style={inputStyle} /></div>
               <div>
                 <label style={labelStyle}>تصویر</label>
