@@ -40,7 +40,9 @@ function PublicLayoutInner({ children }: { children: React.ReactNode }) {
     const refreshCategories = () => {
       const requestId = ++latestRequest;
       api.getCategories().then((data: Category[]) => {
-        if (mounted && requestId === latestRequest) setCategories(data.filter((c) => !c.status || c.status === 'active'));
+        if (mounted && requestId === latestRequest) setCategories(data.filter((c) =>
+          !c.status || c.status === 'active' || Boolean(c.parentId && c.status === c.parentId)
+        ));
       }).catch(() => {});
     };
     refreshCategories();

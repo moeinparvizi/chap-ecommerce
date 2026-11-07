@@ -21,4 +21,14 @@ describe('storefront categories', () => {
     fireEvent.click(screen.getByText('دستهبندیها'));
     expect(screen.getAllByText('دسته جدید').length).toBeGreaterThan(0);
   });
+
+  it('shows subcategories whose status was corrupted by the old edit form', async () => {
+    await api.createCategory({ name: 'زیرمجموعه آزمایشی', slug: 'child', status: 'cat-0', parentId: 'cat-0' });
+    await api.createCategory({ name: 'زیرمجموعه غیرفعال', slug: 'inactive-child', status: 'inactive', parentId: 'cat-0' });
+    render(<PublicLayout><div>محتوا</div></PublicLayout>);
+    await screen.findByRole('button', { name: 'موبایل' });
+    fireEvent.click(screen.getByText('دستهبندیها'));
+    expect(screen.getByText('زیرمجموعه آزمایشی')).toBeTruthy();
+    expect(screen.queryByText('زیرمجموعه غیرفعال')).toBeNull();
+  });
 });
