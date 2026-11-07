@@ -61,7 +61,7 @@ export class CustomPrintService {
   }
   products() {
     return this.prisma.printProduct.findMany({
-      where: { enabled: true, product: { status: 'ACTIVE', stock: { gt: 0 } } },
+      where: { enabled: true, product: { status: 'ACTIVE' } },
       include: { product: { include: { images: true } } },
       orderBy: { createdAt: 'asc' },
     });

@@ -80,6 +80,28 @@ async function fillRequest() {
   fireEvent.change(screen.getByLabelText('رنگ'), { target: { value: 'سفید' } });
 }
 describe('customer print request', () => {
+  it('shows an enabled product with zero stock but blocks artwork submission', async () => {
+    vi.mocked(customPrintApi.products).mockResolvedValue([
+      { ...shirt, product: { ...shirt.product, stock: 0 } },
+    ] as never);
+    render(<CustomPrintPage />);
+    expect(
+      await screen.findByText('این محصول ناموجود است؛ ارسال طرح پس از افزایش موجودی فعال می‌شود.'),
+    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'ارسال برای بررسی' })).toHaveProperty(
+      'disabled',
+      true,
+    );
+    expect(uploadArtwork).not.toHaveBeenCalled();
+  });
+  it('refreshes products when returning to the tab after an administrator adds one', async () => {
+    vi.mocked(customPrintApi.products).mockResolvedValueOnce([] as never);
+    render(<CustomPrintPage />);
+    await screen.findByText('در حال حاضر محصولی برای چاپ فعال نیست. بعداً دوباره مراجعه کنید.');
+    vi.mocked(customPrintApi.products).mockResolvedValue([shirt] as never);
+    fireEvent(window, new Event('focus'));
+    expect(await screen.findByRole('option', { name: 'تیشرت' })).toBeTruthy();
+  });
   it('requires a garment position and preserves artwork and fields on server error', async () => {
     vi.mocked(customPrintApi.createRequest).mockRejectedValue(new Error('موجودی کافی نیست'));
     render(<CustomPrintPage />);

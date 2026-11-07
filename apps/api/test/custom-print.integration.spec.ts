@@ -92,6 +92,40 @@ dbSuite('custom printing with isolated PostgreSQL records', () => {
     await uploads.part(customer.id, file.id, 0, bytes.toString('base64'));
     return uploads.complete(customer.id, file.id);
   }
+  it('lists enabled out-of-stock products publicly while excluding disabled and inactive products', async () => {
+    const unavailable = await db.product.create({
+      data: {
+        name: 'Unavailable print mug',
+        sku: 'out-of-stock',
+        slug: 'out-of-stock',
+        price: 100,
+        stock: 0,
+        status: 'ACTIVE',
+      },
+    });
+    await service.configure({
+      productId: unavailable.id,
+      type: 'MUG',
+      enabled: true,
+      positions: [],
+    });
+    expect((await service.products()).some((p) => p.productId === unavailable.id)).toBe(true);
+    await service.configure({
+      productId: unavailable.id,
+      type: 'MUG',
+      enabled: false,
+      positions: [],
+    });
+    expect((await service.products()).some((p) => p.productId === unavailable.id)).toBe(false);
+    await service.configure({
+      productId: unavailable.id,
+      type: 'MUG',
+      enabled: true,
+      positions: [],
+    });
+    await db.product.update({ where: { id: unavailable.id }, data: { status: 'DRAFT' } });
+    expect((await service.products()).some((p) => p.productId === unavailable.id)).toBe(false);
+  });
   async function submit(overrides = {}) {
     return service.create(customer, {
       productId: product.id,

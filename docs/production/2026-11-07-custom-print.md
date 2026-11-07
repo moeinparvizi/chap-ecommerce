@@ -40,3 +40,9 @@ The same compiled HTTP smoke passed through the public storefront `/api` proxy a
 Chrome verified the live customer form and administrator configuration/review screen, including a privately retrieved artwork image. At widths 390 and 768 pixels, both pages had document widths 384 and 762 respectively, with no horizontal overflow. Temporary viewport overrides were reset. The temporary UI product, request, artwork and user were removed. Final database counts remained 11 categories, 6 products and 0 orders, matching the initial counts. No actual catalog product is automatically eligible for printing; an administrator must configure it.
 
 The Vercel CLI was authenticated but its API operations timed out. The existing Git integration performed both deployments; the nonsecret trial flag is supplied by the committed API Vercel configuration. No manual dashboard settings were changed.
+
+## Printable catalog visibility follow-up
+
+The configured iPad Air M2 had stock=0, explaining the empty public print catalog. Enabled ACTIVE products now remain listed when out of stock, with a clear unavailable label and disabled submission. Request creation and payment continue to validate actual inventory. Disabled configurations and inactive catalog products remain private. The administrator sees a separate list of saved configurations, product type, positions, inventory, visibility and edit controls. Returning to the customer tab refreshes public products without clearing entered form fields. No inventory values were changed by this fix.
+
+Regression verification: 67 API tests passed, including 11 cases in an isolated PostgreSQL schema; 37 web tests passed, including saved configuration editing, zero-stock display/submission blocking and tab-focus refresh. Workspace typechecks and the root build passed.

@@ -65,8 +65,8 @@ export function ConfigurationForm({
     <section className="card print-panel">
       <h2>محصولات قابل چاپ</h2>
       <p className="print-subtle">
-        یک محصول موجود را انتخاب کنید. نمایش در فروشگاه به فعال‌بودن محصول و موجودی آن نیز وابسته
-        است.
+        محصول را انتخاب و تنظیمات چاپ را ذخیره کنید. محصولات فعال در صفحهٔ مشتری نمایش داده می‌شوند؛
+        ثبت درخواست برای محصول ناموجود تا افزایش موجودی بسته است.
       </p>
       <div className="print-form">
         <div className="print-grid">
@@ -147,6 +147,64 @@ export function ConfigurationForm({
           {busy ? 'در حال ذخیره…' : 'ذخیره تنظیمات چاپ'}
         </button>
       </div>
+      <section aria-labelledby="configured-print-products" className="print-configurations">
+        <h3 id="configured-print-products">محصولات ثبت‌شده برای چاپ</h3>
+        {!configurations.length && (
+          <p className="print-notice">هنوز محصولی برای چاپ ثبت نکرده‌اید.</p>
+        )}
+        <ul className="print-config-list">
+          {configurations.map((configuration) => {
+            const item = configuration.product;
+            const visible = configuration.enabled && item.status === 'ACTIVE';
+            const visibility = !configuration.enabled
+              ? 'چاپ غیرفعال؛ پنهان از مشتری'
+              : item.status !== 'ACTIVE'
+                ? 'محصول غیرفعال؛ پنهان از مشتری'
+                : item.stock <= 0
+                  ? 'ناموجود؛ قابل مشاهده برای مشتری'
+                  : 'قابل مشاهده و سفارش برای مشتری';
+            return (
+              <li key={configuration.id}>
+                <div className="print-product">
+                  {item.images?.[0]?.url && <img src={item.images[0].url} alt="" />}
+                  <div>
+                    <h4>{item.name}</h4>
+                    <p>
+                      {typeLabels[configuration.type]} · موجودی:{' '}
+                      {item.stock.toLocaleString('fa-IR')}
+                    </p>
+                    <p className="print-subtle">
+                      محل چاپ:{' '}
+                      {configuration.positions.map((p) => positionLabels[p] || p).join('، ') ||
+                        'نیاز ندارد'}
+                    </p>
+                    <span
+                      className={`badge ${visible && item.stock > 0 ? 'badge-success' : 'badge-warning'}`}
+                    >
+                      {visibility}
+                    </span>
+                  </div>
+                </div>
+                <div className="print-actions">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    disabled={busy}
+                    aria-label={`ویرایش ${item.name}`}
+                    onClick={() => {
+                      selectProduct(configuration.productId);
+                      document.getElementById('config-product')?.focus();
+                    }}
+                  >
+                    ویرایش تنظیمات چاپ
+                  </button>
+                  <a href="/admin/products">مدیریت محصول و موجودی</a>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
     </section>
   );
 }

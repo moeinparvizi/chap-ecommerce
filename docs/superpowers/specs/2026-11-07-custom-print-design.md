@@ -34,7 +34,7 @@ Alternatives considered: creating pending orders immediately mixes design review
 
 ## Data model and API boundaries
 
-- New PrintProduct configuration linked one-to-one to Product, holding type, enabled flag, positions and timestamps. Public listing omits non-ACTIVE/disabled/out-of-stock products.
+- New PrintProduct configuration linked one-to-one to Product, holding type, enabled flag, positions and timestamps. Public listing omits non-ACTIVE/disabled products. Follow-up on November 7: enabled ACTIVE products remain visible at zero stock with an unavailable label and disabled submission; request creation and payment still enforce stock on the server. The admin screen lists all configured products, their visibility/stock, and an edit action.
 - New CustomPrintRequest linked to the submitting User and Product and optionally one unique Order. Store immutable product/options/address/contact snapshots, quantity, positions, notes, private artwork bytes/base64 plus filename/MIME/size, status, quote, review note and timestamps. Store who reviewed it. Do not expose artwork bytes in list endpoints or ordinary order payloads.
 - States: PENDING_REVIEW -> APPROVED or REJECTED; APPROVED -> PAID through the test-payment endpoint only. Paid requests remain linked to their order; fulfillment state comes from Order.
 - Add READY to OrderStatus for the requested ready-before-shipping step. Existing status renderers and filters recognize it.

@@ -72,8 +72,8 @@ export default function CustomPrintPage() {
       setLocationError(errorMessage(e));
     }
   }
-  async function load() {
-    setLoading(true);
+  async function load(background = false) {
+    if (!background) setLoading(true);
     setLoadError('');
     try {
       const [available, config] = await Promise.all([
@@ -94,6 +94,11 @@ export default function CustomPrintPage() {
   useEffect(() => {
     void load();
     void loadLocations();
+    const refresh = () => {
+      void load(true);
+    };
+    window.addEventListener('focus', refresh);
+    return () => window.removeEventListener('focus', refresh);
   }, []);
   useEffect(() => {
     if (!file?.type.startsWith('image/')) {
@@ -117,6 +122,10 @@ export default function CustomPrintPage() {
     }
     if (!product) {
       setError('یک محصول قابل چاپ انتخاب کنید.');
+      return;
+    }
+    if (product.product.stock <= 0) {
+      setError('این محصول ناموجود است؛ پس از افزایش موجودی دوباره تلاش کنید.');
       return;
     }
     if (!file) {
@@ -184,7 +193,12 @@ export default function CustomPrintPage() {
       {loadError && (
         <div role="alert" className="print-error">
           {loadError}{' '}
-          <button className="btn btn-ghost" onClick={load}>
+          <button
+            className="btn btn-ghost"
+            onClick={() => {
+              void load();
+            }}
+          >
             تلاش مجدد
           </button>
         </div>
@@ -220,9 +234,15 @@ export default function CustomPrintPage() {
                   {products.map((p) => (
                     <option key={p.productId} value={p.productId}>
                       {p.product.name}
+                      {p.product.stock <= 0 ? ' — ناموجود' : ''}
                     </option>
                   ))}
                 </select>
+                {product && product.product.stock <= 0 && (
+                  <p className="print-notice" role="status">
+                    این محصول ناموجود است؛ ارسال طرح پس از افزایش موجودی فعال می‌شود.
+                  </p>
+                )}
                 {product?.product.images?.[0]?.url && (
                   <img
                     className="print-preview"
@@ -410,7 +430,11 @@ export default function CustomPrintPage() {
               {error}
             </div>
           )}
-          <button type="submit" className="btn btn-primary" disabled={busy}>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={busy || !product || product.product.stock <= 0}
+          >
             {busy ? 'در حال ارسال…' : signedIn ? 'ارسال برای بررسی' : 'ورود و ارسال طرح'}
           </button>
         </form>
