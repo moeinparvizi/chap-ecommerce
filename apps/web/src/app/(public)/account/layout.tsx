@@ -6,6 +6,7 @@ import { Icons } from '@/app/components/Icons';
 
 const menuItems = [
   { href: '/account', icon: 'LayoutDashboard', label: 'داشبورد', exact: true },
+  { href: '/account/print-requests', icon: 'Clipboard', label: 'درخواست‌های چاپ', exact: false },
   { href: '/account/orders', icon: 'Package', label: 'خریدها', exact: false },
   { href: '/account/wishlist', icon: 'Heart', label: 'علاقهمندیها', exact: false },
   { href: '/account/locations', icon: 'MapPin', label: 'لوکیشنها', exact: false },

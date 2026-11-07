@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Icons } from '@/app/components/Icons';
 import { api } from '@/app/lib/api';
 import { ListLoader } from '@/app/components/Loading';
+import { PrintOrderDetails } from '@/app/components/custom-print/RequestDetails';
+import { paymentLabel } from '@/app/components/custom-print/helpers';
+import '@/app/components/custom-print/custom-print.css';
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -30,6 +33,7 @@ export default function OrdersPage() {
   const statusMap: Record<string, { label: string; color: string; bg: string }> = {
     PENDING: { label: 'در انتظار', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
     PROCESSING: { label: 'در حال پردازش', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
+    READY: { label: 'آماده ارسال', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
     SHIPPED: { label: 'ارسال شده', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
     DELIVERED: { label: 'تحویل شده', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
     CANCELLED: { label: 'لغو شده', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
@@ -61,7 +65,7 @@ export default function OrdersPage() {
       </div>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        {[{ key: 'all', label: 'همه' }, { key: 'PENDING', label: 'در انتظار' }, { key: 'SHIPPED', label: 'ارسال شده' }, { key: 'DELIVERED', label: 'تحویل شده' }, { key: 'CANCELLED', label: 'لغو شده' }].map(tab => (
+        {[{ key: 'all', label: 'همه' }, { key: 'PENDING', label: 'در انتظار' }, { key: 'PROCESSING', label: 'در حال آماده‌سازی' }, { key: 'READY', label: 'آماده ارسال' }, { key: 'SHIPPED', label: 'ارسال شده' }, { key: 'DELIVERED', label: 'تحویل شده' }, { key: 'CANCELLED', label: 'لغو شده' }].map(tab => (
           <button key={tab.key} onClick={() => setFilter(tab.key)} style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid var(--border)', background: filter === tab.key ? 'var(--primary)' : 'var(--card-bg)', color: filter === tab.key ? 'white' : 'var(--text)', cursor: 'pointer', fontSize: '13px', fontWeight: filter === tab.key ? 600 : 400 }}>{tab.label}</button>
         ))}
       </div>
@@ -107,6 +111,9 @@ export default function OrdersPage() {
                     ))}
                   </div>
                 )}
+
+                {order.paymentMethod === 'test' && <p>{paymentLabel(order.paymentMethod)}</p>}
+                <PrintOrderDetails request={order.customPrintRequest} />
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
                   <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{new Date(order.createdAt).toLocaleDateString('fa-IR')}</span>

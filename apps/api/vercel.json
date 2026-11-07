@@ -3,5 +3,8 @@
   "framework": "nestjs",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "buildCommand": "cd ../.. && pnpm db:generate && pnpm build:shared && pnpm build:db && pnpm build:api",
-  "regions": ["iad1"]
+  "regions": ["iad1"],
+  "env": {
+    "PAYMENT_TEST_MODE": "true"
+  }
 }

@@ -66,6 +66,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const menuItems = [
     { id: 'dashboard', label: t('dashboard'), icon: <Icons.BarChart size={18} />, path: '/admin' },
     { id: 'orders', label: t('orders'), icon: <Icons.Package size={18} />, path: '/admin/orders' },
+    { id: 'custom-print', label: lang === 'fa' ? 'چاپ سفارشی' : 'Custom printing', icon: <Icons.Clipboard size={18} />, path: '/admin/custom-print' },
     { id: 'products', label: t('products'), icon: <Icons.Tag size={18} />, path: '/admin/products', children: [
       { id: 'product-list', label: t('products'), icon: <Icons.Clipboard size={18} />, path: '/admin/products' },
       { id: 'categories', label: t('categories'), icon: <Icons.Folder size={18} />, path: '/admin/categories' },
@@ -81,6 +82,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
 
   const getActiveTab = () => {
     if (pathname === '/admin') return 'dashboard';
+    if (pathname.startsWith('/admin/custom-print')) return 'custom-print';
     if (pathname.startsWith('/admin/orders')) return 'orders';
     if (pathname.startsWith('/admin/categories')) return 'categories';
     if (pathname.startsWith('/admin/products')) return 'products';

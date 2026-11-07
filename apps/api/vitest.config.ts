@@ -16,6 +16,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
+      '@ecommerce/shared': resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@ecommerce/db': resolve(__dirname, '../../packages/db/src/index.ts'),
     },
   },
 });

@@ -1,0 +1,212 @@
+.print-page {
+  width: 100%;
+  min-width: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.print-public {
+  padding: 28px 20px 48px;
+}
+.print-page h1 {
+  font-size: 24px;
+  line-height: 1.5;
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+.print-page h2 {
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0 0 18px;
+  font-weight: 700;
+}
+.print-page p {
+  line-height: 1.9;
+}
+.print-subtle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0 0 18px;
+}
+.print-panel {
+  padding: 24px;
+  margin-bottom: 22px;
+}
+.print-form {
+  display: grid;
+  gap: 20px;
+}
+.print-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.print-field {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+.print-field > label,
+.print-page legend {
+  font-size: 14px;
+  font-weight: 600;
+}
+.print-page fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.print-page legend {
+  margin-bottom: 12px;
+}
+.print-checks,
+.print-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.print-checks label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  min-height: 44px;
+}
+.print-page input[type='checkbox'] {
+  accent-color: var(--primary);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.print-page .input {
+  min-width: 0;
+  max-width: 100%;
+}
+.print-page .btn {
+  min-height: 44px;
+  white-space: normal;
+}
+.print-page button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.print-page :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+.print-page a {
+  color: var(--primary);
+  text-underline-offset: 4px;
+}
+.print-error {
+  color: var(--badge-danger-text);
+  background: var(--badge-danger-bg);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+.print-notice {
+  background: var(--hover-bg);
+  border-radius: 10px;
+  padding: 14px 16px;
+  line-height: 1.9;
+  font-size: 14px;
+  margin: 12px 0;
+}
+.print-product {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+.print-product img {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+.print-preview {
+  width: 100%;
+  max-width: 240px;
+  height: 160px;
+  object-fit: contain;
+  background: var(--hover-bg);
+  border-radius: 10px;
+}
+.print-page progress {
+  width: 100%;
+  accent-color: var(--primary);
+}
+.print-request-header {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: start;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.print-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+  margin: 16px 0;
+}
+.print-details div {
+  min-width: 0;
+}
+.print-details dt {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.print-details dd {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.print-wide {
+  grid-column: 1 / -1;
+}
+.print-review {
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 20px;
+}
+.print-divider {
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+.print-order-detail {
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.print-order-detail p {
+  font-size: 13px;
+  margin: 8px 0;
+}
+@media (max-width: 640px) {
+  .print-public {
+    padding: 20px 12px 32px;
+  }
+  .print-grid,
+  .print-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .print-panel {
+    padding: 18px;
+  }
+  .print-page h1 {
+    font-size: 22px;
+  }
+  .print-actions > .btn {
+    flex: 1 1 auto;
+  }
+}

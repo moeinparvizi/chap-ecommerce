@@ -8,15 +8,18 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  password  String
-  role      Role     @default(CUSTOMER)
-  phone     String?
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                    String               @id @default(uuid())
+  email                 String               @unique
+  name                  String
+  password              String
+  role                  Role                 @default(CUSTOMER)
+  phone                 String?
+  avatar                String?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  printUploads          PrintUpload[]
+  printRequests         CustomPrintRequest[] @relation("PrintCustomer")
+  reviewedPrintRequests CustomPrintRequest[] @relation("PrintReviewer")
 }
 
 enum Role {
@@ -26,38 +29,40 @@ enum Role {
 }
 
 model Category {
-  id          String    @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
-  slug        String    @unique
+  slug        String     @unique
   description String?
   image       String?
   parentId    String?
-  parent      Category? @relation("CategoryTree", fields: [parentId], references: [id])
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children    Category[] @relation("CategoryTree")
   products    Product[]
-  status      String    @default("active")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  status      String     @default("active")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Product {
-  id             String         @id @default(uuid())
-  name           String
-  sku            String         @unique
-  slug           String         @unique
-  description    String?
-  price          Float
-  compareAtPrice Float?
-  stock          Int            @default(0)
-  status         ProductStatus  @default(DRAFT)
-  brand          String?
-  rating         Float          @default(0)
-  sales          Int            @default(0)
-  categoryId     String?
-  category       Category?      @relation(fields: [categoryId], references: [id])
-  images         ProductImage[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id                 String               @id @default(uuid())
+  name               String
+  sku                String               @unique
+  slug               String               @unique
+  description        String?
+  price              Float
+  compareAtPrice     Float?
+  stock              Int                  @default(0)
+  status             ProductStatus        @default(DRAFT)
+  brand              String?
+  rating             Float                @default(0)
+  sales              Int                  @default(0)
+  categoryId         String?
+  category           Category?            @relation(fields: [categoryId], references: [id])
+  printConfiguration PrintProduct?
+  printRequests      CustomPrintRequest[]
+  images             ProductImage[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 }
 
 enum ProductStatus {
@@ -75,16 +80,16 @@ model ProductImage {
 }
 
 model Campaign {
-  id          String   @id @default(uuid())
-  name        String
-  type        String
-  status      String   @default("active")
-  discount    String
-  startDate   String
-  endDate     String
-  usageCount  Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  type       String
+  status     String   @default("active")
+  discount   String
+  startDate  String
+  endDate    String
+  usageCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Coupon {
@@ -100,12 +105,12 @@ model Coupon {
 }
 
 model Banner {
-  id        String       @id @default(uuid())
+  id        String        @id @default(uuid())
   name      String
   position  String
   images    BannerImage[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 model BannerImage {
@@ -117,17 +122,18 @@ model BannerImage {
 }
 
 model Order {
-  id            String      @id @default(uuid())
-  customerName  String
-  userId        String?
-  amount        Float
-  status        OrderStatus @default(PENDING)
-  items         Int         @default(1)
-  itemsJson     String?
-  locationJson  String?
-  paymentMethod String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id                 String              @id @default(uuid())
+  customPrintRequest CustomPrintRequest?
+  customerName       String
+  userId             String?
+  amount             Float
+  status             OrderStatus         @default(PENDING)
+  items              Int                 @default(1)
+  itemsJson          String?
+  locationJson       String?
+  paymentMethod      String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model Comment {
@@ -167,54 +173,124 @@ model Location {
 }
 
 model Discount {
-  id           String   @id @default(uuid())
-  name         String
-  percentage   Int
-  targetType   String
-  targetId     String?
-  active       Boolean  @default(true)
-  startDate    String?
-  endDate      String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  percentage Int
+  targetType String
+  targetId   String?
+  active     Boolean  @default(true)
+  startDate  String?
+  endDate    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Wishlist {
-  id          String   @id @default(uuid())
-  userId      String
-  productId   String
-  productName String
+  id           String   @id @default(uuid())
+  userId       String
+  productId    String
+  productName  String
   productPrice Float
   productImage String?
-  createdAt   DateTime @default(now())
+  createdAt    DateTime @default(now())
 }
 
 model Notification {
-  id          String   @id @default(uuid())
-  userId      String
-  title       String
-  message     String
-  type        String
-  read        Boolean  @default(false)
-  productId   String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  read      Boolean  @default(false)
+  productId String?
+  createdAt DateTime @default(now())
 }
 
 model HiddenMarkup {
-  id          String   @id @default(uuid())
-  name        String
-  percentage  Int
-  targetType  String
-  targetId    String?
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  percentage Int
+  targetType String
+  targetId   String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 enum OrderStatus {
   PENDING
   PROCESSING
+  READY
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+model PrintProduct {
+  id        String   @id @default(uuid())
+  productId String   @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type      String
+  enabled   Boolean  @default(true)
+  positions String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PrintUpload {
+  id          String              @id @default(uuid())
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  filename    String
+  mimeType    String
+  size        Int
+  totalChunks Int
+  completed   Boolean             @default(false)
+  createdAt   DateTime            @default(now())
+  parts       PrintUploadPart[]
+  request     CustomPrintRequest?
+
+  @@index([userId, createdAt])
+}
+
+model PrintUploadPart {
+  uploadId String
+  upload   PrintUpload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  index    Int
+  data     Bytes
+
+  @@id([uploadId, index])
+}
+
+model CustomPrintRequest {
+  id             String      @id @default(uuid())
+  userId         String
+  user           User        @relation("PrintCustomer", fields: [userId], references: [id])
+  customerName   String
+  productId      String
+  product        Product     @relation(fields: [productId], references: [id])
+  productName    String
+  productImage   String?
+  productType    String
+  quantity       Int
+  size           String?
+  color          String?
+  positions      String[]
+  notes          String?
+  phone          String
+  locationJson   String
+  designUploadId String      @unique
+  designUpload   PrintUpload @relation(fields: [designUploadId], references: [id])
+  status         String      @default("PENDING_REVIEW")
+  quotedAmount   Float?
+  reviewNote     String?
+  reviewerId     String?
+  reviewer       User?       @relation("PrintReviewer", fields: [reviewerId], references: [id])
+  orderId        String?     @unique
+  order          Order?      @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
 }

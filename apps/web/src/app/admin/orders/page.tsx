@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Icons } from '../../components/Icons';
 import { useNotification } from '../../lib/notifications';
 import { api } from '../../lib/api';
+import type { PrintOrderSummary } from '../../lib/custom-print-types';
+import { PrintOrderDetails } from '../../components/custom-print/RequestDetails';
+import { availablePrintOrderStatuses, paymentLabel } from '../../components/custom-print/helpers';
+import '../../components/custom-print/custom-print.css';
 
 interface Order {
   id: string;
@@ -22,6 +26,7 @@ interface Order {
   createdAt: string;
   updatedAt: string;
   localItems: any[];
+  customPrintRequest?: PrintOrderSummary | null;
 }
 
 export default function OrdersPage() {
@@ -56,7 +61,8 @@ export default function OrdersPage() {
             orderNumber: '#' + o.id.slice(0, 8).toUpperCase(),
             customer: o.customerName,
             email: customer?.email || '—',
-            phone: customer?.phone || location?.phone || '—',
+            phone: o.customPrintRequest?.phone || customer?.phone || location?.phone || '—',
+            customPrintRequest: o.customPrintRequest,
             address: location ? `${location.address}, ${location.city}` : '—',
             locationTitle: location?.title || '',
             items: items.length || o.items || 1,
@@ -93,6 +99,7 @@ export default function OrdersPage() {
     const c: Record<string, { bg: string; text: string }> = {
       pending: { bg: 'var(--badge-danger-bg)', text: 'var(--badge-danger-text)' },
       processing: { bg: 'rgba(59,130,246,0.15)', text: '#3b82f6' },
+      ready: { bg: 'rgba(59,130,246,0.15)', text: '#3b82f6' },
       shipped: { bg: 'var(--badge-success-bg)', text: 'var(--badge-success-text)' },
       delivered: { bg: 'var(--badge-success-bg)', text: 'var(--badge-success-text)' },
       cancelled: { bg: 'var(--badge-danger-bg)', text: 'var(--badge-danger-text)' },
@@ -101,7 +108,7 @@ export default function OrdersPage() {
   };
 
   const getStatusText = (s: string) => {
-    const t: Record<string, string> = { pending: 'در انتظار', confirmed: 'تایید شده', processing: 'در حال پردازش', shipped: 'ارسال شده', delivered: 'تحویل شده', cancelled: 'لغو شده' };
+    const t: Record<string, string> = { pending: 'در انتظار', confirmed: 'تایید شده', processing: 'در حال آماده‌سازی', ready: 'آماده ارسال', shipped: 'ارسال شده', delivered: 'تحویل شده', cancelled: 'لغو شده' };
     return t[s] || s;
   };
 
@@ -109,7 +116,8 @@ export default function OrdersPage() {
     try {
       await api.updateOrder(orderId, { status: newStatus.toUpperCase() });
       await refreshOrders();
-    } catch (e) { notify.error('خطا در بروزرسانی وضعیت'); }
+      setSelectedOrder(order => order?.id === orderId ? { ...order, status: newStatus } : order);
+    } catch (e) { notify.error(e instanceof Error ? e.message : 'خطا در بروزرسانی وضعیت'); }
   };
 
   const handleDeleteOrder = async (orderId: string) => {
@@ -142,7 +150,8 @@ export default function OrdersPage() {
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="input" style={{ width: '160px' }}>
           <option value="all">همه وضعیتها</option>
           <option value="pending">در انتظار</option>
-          <option value="processing">در حال پردازش</option>
+          <option value="processing">در حال آماده‌سازی</option>
+          <option value="ready">آماده ارسال</option>
           <option value="shipped">ارسال شده</option>
           <option value="delivered">تحویل شده</option>
           <option value="cancelled">لغو شده</option>
@@ -188,11 +197,7 @@ export default function OrdersPage() {
                       <Icons.Eye size={14} />
                     </button>
                     <select value={order.status} onChange={e => handleStatusChange(order.id, e.target.value)} style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)', fontSize: '11px', cursor: 'pointer' }}>
-                      <option value="pending">در انتظار</option>
-                      <option value="processing">پردازش</option>
-                      <option value="shipped">ارسال</option>
-                      <option value="delivered">تحویل</option>
-                      <option value="cancelled">لغو</option>
+                      {(order.customPrintRequest ? availablePrintOrderStatuses(order.status) : ['pending', 'processing', 'ready', 'shipped', 'delivered', 'cancelled']).map(status => <option key={status} value={status}>{getStatusText(status)}</option>)}
                     </select>
                   </div>
                 </td>
@@ -233,7 +238,7 @@ export default function OrdersPage() {
                 <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>نام</p><p style={{ fontSize: '13px', fontWeight: 600, margin: 0 }}>{selectedOrder.customer}</p></div>
                 <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>ایمیل</p><p style={{ fontSize: '13px', margin: 0, direction: 'ltr', textAlign: 'left' }}>{selectedOrder.email}</p></div>
                 <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>تلفن</p><p style={{ fontSize: '13px', margin: 0, direction: 'ltr', textAlign: 'left' }}>{selectedOrder.phone}</p></div>
-                <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>روش پرداخت</p><p style={{ fontSize: '13px', margin: 0 }}>{selectedOrder.paymentMethod === 'online' ? 'پرداخت آنلاین' : selectedOrder.paymentMethod || '—'}</p></div>
+                <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>روش پرداخت</p><p style={{ fontSize: '13px', margin: 0 }}>{paymentLabel(selectedOrder.paymentMethod)}</p></div>
               </div>
               {selectedOrder.address !== '—' && (
                 <div style={{ marginTop: '10px', padding: '10px', borderRadius: '8px', background: 'var(--card-bg)', border: '1px solid var(--border)' }}>
@@ -259,6 +264,8 @@ export default function OrdersPage() {
               </div>
             )}
 
+            <PrintOrderDetails request={selectedOrder.customPrintRequest} />
+
             {/* Order Summary */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '14px', borderRadius: '10px', background: 'var(--hover-bg)', marginBottom: '16px' }}>
               <div><p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '0 0 2px' }}>مبلغ</p><p style={{ fontSize: '16px', fontWeight: 700, color: '#22c55e', margin: 0 }}>{(selectedOrder.total * 10).toLocaleString('fa-IR')} ریال</p></div>
@@ -268,13 +275,9 @@ export default function OrdersPage() {
 
             <div style={{ display: 'flex', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
               <select value={selectedOrder.status} onChange={e => handleStatusChange(selectedOrder.id, e.target.value)} className="input" style={{ flex: 1 }}>
-                <option value="pending">در انتظار</option>
-                <option value="processing">پردازش</option>
-                <option value="shipped">ارسال شده</option>
-                <option value="delivered">تحویل شده</option>
-                <option value="cancelled">لغو شده</option>
+                {(selectedOrder.customPrintRequest ? availablePrintOrderStatuses(selectedOrder.status) : ['pending', 'processing', 'ready', 'shipped', 'delivered', 'cancelled']).map(status => <option key={status} value={status}>{getStatusText(status)}</option>)}
               </select>
-              <button onClick={() => handleDeleteOrder(selectedOrder.id)} style={{ padding: '10px 20px', background: 'var(--badge-danger-bg)', color: 'var(--badge-danger-text)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>حذف</button>
+              {!selectedOrder.customPrintRequest && <button onClick={() => handleDeleteOrder(selectedOrder.id)} style={{ padding: '10px 20px', background: 'var(--badge-danger-bg)', color: 'var(--badge-danger-text)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>حذف</button>}
             </div>
           </div>
         </div>

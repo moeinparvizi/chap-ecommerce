@@ -1,3 +1,4 @@
+import { CustomPrintModule } from './custom-print/custom-print.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -24,6 +25,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
     PrismaModule,
+    CustomPrintModule,
     HealthModule,
     ProductsModule,
     CategoriesModule,

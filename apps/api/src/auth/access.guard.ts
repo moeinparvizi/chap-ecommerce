@@ -9,6 +9,7 @@ export class AccessGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
     const parts = req.path.replace(/^\/api\/?/, '').split('/').filter(Boolean);
     const [resource, id, action] = parts;
+    if (req.method === 'GET' && resource === 'custom-print' && parts.length === 2 && ['settings', 'products'].includes(id)) return true;
     const method = req.method;
     if (method === 'POST' && resource === 'auth' && ['login', 'register'].includes(id) && parts.length === 2) return true;
     if (method === 'GET' && ['health', 'products', 'categories'].includes(resource)) return true;
@@ -26,6 +27,11 @@ export class AccessGuard implements CanActivate {
     if (!user) throw new UnauthorizedException();
     req.user = user;
     if (['ADMIN', 'SUPER_ADMIN'].includes(user.role)) return true;
+
+    if (resource === 'custom-print') {
+      if (id === 'uploads' || (id === 'requests' && !parts.includes('review'))) return true;
+      throw new ForbiddenException();
+    }
 
     if (req.body?.userId && req.body.userId !== user.id) throw new ForbiddenException();
     if (resource === 'profile' && id === user.id && ['GET', 'PUT'].includes(method)) return true;

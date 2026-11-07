@@ -65,3 +65,23 @@ describe('backend category permissions', () => {
     await expect(guard().canActivate(context('PUT', '/api/locations/location-id', await jwt.signAsync({ sub: user.id })))).rejects.toThrow();
   });
 });
+
+describe('custom print route access', () => {
+  const customer = { id: 'customer', role: 'CUSTOMER', name: 'Customer' };
+  const guard = new AccessGuard(jwt, { user: { findUnique: async () => customer } } as any);
+  it('allows public settings and product discovery', async () => {
+    expect(await guard.canActivate(context('GET', '/api/custom-print/settings'))).toBe(true);
+    expect(await guard.canActivate(context('GET', '/api/custom-print/products'))).toBe(true);
+  });
+  it('requires login for artwork and customer requests', async () => {
+    await expect(guard.canActivate(context('GET', '/api/custom-print/requests'))).rejects.toThrow();
+    await expect(guard.canActivate(context('POST', '/api/custom-print/uploads'))).rejects.toThrow();
+  });
+  it('allows authenticated customer routes but denies admin configuration and review', async () => {
+    const token = await jwt.signAsync({ sub: customer.id });
+    expect(await guard.canActivate(context('POST', '/api/custom-print/requests', token))).toBe(true);
+    expect(await guard.canActivate(context('POST', '/api/custom-print/requests/id/pay-test', token))).toBe(true);
+    await expect(guard.canActivate(context('POST', '/api/custom-print/configurations', token))).rejects.toThrow();
+    await expect(guard.canActivate(context('POST', '/api/custom-print/requests/id/review', token))).rejects.toThrow();
+  });
+});
