@@ -1,7 +1,12 @@
 'use client';
-import { enterDemo, resetDemo } from '../lib/demo';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { enterDemo, isDemoSession, resetDemo } from '../lib/demo';
 export function DemoNotice() {
-  if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') return null;
+  const pathname = usePathname();
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(isDemoSession()); }, [pathname]);
+  if (!visible) return null;
   return (
     <aside
       aria-label="حالت نمایشی"

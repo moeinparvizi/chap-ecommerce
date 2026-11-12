@@ -1,9 +1,9 @@
-import { demoRequest } from './demo';
+import { demoRequest, isDemoSession } from './demo';
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || '/api').replace(/\/$/, '');
 
 async function request(url: string, options?: RequestInit) {
-  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') return demoRequest(url, options);
+  if (isDemoSession()) return demoRequest(url, options);
   const headers = new Headers(options?.headers);
   headers.set('Content-Type', 'application/json');
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;

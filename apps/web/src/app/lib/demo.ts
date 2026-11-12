@@ -1,4 +1,8 @@
 /** Fictional browser-only data. No requests, payments or shared database writes. */
+export function isDemoSession() {
+  return process.env.NEXT_PUBLIC_DEMO_MODE === 'true' ||
+    (typeof window !== 'undefined' && ['auth-admin-demo', 'auth-customer-demo'].includes(localStorage.getItem('auth_token') || ''));
+}
 const KEY = 'chap-demo-v1';
 type Row = Record<string, any>;
 type Store = Record<string, Row[]>;

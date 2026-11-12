@@ -1,3 +1,4 @@
+import { isDemoSession } from './demo';
 import { MAX_ARTWORK_BYTES, ARTWORK_CHUNK_BYTES } from '@ecommerce/shared';
 import type {
   CreatePrintRequest,
@@ -11,8 +12,9 @@ import type {
 export { MAX_ARTWORK_BYTES, ARTWORK_CHUNK_BYTES };
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || '/api').replace(/\/$/, '');
-// Print records always use the server, including when legacy catalog demo mode is selected.
+// Print reads use the server; demo sessions cannot submit changes.
 async function request<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
+  if (isDemoSession() && method !== 'GET') throw new Error('این قابلیت در حالت نمایشی در دسترس نیست.');
   const headers = new Headers({ 'Content-Type': 'application/json' });
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
   if (token) headers.set('Authorization', `Bearer ${token}`);

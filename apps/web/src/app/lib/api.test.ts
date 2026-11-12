@@ -30,3 +30,19 @@ describe('shared backend transport', () => {
     expect(localStorage.getItem('chap-demo-v1')).toBeNull();
   });
 });
+
+describe('browser demo session', () => {
+  it('keeps demo reads and writes in the browser and resumes server requests after logout', async () => {
+    const fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    vi.stubGlobal('fetch', fetch);
+    const { enterDemo } = await import('./demo');
+    const { api } = await import('./api');
+    await enterDemo('admin');
+    await api.createCategory({ name: 'نمونه' });
+    expect((await api.getCategories()).some((category: { name: string }) => category.name === 'نمونه')).toBe(true);
+    expect(fetch).not.toHaveBeenCalled();
+    localStorage.removeItem('auth_token');
+    await api.getCategories();
+    expect(fetch).toHaveBeenCalledOnce();
+  });
+});

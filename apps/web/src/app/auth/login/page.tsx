@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { api } from '@/app/lib/api';
 import { Icons } from '@/app/components/Icons';
 import { isAdminRole } from '@/app/lib/auth';
+import { enterDemo, resetDemo } from '@/app/lib/demo';
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -82,16 +83,16 @@ export default function LoginPage() {
             <div style={{ padding: '12px 16px', borderRadius: '10px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '13px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid rgba(239,68,68,0.15)' }}><Icons.CheckCircle size={16} /> {error}</div>
           )}
 
-          {mode === 'login' && process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && (
+          {mode === 'login' && (
             <div style={{ padding: '16px', marginBottom: '20px', border: '1px solid var(--border)', borderRadius: '12px', background: 'var(--input-bg)' }}>
               <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>ورود با حساب نمایشی</p>
-              <p style={{ margin: '0 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>برای مشاهده دمو، یک حساب را انتخاب کنید. رمز هر دو: <code dir="ltr">Demo123!</code></p>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>برای ورود به محیط نمایشی با اطلاعات ساختگی، یک حساب را انتخاب کنید.</p>
               <div style={{ display: 'grid', gap: '8px' }}>
                 {[
-                  { label: 'مدیر', email: 'admin@example.com' },
-                  { label: 'مشتری', email: 'customer@example.com' },
+                  { label: 'مدیر', email: 'admin@example.com', role: 'admin' as const },
+                  { label: 'مشتری', email: 'customer@example.com', role: 'customer' as const },
                 ].map(account => (
-                  <button key={account.email} type="button" onClick={() => { setEmail(account.email); setPassword('Demo123!'); setError(''); }} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: '8px', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '13px' }}>
+                  <button key={account.email} type="button" onClick={async () => { try { window.location.href = await enterDemo(account.role); } catch { resetDemo(); window.location.href = await enterDemo(account.role); } }} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: '8px', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '13px' }}>
                     <span>حساب {account.label}</span>
                     <span dir="ltr" style={{ color: 'var(--text-secondary)' }}>{account.email}</span>
                   </button>
