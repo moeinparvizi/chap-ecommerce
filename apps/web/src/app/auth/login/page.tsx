@@ -82,13 +82,23 @@ export default function LoginPage() {
             <div style={{ padding: '12px 16px', borderRadius: '10px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '13px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid rgba(239,68,68,0.15)' }}><Icons.CheckCircle size={16} /> {error}</div>
           )}
 
-          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <div style={{padding:16,marginBottom:20,border:'1px solid var(--border)',borderRadius:12}}>
-            <p style={{margin:'0 0 10px',fontSize:13}}>حساب‌های نمایشی · رمز هر دو: <code dir="ltr">Demo123!</code></p>
-            <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-              <button type="button" className="btn btn-primary" onClick={()=>{setEmail('admin@example.com');setPassword('Demo123!');setMode('login');}}>حساب مدیر</button>
-              <button type="button" className="btn" onClick={()=>{setEmail('customer@example.com');setPassword('Demo123!');setMode('login');}}>حساب مشتری</button>
+          {mode === 'login' && process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && (
+            <div style={{ padding: '16px', marginBottom: '20px', border: '1px solid var(--border)', borderRadius: '12px', background: 'var(--input-bg)' }}>
+              <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>ورود با حساب نمایشی</p>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>برای مشاهده دمو، یک حساب را انتخاب کنید. رمز هر دو: <code dir="ltr">Demo123!</code></p>
+              <div style={{ display: 'grid', gap: '8px' }}>
+                {[
+                  { label: 'مدیر', email: 'admin@example.com' },
+                  { label: 'مشتری', email: 'customer@example.com' },
+                ].map(account => (
+                  <button key={account.email} type="button" onClick={() => { setEmail(account.email); setPassword('Demo123!'); setError(''); }} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: '8px', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '13px' }}>
+                    <span>حساب {account.label}</span>
+                    <span dir="ltr" style={{ color: 'var(--text-secondary)' }}>{account.email}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>}
+          )}
           <form onSubmit={handleSubmit}>
             {mode === 'signup' && (
               <div style={{ marginBottom: '16px' }}>
@@ -111,7 +121,7 @@ export default function LoginPage() {
             <div style={{ marginBottom: '24px' }}>
               <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>رمز عبور</label>
               <div style={{ position: 'relative' }}>
-                <input type="password" minLength={mode === 'signup' ? 12 : 1} maxLength={72} value={password} onChange={e => setPassword(e.target.value)} placeholder="رمز عبور" required style={{ width: '100%', padding: '12px 14px 12px 40px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none' }} />
+                <input type="password" minLength={mode === 'signup' ? 12 : 1} maxLength={72} value={password} onChange={e => setPassword(e.target.value)} placeholder="رمز عبور" required style={{ width: '100%', padding: '12px 14px 12px 40px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'var(--input-bg)', fontSize: '14px', color: 'var(--text)', outline: 'none', direction: 'ltr', textAlign: 'left' }} />
                 <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><Icons.Lock size={16} /></span>
               </div>
             </div>
